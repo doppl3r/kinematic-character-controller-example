@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Kinematic Character Controller Example",
+  "description": "",
+  "version": "0.0.1",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Kinematic Character Controller Example"
+  },
+  "icons": { 
+    "16": "png/icon16.png",
+    "32": "png/icon32.png",
+    "48": "png/icon48.png",
+    "128": "png/icon128.png"
+  }
+}
