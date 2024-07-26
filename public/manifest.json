@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kinematic Character Controller Example",
-  "description": "",
+  "description": "This example shows how to create a Kinematic Character Controller using Rapier.js and Three.js",
   "version": "0.0.1",
   "action": {
     "default_popup": "index.html",

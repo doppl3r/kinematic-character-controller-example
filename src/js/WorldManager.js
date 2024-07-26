@@ -20,7 +20,7 @@ class WorldManager {
 
     // Add game debugger
     this.debugger = new Debugger(this.world);
-    this.debugger.disable();
+    //this.debugger.disable();
   }
 
   addEntitiesToScene(scene) {
@@ -63,6 +63,10 @@ class WorldManager {
     });
   }
 
+  create(options) {
+    return EntityFactory.create(options);
+  }
+
   add(entity) {
     // Add entity to entities map using entity UUID
     this.entities.set(entity.uuid, entity);
@@ -81,38 +85,6 @@ class WorldManager {
 
   get(key) {
     return this.entities.get(key);
-  }
-
-  spawn(name) {
-    var entity;
-    var spawner = this.getEntityByName('Spawner');
-
-    // Check if spawner exists
-    if (spawner) {
-      // Create entity by name
-      entity = EntityFactory.create({
-        class: name,
-        position: spawner.object.position,
-        linearDamping: 0.5
-      });
-      if (entity) this.add(entity);
-
-      // Assign reflection pass to target
-      game.graphics.reflectionPass.setTarget(entity.object);
-      game.graphics.outlinePass.selectedObjects = [entity.object];
-      game.graphics.setCamera(entity.camera);
-      game.ballController.setCamera(entity.camera);
-    }
-    return entity;
-  }
-
-  getEntityByName(name) {
-    // Find entity by name
-    var entity;
-    this.entities.forEach(function(child) {
-      if (child.name == name) entity = child;
-    });
-    return entity;
   }
 
   drain() {

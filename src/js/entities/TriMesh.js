@@ -43,7 +43,6 @@ class TriMesh extends Entity {
 
     // Create physical shape
     var flags = TriMeshFlags;
-    console.log(flags);
     options.shape = new TriMeshShape(options.vertices, options.indices, TriMeshFlags['FIX_INTERNAL_EDGES']);
 
     // Inherit Entity class

@@ -4,6 +4,7 @@ import { AssetManager } from './AssetManager.js';
 import { LightFactory } from './factories/LightFactory.js';
 import { CameraFactory } from './factories/CameraFactory.js';
 import { WorldManager } from './WorldManager.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 class Game {
   constructor() {
@@ -30,11 +31,17 @@ class Game {
     this.worldManager.setFrequency(30);;
 
     // Add entities to the 3D scene
+    var map = this.worldManager.create({
+      class: 'TriMesh',
+      model: this.assets.get('ramps')
+    });
+    this.worldManager.add(map);
     this.worldManager.addEntitiesToScene(this.graphics.scene);
 
     // Update camera
     this.graphics.camera.position.add({ x: 0, y: 5, z: 5 });
     this.graphics.camera.lookAt(0, 0, 0);
+    this.orbitControls = new OrbitControls(this.graphics.camera, this.graphics.canvas);
 
     // Add lights
     var light_hemisphere = LightFactory.create('ambient');
