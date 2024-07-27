@@ -78,7 +78,7 @@ class WorldManager {
   }
 
   remove(entity) {
-    this.entities.delete(entity.uuid);
+    this.entities.delete(entity.uuid); // Dereference entity by UUID
     this.world.removeRigidBody(entity.body); // Remove body from world (includes colliders)
     entity.object.removeFromParent(); // Remove reference to 3D object parent
   }

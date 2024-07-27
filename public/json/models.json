@@ -1,5 +1,8 @@
 {
   "ramps": {
     "url": "./glb/ramps.glb"
+  },
+  "player": {
+    "url": "./glb/player.glb"
   }
 }
