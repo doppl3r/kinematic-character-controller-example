@@ -23,7 +23,7 @@ class Graphics {
     this.renderer = new WebGLRenderer({ alpha: true, canvas: canvas });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = false;
-    //this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
 
     // Assign post processing on top of renderer
     this.renderPass = new RenderPass(this.scene, this.camera);

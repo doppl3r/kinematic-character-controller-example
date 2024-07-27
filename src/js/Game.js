@@ -15,7 +15,6 @@ class Game {
     // Initialize core game engine
     this.loop = new Loop();
     this.graphics = new Graphics(canvas);
-    this.graphics.setCamera(CameraFactory.create());
 
     // Initialize components
     this.worldManager = new WorldManager();
@@ -64,9 +63,8 @@ class Game {
     this.worldManager.addToScene(this.graphics.scene);
 
     // Update camera
-    this.graphics.camera.position.add({ x: 0, y: 5, z: 5 });
-    this.graphics.camera.lookAt(0, 0, 0);
-    this.orbitControls = new OrbitControls(this.graphics.camera, this.graphics.canvas);
+    this.graphics.setCamera(player.camera);
+    //this.orbitControls = new OrbitControls(this.graphics.camera, this.graphics.canvas);
 
     // Add lights
     var light_hemisphere = LightFactory.create('ambient');

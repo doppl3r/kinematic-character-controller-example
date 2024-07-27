@@ -5,7 +5,7 @@ import { AssetModelLoader } from './loaders/AssetModelLoader.js';
 
 /*
   The AssetManager is a singleton class that manages loaders
-  that cache their data back to this manager.
+  that cache their data back to this manager with unique keys.
 */
 
 class AssetManager extends LoadingManager {

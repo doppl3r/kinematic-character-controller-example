@@ -112,7 +112,7 @@ class Character extends Entity {
     this.controller.setSlideEnabled(true); // Allow sliding down hill
     this.controller.setMaxSlopeClimbAngle(60 * Math.PI / 180); // (angle) Limit uphill climbing
     this.controller.setMinSlopeSlideAngle(60 * Math.PI / 180); // (angle) 30 feels slower up 45deg incline
-    this.controller.enableAutostep(0.5, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    this.controller.enableAutostep(0.45, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
     this.controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
     this.controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
     this.controller.setCharacterMass(1); // (mass) Set character mass
