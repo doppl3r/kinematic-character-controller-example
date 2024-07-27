@@ -25,18 +25,43 @@ class Game {
     this.assets.load('./json/');
   }
 
+  update(data) {
+    // Update world physics
+    this.worldManager.update(data.delta, data.alpha);
+  }
+
+  render(data) {
+    this.worldManager.render(data.delta, data.alpha);
+
+    // Render graphics
+    this.graphics.render();
+  }
+
   onLoad() {
     // Initialize entity manager
     this.worldManager.init();
     this.worldManager.setFrequency(30);;
 
-    // Add entities to the 3D scene
+    // Create map entity with model
+    var mapModel = this.assets.get('ramps');
     var map = this.worldManager.create({
       class: 'TriMesh',
-      model: this.assets.get('ramps')
+      model: mapModel
     });
-    this.worldManager.add(map);
-    this.worldManager.addEntitiesToScene(this.graphics.scene);
+    
+    // Create a player character entity
+    var playerModel = this.assets.get('player');
+    var player = this.worldManager.create({
+      class: 'Character',
+      model: playerModel,
+      position: { x: 0, y: 0.5, z: 0 }
+    });
+    player.model.play('Idle', 0); // Start idle animation
+    player.addEventListeners();
+    
+    // Add entities to scene
+    this.worldManager.add(map, player);
+    this.worldManager.addToScene(this.graphics.scene);
 
     // Update camera
     this.graphics.camera.position.add({ x: 0, y: 5, z: 5 });
@@ -56,20 +81,9 @@ class Game {
   }
 
   onProgress(url, itemsLoaded, itemsTotal) {
+    // Emit loader progress to global window object
     var percent = Math.ceil((itemsLoaded / itemsTotal) * 100);
     window.dispatchEvent(new CustomEvent('updateLoading', { detail: { url: url, itemsLoaded: itemsLoaded, itemsTotal: itemsTotal, percent: percent }}));
-  }
-
-  update(data) {
-    // Update world physics
-    this.worldManager.update(data.delta, data.alpha);
-  }
-
-  render(data) {
-    this.worldManager.render(data.delta, data.alpha);
-
-    // Render graphics
-    this.graphics.render();
   }
 }
 

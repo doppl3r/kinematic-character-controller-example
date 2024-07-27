@@ -1,4 +1,5 @@
 import { Cube } from '../entities/Cube';
+import { Character } from '../entities/Character';
 import { Sphere } from '../entities/Sphere';
 import { TriMesh } from '../entities/TriMesh';
 
@@ -23,6 +24,10 @@ class EntityFactory {
     return new Cube(options);
   }
   
+  static createCharacter(options) {
+    return new Character(options);
+  }
+
   static createSphere(options) {
     return new Sphere(options);
   }

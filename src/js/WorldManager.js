@@ -23,16 +23,6 @@ class WorldManager {
     //this.debugger.disable();
   }
 
-  addEntitiesToScene(scene) {
-    // Loop through all entities
-    this.entities.forEach(function(child) {
-      scene.add(child.object);
-    });
-
-    // Add debugger to scene
-    scene.add(this.debugger);
-  }
-
   setFrequency(frequency = 60) {
     this.world.timestep = 1 / frequency;
   }
@@ -44,9 +34,6 @@ class WorldManager {
       this.clear();
     }
 
-    // Update debugger buffer
-    this.debugger.update();
-
     // Loop through all entities
     this.entities.forEach(function(child) {
       if (child.body) child.update(delta);
@@ -54,6 +41,9 @@ class WorldManager {
 
     // Simulate world
     this.world.step();
+
+    // Update debugger buffer
+    this.debugger.update();
   }
 
   render(delta, alpha) {
@@ -68,6 +58,13 @@ class WorldManager {
   }
 
   add(entity) {
+    // Recursively add multiple entities if provided
+    if (arguments.length > 1) {
+      for (var i = 0; i < arguments.length; i++) {
+        this.add(arguments[i]);
+      }
+    }
+
     // Add entity to entities map using entity UUID
     this.entities.set(entity.uuid, entity);
 
@@ -75,6 +72,16 @@ class WorldManager {
     entity.createBody(this.world);
     entity.createCollider(this.world);
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
+  }
+
+  addToScene(scene) {
+    // Loop through all entities
+    this.entities.forEach(function(child) {
+      scene.add(child.object);
+    });
+
+    // Add debugger to scene
+    if (this.debugger.parent != scene) scene.add(this.debugger);
   }
 
   remove(entity) {

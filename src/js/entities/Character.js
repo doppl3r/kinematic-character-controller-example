@@ -55,7 +55,7 @@ class Character extends Entity {
     if (this.keys['KeyW'] == true) this.velocity.z -= delta * this.speed;
     if (this.keys['KeyS'] == true) this.velocity.z += delta * this.speed;
     if (this.keys['KeyA'] == true) this.velocity.x -= delta * this.speed;
-    if (this.keys['keyD'] == true) this.velocity.x += delta * this.speed;
+    if (this.keys['KeyD'] == true) this.velocity.x += delta * this.speed;
     if (this.keys['Space'] == true && this.isJumping == false) {
       this.isJumping = true;
       this.velocity.y += 0.25;
@@ -76,16 +76,6 @@ class Character extends Entity {
 
     // Calculate collider movement
     this.controller.computeColliderMovement(this.collider, this.velocity);
-
-    // Resolve collision issues
-    for (var i = 0; i < this.controller.numComputedCollisions(); i++) {
-      var collision = this.controller.computedCollision(i);
-
-      // Reflect velocity if hitting head on top
-      if (collision.normal1.y == -1) {
-        this.velocity.reflect(collision.normal1);
-      }
-    }
 
     // Calculate next translation from computed movement
     this.movement.copy(this.controller.computedMovement());

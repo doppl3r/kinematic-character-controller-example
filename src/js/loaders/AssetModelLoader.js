@@ -21,6 +21,7 @@ class AssetModelLoader extends GLTFLoader {
         model.userData = { ...value.userData };
         model.duplicate = this.duplicate.bind(this, model);
         this.manager.cache[key] = model;
+        this.addMixer(model);
       }.bind(this));
     }
   }
