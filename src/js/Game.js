@@ -2,9 +2,7 @@ import { Loop } from './Loop';
 import { Graphics } from './Graphics.js';
 import { AssetManager } from './AssetManager.js';
 import { LightFactory } from './factories/LightFactory.js';
-import { CameraFactory } from './factories/CameraFactory.js';
 import { WorldManager } from './WorldManager.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 class Game {
   constructor() {
@@ -39,7 +37,7 @@ class Game {
   onLoad() {
     // Initialize entity manager
     this.worldManager.init();
-    this.worldManager.setFrequency(30);;
+    this.worldManager.setFrequency(30);
 
     // Create map entity with model
     var mapModel = this.assets.get('ramps');

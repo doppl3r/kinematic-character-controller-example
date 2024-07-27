@@ -29,7 +29,7 @@ class Character extends Entity {
     this.isJumping = true;
     this.isGrounded = false;
     this.speed = 5;
-    this.direction = new Euler();
+    this.direction = new Vector3();
     this.velocity = new Vector3();
     this.movement = new Vector3();
     this.nextTranslation = new Vector3();
@@ -60,6 +60,8 @@ class Character extends Entity {
       this.isJumping = true;
       this.velocity.y += 0.25;
     }
+
+    // TODO: Multiply velocity by direction
 
     // Simulate gravity
     this.velocity.y -= delta;
@@ -149,6 +151,20 @@ class Character extends Entity {
     if (this.isMoving() == false) {
       this.model.play('Idle', 0.125);
     }
+  }
+
+  getForwardVector() {
+    // Update controller direction from camera world direction
+    this.camera.getWorldDirection(this.direction);
+
+    // Ignore y direction (up/down)
+    this.direction.y = 0;
+    this.direction.normalize();
+    return this.direction;
+  }
+
+  getSideVector() {
+    return this.getForwardVector().cross(this.camera.up);
   }
 
   isMoving() {
