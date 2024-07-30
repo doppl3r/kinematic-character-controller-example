@@ -29,6 +29,7 @@ class Character extends Entity {
     this.isJumping = true;
     this.isGrounded = false;
     this.speed = 5;
+    this.angle = 0;
     this.force = new Vector3();
     this.direction = new Vector3();
     this.velocity = new Vector3();
@@ -39,7 +40,7 @@ class Character extends Entity {
     this.cameraOffset = new Vector3(0, 2, 2);
     this.camera = CameraFactory.create('perspective');
     this.camera.position.add(this.cameraOffset);
-    this.camera.lookAt(0, 0, 0);
+    this.camera.lookAt(this.object.position);
   }
 
   update(delta) {
@@ -52,7 +53,7 @@ class Character extends Entity {
       this.isJumping = false;
     }
 
-    // Update velocity from keys
+    // Update force from keys
     this.force.set(0, 0, 0)
     if (this.keys['KeyW'] == true) this.force.z = -delta * this.speed;
     if (this.keys['KeyS'] == true) this.force.z = delta * this.speed;
@@ -63,13 +64,14 @@ class Character extends Entity {
       this.force.y += 0.25;
     }
 
-    // Update force from camera angle
+    // Rotate force by camera angle
     this.camera.getWorldDirection(this.direction);
     this.direction.y = 0;
-    this.direction.normalize();
-    //this.force.x *= -this.direction.z;
-    //this.force.z *= -this.direction.x;
-    //console.log(this.direction)
+    this.direction.normalize(); // Not necessary since the angle is the same
+    this.angle = (Math.PI * 1.5) - Math.atan2(this.direction.z, this.direction.x);
+    this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle);
+
+    // Add force to current velocity
     this.velocity.add(this.force);
 
     // Simulate gravity
@@ -110,6 +112,7 @@ class Character extends Entity {
 
     // Update camera position
     this.camera.position.copy(this.object.position).add(this.cameraOffset);
+    this.camera.lookAt(this.object.position);
   }
 
   createBody(world) {
