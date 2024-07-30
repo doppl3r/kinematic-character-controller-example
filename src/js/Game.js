@@ -41,27 +41,27 @@ class Game {
 
     // Create map entity with model
     var mapModel = this.assets.get('ramps');
-    var map = this.physics.create({
+    var mapEntity = this.physics.create({
       class: 'TriMesh',
       model: mapModel
     });
     
     // Create a player character entity
     var playerModel = this.assets.get('player');
-    var player = window.player = this.physics.create({
+    var playerEntity = this.physics.create({
       class: 'Character',
       model: playerModel,
       position: { x: 0, y: 0.5, z: 0 }
     });
-    player.model.play('Idle', 0); // Start idle animation
-    player.addEventListeners();
+    playerEntity.model.play('Idle', 0); // Start idle animation
+    playerEntity.addEventListeners();
     
     // Add entities to scene
-    this.physics.add(map, player);
+    this.physics.add(mapEntity, playerEntity);
     this.physics.addEntitiesToScene(this.graphics.scene);
 
     // Update camera
-    this.graphics.setCamera(player.camera);
+    this.graphics.setCamera(playerEntity.camera);
 
     // Add lights
     var light_hemisphere = LightFactory.create('ambient');
