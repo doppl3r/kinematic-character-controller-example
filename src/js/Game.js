@@ -58,7 +58,7 @@ class Game {
     
     // Add entities to scene
     this.physics.add(map, player);
-    this.physics.addToScene(this.graphics.scene);
+    this.physics.addEntitiesToScene(this.graphics.scene);
 
     // Update camera
     this.graphics.setCamera(player.camera);

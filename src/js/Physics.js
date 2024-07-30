@@ -74,7 +74,7 @@ class Physics {
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
   }
 
-  addToScene(scene) {
+  addEntitiesToScene(scene) {
     // Loop through all entities
     this.entities.forEach(function(child) {
       scene.add(child.object);
