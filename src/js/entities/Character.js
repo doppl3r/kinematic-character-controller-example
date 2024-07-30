@@ -29,6 +29,7 @@ class Character extends Entity {
     this.isJumping = true;
     this.isGrounded = false;
     this.speed = 5;
+    this.force = new Vector3();
     this.direction = new Vector3();
     this.velocity = new Vector3();
     this.movement = new Vector3();
@@ -52,16 +53,24 @@ class Character extends Entity {
     }
 
     // Update velocity from keys
-    if (this.keys['KeyW'] == true) this.velocity.z -= delta * this.speed;
-    if (this.keys['KeyS'] == true) this.velocity.z += delta * this.speed;
-    if (this.keys['KeyA'] == true) this.velocity.x -= delta * this.speed;
-    if (this.keys['KeyD'] == true) this.velocity.x += delta * this.speed;
+    this.force.set(0, 0, 0)
+    if (this.keys['KeyW'] == true) this.force.z = -delta * this.speed;
+    if (this.keys['KeyS'] == true) this.force.z = delta * this.speed;
+    if (this.keys['KeyA'] == true) this.force.x = -delta * this.speed;
+    if (this.keys['KeyD'] == true) this.force.x = delta * this.speed;
     if (this.keys['Space'] == true && this.isJumping == false) {
       this.isJumping = true;
-      this.velocity.y += 0.25;
+      this.force.y += 0.25;
     }
 
-    // TODO: Multiply velocity by direction
+    // Update force from camera angle
+    this.camera.getWorldDirection(this.direction);
+    this.direction.y = 0;
+    this.direction.normalize();
+    //this.force.x *= -this.direction.z;
+    //this.force.z *= -this.direction.x;
+    //console.log(this.direction)
+    this.velocity.add(this.force);
 
     // Simulate gravity
     this.velocity.y -= delta;
@@ -151,20 +160,6 @@ class Character extends Entity {
     if (this.isMoving() == false) {
       this.model.play('Idle', 0.125);
     }
-  }
-
-  getForwardVector() {
-    // Update controller direction from camera world direction
-    this.camera.getWorldDirection(this.direction);
-
-    // Ignore y direction (up/down)
-    this.direction.y = 0;
-    this.direction.normalize();
-    return this.direction;
-  }
-
-  getSideVector() {
-    return this.getForwardVector().cross(this.camera.up);
   }
 
   isMoving() {
