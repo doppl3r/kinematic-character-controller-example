@@ -1,8 +1,8 @@
 import { Loop } from './Loop';
 import { Graphics } from './Graphics.js';
-import { AssetManager } from './AssetManager.js';
+import { AssetLoader } from './loaders/AssetLoader.js';
 import { LightFactory } from './factories/LightFactory.js';
-import { WorldManager } from './WorldManager.js';
+import { Physics } from './Physics.js';
 
 class Game {
   constructor() {
@@ -15,20 +15,20 @@ class Game {
     this.graphics = new Graphics(canvas);
 
     // Initialize components
-    this.worldManager = new WorldManager();
+    this.physics = new Physics();
 
     // Load public assets with callbacks (onLoad, onProgress, onError)
-    this.assets = new AssetManager(this.onLoad.bind(this), this.onProgress.bind(this));
+    this.assets = new AssetLoader(this.onLoad.bind(this), this.onProgress.bind(this));
     this.assets.load('./json/');
   }
 
   update(data) {
     // Update world physics
-    this.worldManager.update(data.delta, data.alpha);
+    this.physics.update(data.delta, data.alpha);
   }
 
   render(data) {
-    this.worldManager.render(data.delta, data.alpha);
+    this.physics.render(data.delta, data.alpha);
 
     // Render graphics
     this.graphics.render();
@@ -36,19 +36,19 @@ class Game {
 
   onLoad() {
     // Initialize entity manager
-    this.worldManager.init();
-    this.worldManager.setFrequency(30);
+    this.physics.init();
+    this.physics.setFrequency(30);
 
     // Create map entity with model
     var mapModel = this.assets.get('ramps');
-    var map = this.worldManager.create({
+    var map = this.physics.create({
       class: 'TriMesh',
       model: mapModel
     });
     
     // Create a player character entity
     var playerModel = this.assets.get('player');
-    var player = this.worldManager.create({
+    var player = window.player = this.physics.create({
       class: 'Character',
       model: playerModel,
       position: { x: 0, y: 0.5, z: 0 }
@@ -57,12 +57,11 @@ class Game {
     player.addEventListeners();
     
     // Add entities to scene
-    this.worldManager.add(map, player);
-    this.worldManager.addToScene(this.graphics.scene);
+    this.physics.add(map, player);
+    this.physics.addToScene(this.graphics.scene);
 
     // Update camera
     this.graphics.setCamera(player.camera);
-    //this.orbitControls = new OrbitControls(this.graphics.camera, this.graphics.canvas);
 
     // Add lights
     var light_hemisphere = LightFactory.create('ambient');

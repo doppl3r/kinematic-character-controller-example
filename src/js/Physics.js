@@ -1,12 +1,12 @@
+import { World } from '@dimforge/rapier3d';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './factories/EntityFactory.js';
-import { World } from '@dimforge/rapier3d';
 
 /*
-  Manage world entities
+  Manage physics related components
 */
 
-class WorldManager {
+class Physics {
   constructor() {
     
   }
@@ -113,4 +113,4 @@ class WorldManager {
   }
 }
 
-export { WorldManager };
+export { Physics };

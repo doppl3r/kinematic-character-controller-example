@@ -1,4 +1,4 @@
-import { Euler, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Capsule } from '@dimforge/rapier3d';
 import { Entity } from './Entity.js';
 import { CameraFactory } from '../factories/CameraFactory.js';
@@ -54,7 +54,7 @@ class Character extends Entity {
     }
 
     // Update force from keys
-    this.force.set(0, 0, 0)
+    this.force.set(0, 0, 0);
     if (this.keys['KeyW'] == true) this.force.z = -delta * this.speed;
     if (this.keys['KeyS'] == true) this.force.z = delta * this.speed;
     if (this.keys['KeyA'] == true) this.force.x = -delta * this.speed;
@@ -64,14 +64,12 @@ class Character extends Entity {
       this.force.y += 0.25;
     }
 
-    // Rotate force by camera angle
+    // Rotate force by camera world direction
     this.camera.getWorldDirection(this.direction);
-    this.direction.y = 0;
-    this.direction.normalize(); // Not necessary since the angle is the same
     this.angle = (Math.PI * 1.5) - Math.atan2(this.direction.z, this.direction.x);
     this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle);
 
-    // Add force to current velocity
+    // Add new force to current velocity
     this.velocity.add(this.force);
 
     // Simulate gravity

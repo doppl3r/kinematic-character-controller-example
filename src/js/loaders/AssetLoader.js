@@ -1,14 +1,14 @@
 import { LoadingManager } from 'three';
-import { AssetAudioLoader } from './loaders/AssetAudioLoader.js';
-import { AssetTextureLoader } from './loaders/AssetTextureLoader.js';
-import { AssetModelLoader } from './loaders/AssetModelLoader.js';
+import { AssetAudioLoader } from './AssetAudioLoader.js';
+import { AssetTextureLoader } from './AssetTextureLoader.js';
+import { AssetModelLoader } from './AssetModelLoader.js';
 
 /*
-  The AssetManager is a singleton class that manages loaders
+  The AssetLoader is a singleton class that manages loaders
   that cache their data back to this manager with unique keys.
 */
 
-class AssetManager extends LoadingManager {
+class AssetLoader extends LoadingManager {
   constructor(onLoad, onProgress, onError) {
     // Inherit LoadingManager with events
     super(onLoad, onProgress, onError);
@@ -40,4 +40,4 @@ class AssetManager extends LoadingManager {
   }
 }
 
-export { AssetManager };
+export { AssetLoader };
