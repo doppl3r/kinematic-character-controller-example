@@ -6,6 +6,9 @@ This example shows how to create a Kinematic Character Controller (aka "KCC") us
  - [TriMesh.js](src/js/entities/TriMesh.js) - Creates a TriMesh shape using a 3D mesh.
  - [Debugger.js](src/js/Debugger.js) - Renders the Rapier.js `world` as a 3D object that can be added to a scene.
 
+## Screenshot
+![Screenshot](public/png/screenshot.png)
+
 ## Local Development
 
  - Install NodeJS package libraries: `npm i`

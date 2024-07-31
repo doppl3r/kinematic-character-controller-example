@@ -89,13 +89,6 @@ class Physics {
     }
   }
 
-  addEntitiesToScene(scene) {
-    // Loop through all entities
-    this.entities.forEach(function(child) {
-      scene.add(child.object);
-    });
-  }
-
   remove(entity) {
     this.entities.delete(entity.uuid); // Dereference entity by UUID
     this.world.removeRigidBody(entity.body); // Remove body from world (includes colliders)
