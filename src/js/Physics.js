@@ -23,6 +23,16 @@ class Physics {
     //this.debugger.disable();
   }
 
+  setScene(scene) {
+    // Assign scene for entity 3D objects
+    this.scene = scene;
+
+    // Add debugger to scene
+    if (this.debugger.parent != scene) {
+      this.scene.add(this.debugger);
+    }
+  }
+
   setFrequency(frequency = 60) {
     this.world.timestep = 1 / frequency;
   }
@@ -72,6 +82,11 @@ class Physics {
     entity.createBody(this.world);
     entity.createCollider(this.world);
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
+
+    // Add entity 3D object to scene reference
+    if (this.scene) {
+      this.scene.add(entity.object);
+    }
   }
 
   addEntitiesToScene(scene) {
@@ -79,9 +94,6 @@ class Physics {
     this.entities.forEach(function(child) {
       scene.add(child.object);
     });
-
-    // Add debugger to scene
-    if (this.debugger.parent != scene) scene.add(this.debugger);
   }
 
   remove(entity) {

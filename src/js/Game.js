@@ -38,27 +38,44 @@ class Game {
     // Initialize entity manager
     this.physics.init();
     this.physics.setFrequency(30);
+    this.physics.setScene(this.graphics.scene);
 
     // Create map entity with model
-    var mapModel = this.assets.get('ramps');
     var mapEntity = this.physics.create({
       class: 'TriMesh',
-      model: mapModel
+      model: this.assets.get('ramps')
     });
-    
+
+    // Create cube entity
+    var cubeEntity = this.physics.create({
+      class: 'Cube',
+      color: '#ff0000',
+      ccd: true,
+      scale: { x: 0.5, y: 0.5, z: 0.5 },
+      position: { x: -3, y: 8, z: -1.5 }
+    });
+
+    // Create sphere entity
+    var sphereEntity = this.physics.create({
+      class: 'Sphere',
+      color: '#ffff00',
+      ccd: true,
+      radius: 0.25,
+      position: { x: 3, y: 8, z: -1.5 }
+    });
+
     // Create a player character entity
-    var playerModel = this.assets.get('player');
     var playerEntity = this.physics.create({
       class: 'Character',
-      model: playerModel,
+      ccd: true,
+      model: this.assets.get('player'),
       position: { x: 0, y: 0.5, z: 0 }
     });
     playerEntity.model.play('Idle', 0); // Start idle animation
     playerEntity.addEventListeners();
     
     // Add entities to scene
-    this.physics.add(mapEntity, playerEntity);
-    this.physics.addEntitiesToScene(this.graphics.scene);
+    this.physics.add(mapEntity, cubeEntity, sphereEntity, playerEntity);
 
     // Update camera
     this.graphics.setCamera(playerEntity.camera);
