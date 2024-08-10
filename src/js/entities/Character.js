@@ -40,8 +40,6 @@ class Character extends Entity {
     // Set character camera properties
     this.cameraOffset = new Vector3(0, 2, 2);
     this.camera = CameraFactory.create('perspective');
-    this.camera.position.add(this.cameraOffset);
-    this.camera.lookAt(this.object.position);
   }
 
   update(delta) {

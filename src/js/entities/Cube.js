@@ -12,24 +12,23 @@ class Cube extends Entity {
     // Set options with default values
     options = Object.assign({
       color: '#ffffff',
-      size: { x: 1, y: 1, z: 1 }
+      scale: { x: 1, y: 1, z: 1 }
     }, options);
 
     // Create physical shape
-    options.shape = new Cuboid(options.scale.x / 2, options.scale.y / 2, options.scale.z / 2)
+    options.shape = new Cuboid(options.scale.x / 2, options.scale.y / 2, options.scale.z / 2);
 
-    // Inherit Entity class
-    super(options);
-
-    // Initialize default cube mesh
+    // Initialize default cube model mesh
     if (options.model == null) {
       var geometry = new BoxGeometry(1, 1, 1);
       var material = new MeshStandardMaterial({ color: options.color });
-      var mesh = new Mesh(geometry, material);
-      mesh.receiveShadow = true;
-      mesh.castShadow = true;
-      this.object.add(mesh);
+      options.model = new Mesh(geometry, material);
+      options.model.receiveShadow = true;
+      options.model.castShadow = true;
     }
+
+    // Inherit Entity class
+    super(options);
   }
 }
 

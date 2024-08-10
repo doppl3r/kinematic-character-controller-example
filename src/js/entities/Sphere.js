@@ -20,18 +20,17 @@ class Sphere extends Entity {
     // Create physical shape
     options.shape = new Ball(options.radius);
 
-    // Inherit Entity class
-    super(options);
-
-    // Initialize default sphere mesh
+    // Initialize default sphere model mesh
     if (options.model == null) {
       var geometry = new SphereGeometry(options.radius, options.widthSegments, options.heightSegments);
       var material = new MeshStandardMaterial({ color: options.color });
-      var mesh = new Mesh(geometry, material);
-      mesh.receiveShadow = true;
-      mesh.castShadow = true;
-      this.object.add(mesh);
+      options.model = new Mesh(geometry, material);
+      options.model.receiveShadow = true;
+      options.model.castShadow = true;
     }
+
+    // Inherit Entity class
+    super(options);
   }
 }
 
