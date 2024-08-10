@@ -17,9 +17,11 @@ class CameraFactory {
     var height = window.innerHeight;
     var ratio = width / height;
 
-    // Set default options
-    if (options.fov == null) options.fov = 45;
-    if (options.zoom == null) options.zoom = 1;
+    // Set options with default values
+    options = Object.assign({
+      fov: 45,
+      zoom: 1
+    }, options);
 
     // Conditionally create camera
     if (type == 'perspective') {

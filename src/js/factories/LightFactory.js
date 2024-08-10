@@ -14,14 +14,16 @@ class LightFactory {
     var light;
     var helper;
     
-    // Set default options
-    if (options.color == null) options.color = 0xffffff;
-    if (options.skyColor == null) options.skyColor = 0xffffff;
-    if (options.groundColor == null) options.groundColor = 0xffffff;
-    if (options.intensity == null) options.intensity = Math.PI;
-    if (options.distance == null) options.distance = 0; // no limit
-    if (options.shadow == null) options.shadow = false;
-    if (options.decay == null) options.decay = 2;
+    // Set options with default values
+    options = Object.assign({
+      color: '#ffffff',
+      decay: 2,
+      distance: 0,
+      groundColor: '#ffffff',
+      intensity: Math.PI,
+      shadow: false,
+      skyColor: '#ffffff'
+    }, options)
     
     // Conditionally create camera
     if (type == 'ambient') {

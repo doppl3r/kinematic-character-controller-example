@@ -11,12 +11,13 @@ import { CameraFactory } from '../factories/CameraFactory.js';
 
 class Character extends Entity {
   constructor(options = {}) {
-    // Resolve null option values
-    if (options == null) options = {};
-    if (options.color == null) options.color = '#ffffff';
-    if (options.height == null) options.height = 0.5;
-    if (options.radius == null) options.radius = 0.25;
-    if (options.type == null) options.type = 'KinematicPositionBased';
+    // Set options with default values
+    options = Object.assign({
+      color: '#ffffff',
+      height: 0.5,
+      radius: 0.25,
+      type: 'KinematicPositionBased'
+    }, options);
 
     // Create physical shape
     options.shape = new Capsule(options.height / 2, options.radius);

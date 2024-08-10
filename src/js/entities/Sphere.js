@@ -9,12 +9,13 @@ import { Entity } from './Entity.js';
 
 class Sphere extends Entity {
   constructor(options = {}) {
-    // Resolve null option values
-    if (options == null) options = {};
-    if (options.color == null) options.color = '#ffffff';
-    if (options.radius == null) options.radius = 1;
-    if (options.widthSegments == null) options.widthSegments = 32;
-    if (options.heightSegments == null) options.heightSegments = 32;
+    // Set options with default values
+    options = Object.assign({
+      color: '#ffffff',
+      heightSegments: 32,
+      radius: 1,
+      widthSegments: 32,
+    }, options);
 
     // Create physical shape
     options.shape = new Ball(options.radius);
@@ -22,7 +23,7 @@ class Sphere extends Entity {
     // Inherit Entity class
     super(options);
 
-    // Initialize default cube mesh
+    // Initialize default sphere mesh
     if (options.model == null) {
       var geometry = new SphereGeometry(options.radius, options.widthSegments, options.heightSegments);
       var material = new MeshStandardMaterial({ color: options.color });

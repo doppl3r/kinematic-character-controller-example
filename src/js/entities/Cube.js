@@ -9,10 +9,11 @@ import { Entity } from './Entity.js';
 
 class Cube extends Entity {
   constructor(options) {
-    // Resolve null option values
-    if (options == null) options = {};
-    if (options.color == null) options.color = '#ffffff';
-    if (options.scale == null) options.scale = { x: 1, y: 1, z: 1 };
+    // Set options with default values
+    options = Object.assign({
+      color: '#ffffff',
+      size: { x: 1, y: 1, z: 1 }
+    }, options);
 
     // Create physical shape
     options.shape = new Cuboid(options.scale.x / 2, options.scale.y / 2, options.scale.z / 2)

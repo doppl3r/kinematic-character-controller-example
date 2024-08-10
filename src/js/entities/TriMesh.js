@@ -10,13 +10,15 @@ import { Entity } from './Entity.js';
 
 class TriMesh extends Entity {
   constructor(options) {
-    // Resolve null option values
-    if (options == null) options = {};
-    if (options.vertices == null) options.vertices = new Float32Array();
-    if (options.indices == null) options.indices = new Uint16Array();
-    if (options.type == null) options.type = 'Fixed';
+    // Set options with default values
+    options = Object.assign({
+      vertices: new Float32Array(),
+      indices: new Uint16Array(),
+      type: 'Fixed'
+    }, options);
+
+    // Merge geometries from model meshes
     if (options.model) {
-      // Merge geometries from all meshes
       var geometry;
       var geometries = [];
       options.model.traverse(function(child) {
