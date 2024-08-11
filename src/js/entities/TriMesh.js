@@ -12,9 +12,9 @@ class TriMesh extends Entity {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      vertices: new Float32Array(),
       indices: new Uint16Array(),
-      type: 'Fixed'
+      type: 'Fixed',
+      vertices: new Float32Array()
     }, options);
 
     // Merge geometries from model meshes

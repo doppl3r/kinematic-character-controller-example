@@ -12,28 +12,26 @@ class Entity {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      uuid: MathUtils.generateUUID(),
-      position: { x: 0, y: 0, z: 0 },
-      quaternion: { x: 0, y: 0, z: 0, w: 1 },
-      scale: { x: 1, y: 1, z: 1 },
-      type: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      angularDamping: 0,
+      ccd: false,
+      density: 1,
       group: 0xFFFFFFFF,
       isEnabled: true,
       isSensor: false,
-      shape: null,
-      model: null,
-      density: 1,
-      angularDamping: 0,
       linearDamping: 0,
-      restitution: 0,
       mass: 1,
-      ccd: false,
-      name: ''
+      model: null,
+      position: { x: 0, y: 0, z: 0 },
+      quaternion: { x: 0, y: 0, z: 0, w: 1 },
+      restitution: 0,
+      scale: { x: 1, y: 1, z: 1 },
+      shape: null,
+      type: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      uuid: MathUtils.generateUUID()
     }, options);
 
     // Apply defaults
     this.uuid = options.uuid;
-    this.name = options.name;
 
     // Initialize rigid body description
     this.rigidBodyDesc = new RigidBodyDesc(RigidBodyType[options.type]);

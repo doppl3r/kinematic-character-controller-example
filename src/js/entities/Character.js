@@ -28,7 +28,6 @@ class Character extends Entity {
     // Set default properties
     this.keys = {};
     this.isJumping = true;
-    this.isGrounded = false;
     this.speed = 5;
     this.angle = 0;
     this.force = new Vector3();
@@ -38,16 +37,40 @@ class Character extends Entity {
     this.nextTranslation = new Vector3();
 
     // Set character camera properties
-    this.cameraOffset = new Vector3(0, 2, 2);
     this.camera = CameraFactory.create('perspective');
+    this.cameraOffset = new Vector3(0, 2, 2);
   }
 
   update(delta) {
-    // Check if the controller is grounded
-    this.isGrounded = this.controller.computedGrounded();
+    // Update the player velocity from input keys
+    this.updateVelocityFromInput(delta);
+    
+    // Calculate next translation from computed movement
+    this.controller.computeColliderMovement(this.collider, this.velocity);
+    this.movement.copy(this.controller.computedMovement());
+    this.nextTranslation.copy(this.body.translation());
+    this.nextTranslation.add(this.movement);
+    this.setNextPosition(this.nextTranslation);
 
+    // Update 3D object rotation using next direction
+    this.updateObjectRotation();
+
+    // Call Entity update function
+    super.update(delta);
+  }
+
+  render(delta, alpha) {
+    // Call Entity render function
+    super.render(delta, alpha);
+
+    // Update camera position
+    this.camera.position.copy(this.object.position).add(this.cameraOffset);
+    this.camera.lookAt(this.object.position);
+  }
+
+  updateVelocityFromInput(delta) {
     // Set vertical velocity to zero if grounded
-    if (this.isGrounded == true) {
+    if (this.isGrounded()) {
       this.velocity.y = 0;
       this.isJumping = false;
     }
@@ -65,16 +88,14 @@ class Character extends Entity {
 
     // Rotate force by camera world direction
     this.camera.getWorldDirection(this.direction);
-    this.angle = (Math.PI * 1.5) - Math.atan2(this.direction.z, this.direction.x);
-    this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle);
+    this.angle = Math.PI - Math.atan2(this.direction.z, this.direction.x);
+    this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle + (Math.PI / 2));
 
     // Add new force to current velocity
     this.velocity.add(this.force);
-
-    // Simulate gravity
+    
+    // Simulate gravity and damping
     this.velocity.y -= delta;
-
-    // Simulate movement damping
     this.velocity.z *= 0.5;
     this.velocity.x *= 0.5;
     
@@ -83,43 +104,22 @@ class Character extends Entity {
     this.velocity.y = 0; // Ignore gravity velocity
     this.velocity.clampLength(-this.speed * delta, this.speed * delta);
     this.velocity.y = this.velocity._y;
+  }
 
-    // Calculate collider movement
-    this.controller.computeColliderMovement(this.collider, this.velocity);
-
-    // Calculate next translation from computed movement
-    this.movement.copy(this.controller.computedMovement());
-    this.nextTranslation.copy(this.body.translation());
-    this.nextTranslation.add(this.movement);
-    this.setNextPosition(this.nextTranslation);
-
-    // Calculate next rotation from character direction
+  updateObjectRotation() {
+    // Calculate 3D object rotation from character translation
     if (this.nextTranslation.distanceTo(this.body.translation()) > 0.01) {
       this.object.lookAt(this.nextTranslation.x, this.object.position.y, this.nextTranslation.z);
       this.setNextRotation(this.object.quaternion);
     }
-
-    // Call Entity update function
-    super.update(delta);
-  }
-
-  render(delta, alpha) {
-    // Call Entity render function
-    super.render(delta, alpha);
-
-    // Update camera position
-    this.camera.position.copy(this.object.position).add(this.cameraOffset);
-    this.camera.lookAt(this.object.position);
   }
 
   createBody(world) {
-    // Add character shape to the world using Entity createBody function
+    // Invoke Entity superclass constructor
     super.createBody(world);
 
-    // Add character controller to the world
+    // Create character controller from world
     this.controller = world.createCharacterController(0.01); // Spacing
-
-    // Set controller behavior
     this.controller.setSlideEnabled(true); // Allow sliding down hill
     this.controller.setMaxSlopeClimbAngle(60 * Math.PI / 180); // (angle) Limit uphill climbing
     this.controller.setMinSlopeSlideAngle(60 * Math.PI / 180); // (angle) 30 feels slower up 45deg incline
@@ -127,6 +127,14 @@ class Character extends Entity {
     this.controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
     this.controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
     this.controller.setCharacterMass(1); // (mass) Set character mass
+  }
+
+  isGrounded() {
+    return this.controller.computedGrounded();
+  }
+
+  isMoving() {
+    return (this.keys['KeyW'] == true || this.keys['KeyS'] == true || this.keys['KeyA'] == true || this.keys['KeyD'] == true);
   }
 
   addEventListeners(domElement = window.document) {
@@ -160,10 +168,6 @@ class Character extends Entity {
     if (this.isMoving() == false) {
       this.model.play('Idle', 0.125);
     }
-  }
-
-  isMoving() {
-    return (this.keys['KeyW'] == true || this.keys['KeyS'] == true || this.keys['KeyA'] == true || this.keys['KeyD'] == true);
   }
 }
 

@@ -65,20 +65,20 @@ class Game {
     });
 
     // Create a player character entity
-    var playerEntity = this.physics.create({
+    this.player = this.physics.create({
       class: 'Character',
       ccd: true,
       model: this.assets.get('player'),
       position: { x: 0, y: 0.5, z: 0 }
     });
-    playerEntity.model.play('Idle', 0); // Start idle animation
-    playerEntity.addEventListeners();
+    this.player.model.play('Idle', 0); // Start idle animation
+    this.player.addEventListeners();
     
     // Add entities to scene
-    this.physics.add(mapEntity, cubeEntity, sphereEntity, playerEntity);
+    this.physics.add(mapEntity, cubeEntity, sphereEntity, this.player);
 
     // Update camera
-    this.graphics.setCamera(playerEntity.camera);
+    this.graphics.setCamera(this.player.camera);
 
     // Add lights
     var light_hemisphere = LightFactory.create('ambient');
