@@ -30,6 +30,7 @@ class Character extends Entity {
     this.isJumping = true;
     this.speed = 5;
     this.angle = 0;
+    this.gravity = 9.81;
     this.force = new Vector3();
     this.direction = new Vector3();
     this.velocity = new Vector3();
@@ -75,27 +76,29 @@ class Character extends Entity {
       this.isJumping = false;
     }
 
-    // Update force from keys
+    // Reset force to zero
     this.force.set(0, 0, 0);
-    if (this.keys['KeyW'] == true) this.force.z = -delta * this.speed;
-    if (this.keys['KeyS'] == true) this.force.z = delta * this.speed;
-    if (this.keys['KeyA'] == true) this.force.x = -delta * this.speed;
-    if (this.keys['KeyD'] == true) this.force.x = delta * this.speed;
+
+    // Add force relative to zero radians/degrees (visually 90° counterclockwise)
+    if (this.keys['KeyW'] == true) this.force.x = -delta * this.speed;
+    if (this.keys['KeyA'] == true) this.force.z = delta * this.speed;
+    if (this.keys['KeyS'] == true) this.force.x = delta * this.speed;
+    if (this.keys['KeyD'] == true) this.force.z = -delta * this.speed;
     if (this.keys['Space'] == true && this.isJumping == false) {
       this.isJumping = true;
-      this.force.y += 0.25;
+      this.force.y += delta * this.speed * 1.5;
     }
 
     // Rotate force by camera world direction
     this.camera.getWorldDirection(this.direction);
     this.angle = Math.PI - Math.atan2(this.direction.z, this.direction.x);
-    this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle + (Math.PI / 2));
+    this.force.applyAxisAngle({ x: 0, y: 1, z: 0 }, this.angle);
 
     // Add new force to current velocity
     this.velocity.add(this.force);
     
     // Simulate gravity and damping
-    this.velocity.y -= delta;
+    this.velocity.y -= delta * this.gravity / 9.81;
     this.velocity.z *= 0.5;
     this.velocity.x *= 0.5;
     

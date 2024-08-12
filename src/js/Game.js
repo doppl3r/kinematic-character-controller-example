@@ -48,26 +48,27 @@ class Game {
 
     // Create cube entity
     var cubeEntity = this.physics.create({
+      ccd: true,
       class: 'Cube',
       color: '#ff0000',
-      ccd: true,
-      scale: { x: 0.5, y: 0.5, z: 0.5 },
-      position: { x: -3, y: 8, z: -1.5 }
+      position: { x: -3, y: 8, z: -1.5 },
+      scale: { x: 0.5, y: 0.5, z: 0.5 }
     });
 
     // Create sphere entity
     var sphereEntity = this.physics.create({
+      angularDamping: 1,
+      ccd: true,
       class: 'Sphere',
       color: '#ffff00',
-      ccd: true,
-      radius: 0.25,
-      position: { x: 3, y: 8, z: -1.5 }
+      position: { x: 3, y: 8, z: -1.5 },
+      radius: 0.25
     });
 
     // Create a player character entity
     this.player = this.physics.create({
-      class: 'Character',
       ccd: true,
+      class: 'Character',
       model: this.assets.get('player'),
       position: { x: 0, y: 0.5, z: 0 }
     });
