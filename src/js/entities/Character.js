@@ -14,23 +14,27 @@ class Character extends Entity {
     // Set options with default values
     options = Object.assign({
       color: '#ffffff',
-      height: 0.5,
+      height: 0.25,
+      gravity: 9.81,
       radius: 0.25,
+      moveSpeed: 5,
+      jumpSpeed: 5,
       type: 'KinematicPositionBased'
     }, options);
 
     // Create physical shape
-    options.shape = new Capsule(options.height / 2, options.radius);
+    options.shape = new Capsule(options.height, options.radius);
 
     // Inherit Entity class
     super(options);
 
     // Set default properties
     this.keys = {};
-    this.isJumping = true;
-    this.speed = 5;
+    this.jumping = true;
     this.angle = 0;
-    this.gravity = 9.81;
+    this.gravity = options.gravity;
+    this.jumpSpeed = options.jumpSpeed;
+    this.moveSpeed = options.moveSpeed;
     this.force = new Vector3();
     this.direction = new Vector3();
     this.velocity = new Vector3();
@@ -73,20 +77,20 @@ class Character extends Entity {
     // Set vertical velocity to zero if grounded
     if (this.isGrounded()) {
       this.velocity.y = 0;
-      this.isJumping = false;
+      this.jumping = false;
     }
 
     // Reset force to zero
     this.force.set(0, 0, 0);
 
     // Add force relative to zero radians/degrees (visually 90° counterclockwise)
-    if (this.keys['KeyW'] == true) this.force.x = -delta * this.speed;
-    if (this.keys['KeyA'] == true) this.force.z = delta * this.speed;
-    if (this.keys['KeyS'] == true) this.force.x = delta * this.speed;
-    if (this.keys['KeyD'] == true) this.force.z = -delta * this.speed;
-    if (this.keys['Space'] == true && this.isJumping == false) {
-      this.isJumping = true;
-      this.force.y += delta * this.speed * 1.5;
+    if (this.keys['KeyW'] == true) this.force.x = -delta * this.moveSpeed;
+    if (this.keys['KeyA'] == true) this.force.z = delta * this.moveSpeed;
+    if (this.keys['KeyS'] == true) this.force.x = delta * this.moveSpeed;
+    if (this.keys['KeyD'] == true) this.force.z = -delta * this.moveSpeed;
+    if (this.keys['Space'] == true && this.isJumping() == false) {
+      this.jumping = true;
+      this.force.y += delta * this.jumpSpeed * 1.5;
     }
 
     // Rotate force by camera world direction
@@ -105,7 +109,7 @@ class Character extends Entity {
     // Clamp directional velocity
     this.velocity._y = this.velocity.y;
     this.velocity.y = 0; // Ignore gravity velocity
-    this.velocity.clampLength(-this.speed * delta, this.speed * delta);
+    this.velocity.clampLength(-this.moveSpeed * delta, this.moveSpeed * delta);
     this.velocity.y = this.velocity._y;
   }
 
@@ -117,19 +121,34 @@ class Character extends Entity {
     }
   }
 
-  createBody(world) {
+  createCollider(world) {
     // Invoke Entity superclass constructor
-    super.createBody(world);
+    super.createCollider(world);
 
+    // Pass world through controller initialization
+    this.createController(world);
+  }
+
+  createController(world) {
     // Create character controller from world
     this.controller = world.createCharacterController(0.01); // Spacing
     this.controller.setSlideEnabled(true); // Allow sliding down hill
     this.controller.setMaxSlopeClimbAngle(60 * Math.PI / 180); // (angle) Limit uphill climbing
     this.controller.setMinSlopeSlideAngle(60 * Math.PI / 180); // (angle) 30 feels slower up 45deg incline
-    this.controller.enableAutostep(0.45, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
-    this.controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
+    this.controller.enableAutostep(this.colliderDesc.shape.radius, this.colliderDesc.shape.radius / 2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    this.controller.enableSnapToGround(this.colliderDesc.shape.radius); // (distance) Set ground snap behavior
     this.controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
     this.controller.setCharacterMass(1); // (mass) Set character mass
+  }
+
+  addModel(model) {
+    // Invoke Entity superclass constructor
+    super.addModel(model);
+      
+    // Offset model position from shape dimensions
+    var height = this.colliderDesc.shape.halfHeight / this.object.scale.y;
+    var radius = this.colliderDesc.shape.radius / this.object.scale.x
+    this.model.position.y = -(height + radius);
   }
 
   isGrounded() {
@@ -138,6 +157,10 @@ class Character extends Entity {
 
   isMoving() {
     return (this.keys['KeyW'] == true || this.keys['KeyS'] == true || this.keys['KeyA'] == true || this.keys['KeyD'] == true);
+  }
+
+  isJumping() {
+    return this.jumping;
   }
 
   addEventListeners(domElement = window.document) {

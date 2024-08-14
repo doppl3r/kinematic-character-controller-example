@@ -1,8 +1,11 @@
 {
-  "ramps": {
-    "url": "./glb/ramps.glb"
+  "bedroom": {
+    "url": "./glb/bedroom.glb"
   },
   "player": {
     "url": "./glb/player.glb"
+  },
+  "ramps": {
+    "url": "./glb/ramps.glb"
   }
 }

@@ -56,6 +56,9 @@ class Entity {
 
     // Create an empty object
     this.object = new Object3D();
+    this.object.position.copy(options.position);
+    this.object.quaternion.copy(options.quaternion);
+    this.object.scale.copy(options.scale);
 
     // Add optional model
     this.addModel(options.model);
@@ -125,15 +128,8 @@ class Entity {
 
   addModel(model) {
     if (model) {
-      this.object.add(model);
       this.model = model;
-      
-      // Offset model position from shape halfHeight value
-      if (this.colliderDesc.shape && this.colliderDesc.shape.halfHeight) {
-        if (this.model.position) {
-          this.model.position.y = -(this.colliderDesc.shape.halfHeight * 2);
-        }
-      }
+      this.object.add(model);
     }
   }
 

@@ -69,8 +69,13 @@ class Game {
     this.player = this.physics.create({
       ccd: true,
       class: 'Character',
+      height: 0.25,
+      jumpSpeed: 4,
       model: this.assets.get('player'),
-      position: { x: 0, y: 0.5, z: 0 }
+      moveSpeed: 5,
+      position: { x: 0, y: 0.5, z: 0 },
+      radius: 0.25,
+      scale: { x: 1, y: 1, z: 1 }
     });
     this.player.model.play('Idle', 0); // Start idle animation
     this.player.addEventListeners();
