@@ -17,8 +17,8 @@ class Character extends Entity {
       height: 0.25,
       gravity: 9.81,
       radius: 0.25,
-      moveSpeed: 5,
-      jumpSpeed: 5,
+      moveForce: 5,
+      jumpForce: 5,
       type: 'KinematicPositionBased'
     }, options);
 
@@ -33,12 +33,11 @@ class Character extends Entity {
     this.jumping = true;
     this.angle = 0;
     this.gravity = options.gravity;
-    this.jumpSpeed = options.jumpSpeed;
-    this.moveSpeed = options.moveSpeed;
+    this.jumpForce = options.jumpForce;
+    this.moveForce = options.moveForce;
     this.force = new Vector3();
     this.direction = new Vector3();
     this.velocity = new Vector3();
-    this.movement = new Vector3();
     this.nextTranslation = new Vector3();
 
     // Set character camera properties
@@ -52,9 +51,8 @@ class Character extends Entity {
     
     // Calculate next translation from computed movement
     this.controller.computeColliderMovement(this.collider, this.velocity);
-    this.movement.copy(this.controller.computedMovement());
     this.nextTranslation.copy(this.body.translation());
-    this.nextTranslation.add(this.movement);
+    this.nextTranslation.add(this.controller.computedMovement());
     this.setNextPosition(this.nextTranslation);
 
     // Update 3D object rotation using next direction
@@ -84,13 +82,13 @@ class Character extends Entity {
     this.force.set(0, 0, 0);
 
     // Add force relative to zero radians/degrees (visually 90° counterclockwise)
-    if (this.keys['KeyW'] == true) this.force.x = -delta * this.moveSpeed;
-    if (this.keys['KeyA'] == true) this.force.z = delta * this.moveSpeed;
-    if (this.keys['KeyS'] == true) this.force.x = delta * this.moveSpeed;
-    if (this.keys['KeyD'] == true) this.force.z = -delta * this.moveSpeed;
+    if (this.keys['KeyW'] == true) this.force.x = -delta * this.moveForce;
+    if (this.keys['KeyA'] == true) this.force.z = delta * this.moveForce;
+    if (this.keys['KeyS'] == true) this.force.x = delta * this.moveForce;
+    if (this.keys['KeyD'] == true) this.force.z = -delta * this.moveForce;
     if (this.keys['Space'] == true && this.isJumping() == false) {
       this.jumping = true;
-      this.force.y += delta * this.jumpSpeed * 1.5;
+      this.force.y += delta * this.jumpForce * 1.5;
     }
 
     // Rotate force by camera world direction
@@ -109,7 +107,7 @@ class Character extends Entity {
     // Clamp directional velocity
     this.velocity._y = this.velocity.y;
     this.velocity.y = 0; // Ignore gravity velocity
-    this.velocity.clampLength(-this.moveSpeed * delta, this.moveSpeed * delta);
+    this.velocity.clampLength(-this.moveForce * delta, this.moveForce * delta);
     this.velocity.y = this.velocity._y;
   }
 
