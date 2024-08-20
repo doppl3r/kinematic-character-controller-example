@@ -20,7 +20,7 @@ class Physics {
 
     // Add game debugger
     this.debugger = new Debugger(this.world);
-    //this.debugger.disable();
+    this.debugger.disable();
   }
 
   setScene(scene) {
@@ -49,11 +49,11 @@ class Physics {
       if (child.body) child.update(delta);
     });
 
-    // Simulate world
-    this.world.step();
-
     // Update debugger buffer
     this.debugger.update();
+
+    // Simulate world
+    this.world.step();
   }
 
   render(delta, alpha) {

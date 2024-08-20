@@ -1,4 +1,4 @@
-import { Color, PCFSoftShadowMap, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { PCFSoftShadowMap, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPixelatedPass.js';
@@ -68,12 +68,25 @@ class Graphics {
   }
 
   resize(e) {
-    // Dispatch resize event to CameraFactory camera
-    this.camera.dispatchEvent({ type: 'resize' });
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var ratio = width / height;
+    
+    // Update orthographic frustum
+    if (this.camera.isOrthographicCamera) {
+      this.camera.left = -ratio;
+      this.camera.right = ratio;
+      this.camera.top = 1;
+      this.camera.bottom = -1;
+    }
+
+    // Update camera ratio
+    this.camera.aspect = ratio;
+    this.camera.updateProjectionMatrix();
 
     // Update renderer size
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(width, height);
+    this.composer.setSize(width, height);
   }
 
   setCamera(camera) {
