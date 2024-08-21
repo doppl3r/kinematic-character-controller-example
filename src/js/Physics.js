@@ -20,7 +20,7 @@ class Physics {
 
     // Add game debugger
     this.debugger = new Debugger(this.world);
-    this.debugger.disable();
+    //this.debugger.disable();
   }
 
   setScene(scene) {

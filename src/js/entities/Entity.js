@@ -106,24 +106,12 @@ class Entity {
     if (this.body) this.body.setTranslation(position);
   }
 
-  setNextPosition(position) {
-    if (this.body) this.body.setNextKinematicTranslation(position);
-  }
-
   setRotation(quaternion) {
     if (this.body) this.body.setRotation(quaternion);
   }
 
-  setNextRotation(quaternion) {
-    if (this.body) this.body.setNextKinematicRotation(quaternion);
-  }
-
   setScale(scale) {
     this.snapshot.scale_1.copy(scale);
-  }
-
-  setNextScale(scale) {
-    this.snapshot.scale_2.copy(scale);
   }
 
   addModel(model) {

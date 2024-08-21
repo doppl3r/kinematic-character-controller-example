@@ -2,7 +2,8 @@
 This example shows how to create a Kinematic Character Controller (aka "KCC") using Rapier.js and Three.js.
 
 ## Quick links
- - [Character.js](src/js/entities/Character.js) - Creates a controller for the player movement.
+ - [Player.js](src/js/entities/Player.js) - Creates a controller with player movement.
+ - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers (can be used players, conveyors, doors, etc.)
  - [Entity.js](src/js/entities/Entity.js) - The superclass for all entities.
  - [TriMesh.js](src/js/entities/TriMesh.js) - Creates a TriMesh shape using a 3D mesh.
  - [Debugger.js](src/js/Debugger.js) - Renders the Rapier.js `world` as a 3D object that can be added to a scene.

@@ -51,8 +51,7 @@ class Game {
       ccd: true,
       class: 'Cube',
       color: '#ff0000',
-      position: { x: -3, y: 8, z: -1.5 },
-      scale: { x: 0.5, y: 0.5, z: 0.5 }
+      position: { x: -6, y: 16, z: -3 }
     });
 
     // Create sphere entity
@@ -61,14 +60,14 @@ class Game {
       ccd: true,
       class: 'Sphere',
       color: '#ffff00',
-      position: { x: 3, y: 8, z: -1.5 },
-      radius: 0.25
+      position: { x: 6, y: 16, z: -3 },
+      radius: 0.5
     });
 
     // Create a player character entity
     this.player = this.physics.create({
       ccd: true,
-      class: 'Character',
+      class: 'Player',
       height: 0.25,
       jumpSpeed: 4,
       model: this.assets.get('player'),

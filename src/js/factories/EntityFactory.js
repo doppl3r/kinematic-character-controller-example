@@ -1,5 +1,6 @@
-import { Cube } from '../entities/Cube';
 import { Character } from '../entities/Character';
+import { Cube } from '../entities/Cube';
+import { Player } from '../entities/Player';
 import { Sphere } from '../entities/Sphere';
 import { TriMesh } from '../entities/TriMesh';
 
@@ -19,13 +20,17 @@ class EntityFactory {
     if (fn == null) return;
     return fn(options);
   }
+
+  static createCharacter(options) {
+    return new Character(options);
+  }
   
   static createCube(options) {
     return new Cube(options);
   }
-  
-  static createCharacter(options) {
-    return new Character(options);
+
+  static createPlayer(options) {
+    return new Player(options);
   }
 
   static createSphere(options) {
