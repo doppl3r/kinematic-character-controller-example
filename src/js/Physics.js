@@ -1,4 +1,5 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
+import { EventDispatcher } from 'three';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './factories/EntityFactory.js';
 
@@ -6,9 +7,10 @@ import { EntityFactory } from './factories/EntityFactory.js';
   Manage physics related components
 */
 
-class Physics {
+class Physics extends EventDispatcher {
   constructor() {
-    
+    // Inherit Three.js EventDispatcher system
+    super();
   }
 
   init() {
@@ -44,19 +46,16 @@ class Physics {
 
     // Check collision events
     this.events.drainCollisionEvents(function(handleOne, handleTwo, started) {
-      var colliderOne = this.world.getCollider(handleOne);
-      var colliderTwo = this.world.getCollider(handleTwo);
-      var message = `handleOne: ${ handleOne }, handleTwo: ${ handleTwo }, started: ${ started }`;
+      var entityOne = this.get(handleOne);
+      var entityTwo = this.get(handleTwo);
 
       // Check if collider is a sensor
-      if (colliderOne.isSensor()) {
+      if (entityOne.collider.isSensor()) {
         if (started == true) {
-          // Dispatch an event to the UI to open a popup
-          dispatchEvent(new CustomEvent('openPopup', { detail: { message: message }}));
+          this.dispatchEvent({ type: 'startCollision', pair: [entityOne, entityTwo] });
         }
         else {
-          // Dispatch an event to close a popup
-          dispatchEvent(new CustomEvent('closePopup', { detail: { message: message }}));
+          this.dispatchEvent({ type: 'stopCollision', pair: [entityOne, entityTwo] });
         }
       }
     }.bind(this));
@@ -95,13 +94,13 @@ class Physics {
       }
     }
 
-    // Add entity to entities map using entity UUID
-    this.entities.set(entity.uuid, entity);
-
     // Create body and collider for entity
     entity.createBody(this.world);
     entity.createCollider(this.world);
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
+
+    // Add entity to entities map using body handle (ex: "5e-324")
+    this.entities.set(entity.body.handle, entity);
 
     // Add entity 3D object to scene reference
     if (this.scene) {
@@ -110,13 +109,13 @@ class Physics {
   }
 
   remove(entity) {
-    this.entities.delete(entity.uuid); // Dereference entity by UUID
+    this.entities.delete(entity.body.handle); // Dereference entity by UUID
     this.world.removeRigidBody(entity.body); // Remove body from world (includes colliders)
     entity.object.removeFromParent(); // Remove reference to 3D object parent
   }
 
-  get(key) {
-    return this.entities.get(key);
+  get(handle) {
+    return this.entities.get(handle);
   }
 
   drain() {

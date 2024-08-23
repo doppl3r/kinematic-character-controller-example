@@ -51,9 +51,10 @@ class Game {
     var cubeEntity = this.physics.create({
       ccd: true,
       class: 'Cube',
-      color: '#ff0000',
+      color: '#0000ff',
       isSensor: true,
-      position: { x: -7, y: 4.5, z: 1 },
+      position: { x: -0.5, y: 0, z: -3.5 },
+      scale: { x: 1, y: 0.25, z: 1 },
       type: 'Fixed'
     });
 
@@ -62,8 +63,8 @@ class Game {
       angularDamping: 1,
       ccd: true,
       class: 'Sphere',
-      color: '#ffff00',
-      position: { x: 6, y: 16, z: -3 },
+      color: '#ff00ff',
+      position: { x: 0.5, y: 0.5, z: -5.5 },
       radius: 0.5
     });
 
@@ -98,6 +99,21 @@ class Game {
     this.loop.add(this.update.bind(this), 30); // Physics
     this.loop.add(this.render.bind(this), -1); // Render
     this.loop.start();
+
+    // Add event listener for collision events that occur in Physics.js
+    this.physics.addEventListener('startCollision', function(e) {
+      // Change cube color to green
+      e.pair[0].model.material.color.set('#00ff00');
+
+      // Bounce player
+      e.pair[1].move({ x: 0, y: 1, z: 0});
+      e.pair[1].velocity.y = 0.5;
+    });
+
+    this.physics.addEventListener('stopCollision', function(e) {
+      // Change cube color to green
+      e.pair[0].model.material.color.set('#0000ff');
+    });
   }
 
   onProgress(url, itemsLoaded, itemsTotal) {

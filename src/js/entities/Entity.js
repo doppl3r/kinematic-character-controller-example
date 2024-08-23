@@ -30,11 +30,7 @@ class Entity {
       shape: null,
       solverGroups: 0xFFFFFFFF,
       type: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
-      uuid: MathUtils.generateUUID()
     }, options);
-
-    // Apply defaults
-    this.uuid = options.uuid;
 
     // Initialize rigid body description
     this.rigidBodyDesc = new RigidBodyDesc(RigidBodyType[options.type]);
@@ -159,7 +155,6 @@ class Entity {
 
   toJSON() {
     var json = {
-      uuid: this.uuid,
       class: this.constructor.name,
       position: {
         x: this.snapshot.position_2.x,
