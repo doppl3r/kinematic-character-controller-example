@@ -12,6 +12,8 @@ class Player extends Character {
   constructor(options = {}) {
     // Set options with default values
     options = Object.assign({
+      activeCollisionTypes: 'KINEMATIC_FIXED',
+      activeEvents: 'COLLISION_EVENTS',
       height: 0.25,
       gravity: 9.81,
       radius: 0.25,

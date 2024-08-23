@@ -1,4 +1,4 @@
-import { World } from '@dimforge/rapier3d';
+import { EventQueue, World } from '@dimforge/rapier3d';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './factories/EntityFactory.js';
 
@@ -14,6 +14,7 @@ class Physics {
   init() {
     // Initialize Rapier world
     this.world = new World({ x: 0.0, y: -9.81 * 2, z: 0.0 });
+    this.events = new EventQueue(true);
 
     // Initialize entity manager
     this.entities = new Map();
@@ -21,20 +22,6 @@ class Physics {
     // Add game debugger
     this.debugger = new Debugger(this.world);
     //this.debugger.disable();
-  }
-
-  setScene(scene) {
-    // Assign scene for entity 3D objects
-    this.scene = scene;
-
-    // Add debugger to scene
-    if (this.debugger.parent != scene) {
-      this.scene.add(this.debugger);
-    }
-  }
-
-  setFrequency(frequency = 60) {
-    this.world.timestep = 1 / frequency;
   }
 
   update(delta, alpha) {
@@ -53,7 +40,26 @@ class Physics {
     this.debugger.update();
 
     // Simulate world
-    this.world.step();
+    this.world.step(this.events);
+
+    // Check collision events
+    this.events.drainCollisionEvents(function(handleOne, handleTwo, started) {
+      var colliderOne = this.world.getCollider(handleOne);
+      var colliderTwo = this.world.getCollider(handleTwo);
+      var message = `handleOne: ${ handleOne }, handleTwo: ${ handleTwo }, started: ${ started }`;
+
+      // Check if collider is a sensor
+      if (colliderOne.isSensor()) {
+        if (started == true) {
+          // Dispatch an event to the UI to open a popup
+          dispatchEvent(new CustomEvent('openPopup', { detail: { message: message }}));
+        }
+        else {
+          // Dispatch an event to close a popup
+          dispatchEvent(new CustomEvent('closePopup', { detail: { message: message }}));
+        }
+      }
+    }.bind(this));
   }
 
   render(delta, alpha) {
@@ -61,6 +67,20 @@ class Physics {
     this.entities.forEach(function(child) {
       child.render(delta, alpha);
     });
+  }
+
+  setScene(scene) {
+    // Assign scene for entity 3D objects
+    this.scene = scene;
+
+    // Add debugger to scene
+    if (this.debugger.parent != scene) {
+      this.scene.add(this.debugger);
+    }
+  }
+
+  setFrequency(frequency = 60) {
+    this.world.timestep = 1 / frequency;
   }
 
   create(options) {

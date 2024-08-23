@@ -1,5 +1,5 @@
 import { MathUtils, Object3D, Quaternion, Vector3 } from 'three';
-import { ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
+import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 
 /*
   An entity is an abstract class that contains a single 3D object and a
@@ -12,10 +12,12 @@ class Entity {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
+      activeCollisionTypes: 'DEFAULT', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
       angularDamping: 0,
       ccd: false,
       density: 1,
-      group: 0xFFFFFFFF,
+      activeEvents: 'NONE', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
+      collisionGroups: 0xFFFFFFFF,
       isEnabled: true,
       isSensor: false,
       linearDamping: 0,
@@ -26,6 +28,7 @@ class Entity {
       restitution: 0,
       scale: { x: 1, y: 1, z: 1 },
       shape: null,
+      solverGroups: 0xFFFFFFFF,
       type: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
       uuid: MathUtils.generateUUID()
     }, options);
@@ -44,11 +47,14 @@ class Entity {
     
     // Initialize collider description
     this.colliderDesc = new ColliderDesc(options.shape);
-    this.colliderDesc.setCollisionGroups(options.group);
+    this.colliderDesc.setActiveCollisionTypes(ActiveCollisionTypes[options.activeCollisionTypes]);
+    this.colliderDesc.setCollisionGroups(options.collisionGroups);
+    this.colliderDesc.setSolverGroups(options.solverGroups);
     this.colliderDesc.setSensor(options.isSensor);
     this.colliderDesc.setRestitution(options.restitution);
     this.colliderDesc.setDensity(options.density);
     this.colliderDesc.setMass(options.mass);
+    this.colliderDesc.setActiveEvents(ActiveEvents[options.activeEvents]);
 
     // These components are created when this entity is added to scene/world
     this.body;

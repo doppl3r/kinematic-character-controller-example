@@ -1,9 +1,9 @@
-import { Cuboid } from '@dimforge/rapier3d';
+import { Cuboid, QueryFilterFlags } from '@dimforge/rapier3d';
 import { Vector3 } from 'three';
 import { Entity } from './Entity.js';
 
 /*
-  Characters are a subclass that have a single Kinematic Body and
+  Characters are a subclass that has a single Kinematic Body and
   a single Character Controller. A Player or an enemy should inherit
   this class for common control behaviors that interact with the world.
 */
@@ -25,7 +25,7 @@ class Character extends Entity {
   }
 
   move(desiredTranslation) {
-    this.controller.computeColliderMovement(this.collider, desiredTranslation);
+    this.controller.computeColliderMovement(this.collider, desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
     this.nextTranslation.copy(this.body.translation());
     this.nextTranslation.add(this.controller.computedMovement());
     this.body.setNextKinematicTranslation(this.nextTranslation);

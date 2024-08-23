@@ -43,6 +43,7 @@ class Game {
     // Create map entity with model
     var mapEntity = this.physics.create({
       class: 'TriMesh',
+      solverGroups: 0xFFFFFF00,
       model: this.assets.get('ramps')
     });
 
@@ -51,7 +52,9 @@ class Game {
       ccd: true,
       class: 'Cube',
       color: '#ff0000',
-      position: { x: -6, y: 16, z: -3 }
+      isSensor: true,
+      position: { x: -7, y: 4.5, z: 1 },
+      type: 'Fixed'
     });
 
     // Create sphere entity
@@ -100,7 +103,7 @@ class Game {
   onProgress(url, itemsLoaded, itemsTotal) {
     // Emit loader progress to global window object
     var percent = Math.ceil((itemsLoaded / itemsTotal) * 100);
-    window.dispatchEvent(new CustomEvent('updateLoading', { detail: { url: url, itemsLoaded: itemsLoaded, itemsTotal: itemsTotal, percent: percent }}));
+    dispatchEvent(new CustomEvent('updateLoading', { detail: { url: url, itemsLoaded: itemsLoaded, itemsTotal: itemsTotal, percent: percent }}));
   }
 }
 
