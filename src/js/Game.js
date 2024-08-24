@@ -101,18 +101,26 @@ class Game {
     this.loop.start();
 
     // Add event listener for collision events that occur in Physics.js
-    this.physics.addEventListener('startCollision', function(e) {
-      // Change cube color to green
-      e.pair[0].model.material.color.set('#00ff00');
+    this.physics.addEventListener('collision', function(e) {
+      // Sort pair array so that the sensor is always the first pair item
+      e.pair.sort(function(entity) { return entity.collider.isSensor() ? -1 : 1; });
+      
+      // Check if the first entity is a sensor
+      if (e.pair[0].collider.isSensor()) {
 
-      // Bounce player
-      e.pair[1].move({ x: 0, y: 1, z: 0});
-      e.pair[1].velocity.y = 0.5;
-    });
-
-    this.physics.addEventListener('stopCollision', function(e) {
-      // Change cube color to green
-      e.pair[0].model.material.color.set('#0000ff');
+        if (e.started == true) {
+          // Change cube color to green
+          e.pair[0].model.material.color.set('#00ff00');
+  
+          // Bounce player
+          e.pair[1].move({ x: 0, y: 1, z: 0});
+          e.pair[1].velocity.y = 0.5;
+        }
+        else {
+          // Change cube color to blue
+          e.pair[0].model.material.color.set('#0000ff');
+        }
+      }
     });
   }
 

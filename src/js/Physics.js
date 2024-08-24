@@ -46,18 +46,12 @@ class Physics extends EventDispatcher {
 
     // Check collision events
     this.events.drainCollisionEvents(function(handleOne, handleTwo, started) {
-      var entityOne = this.get(handleOne);
-      var entityTwo = this.get(handleTwo);
-
-      // Check if collider is a sensor
-      if (entityOne.collider.isSensor()) {
-        if (started == true) {
-          this.dispatchEvent({ type: 'startCollision', pair: [entityOne, entityTwo] });
-        }
-        else {
-          this.dispatchEvent({ type: 'stopCollision', pair: [entityOne, entityTwo] });
-        }
-      }
+      // Dispatch event to subscribers
+      this.dispatchEvent({
+        type: 'collision',
+        pair: [this.get(handleOne), this.get(handleTwo)],
+        started: started
+      });
     }.bind(this));
   }
 
@@ -99,7 +93,7 @@ class Physics extends EventDispatcher {
     entity.createCollider(this.world);
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
 
-    // Add entity to entities map using body handle (ex: "5e-324")
+    // Add entity to entities map using the body handle as the key (ex: "5e-324")
     this.entities.set(entity.body.handle, entity);
 
     // Add entity 3D object to scene reference
@@ -109,12 +103,14 @@ class Physics extends EventDispatcher {
   }
 
   remove(entity) {
-    this.entities.delete(entity.body.handle); // Dereference entity by UUID
-    this.world.removeRigidBody(entity.body); // Remove body from world (includes colliders)
-    entity.object.removeFromParent(); // Remove reference to 3D object parent
+    // Delete and remove entity reference using the body handle as the key
+    this.entities.delete(entity.body.handle);
+    this.world.removeRigidBody(entity.body);
+    entity.object.removeFromParent();
   }
 
   get(handle) {
+    // Get entity from entities map using the body handle as the key
     return this.entities.get(handle);
   }
 
