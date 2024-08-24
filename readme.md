@@ -3,10 +3,7 @@ This example shows how to create a Kinematic Character Controller (aka "KCC") us
 
 ## Quick links
  - [Player.js](src/js/entities/Player.js) - Extends the `Character.js` class and adds keyboard input.
- - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers (can be used for players, conveyors, doors, etc.)
- - [Entity.js](src/js/entities/Entity.js) - The superclass for all entities.
- - [TriMesh.js](src/js/entities/TriMesh.js) - Creates a TriMesh shape using a 3D mesh.
- - [Debugger.js](src/js/Debugger.js) - Renders the Rapier.js `world` as a 3D object that can be added to a scene.
+ - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers that extends [Entity.js](src/js/entities/Entity.js). Can be used for players, conveyors, doors, etc.
  - [Game.js](src/js/Game.js) - Handles all game states, entities, and resources.
 
 ## Screenshot
