@@ -7,6 +7,9 @@
     "default_popup": "index.html",
     "default_title": "Kinematic Character Controller Example"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+  },
   "icons": { 
     "16": "png/icon16.png",
     "32": "png/icon32.png",
