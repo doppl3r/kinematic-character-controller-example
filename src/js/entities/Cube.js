@@ -29,6 +29,9 @@ class Cube extends Entity {
 
     // Inherit Entity class
     super(options);
+
+    // Update 3D object scale
+    this.object.scale.copy(options.scale)
   }
 }
 

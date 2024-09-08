@@ -1,5 +1,4 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
-import { EventDispatcher } from 'three';
 import { Debugger } from './Debugger.js';
 import { EntityFactory } from './factories/EntityFactory.js';
 
@@ -7,10 +6,9 @@ import { EntityFactory } from './factories/EntityFactory.js';
   Manage physics related components
 */
 
-class Physics extends EventDispatcher {
+class Physics {
   constructor() {
-    // Inherit Three.js EventDispatcher system
-    super();
+    
   }
 
   init() {
@@ -45,13 +43,12 @@ class Physics extends EventDispatcher {
     this.world.step(this.events);
 
     // Check collision events
-    this.events.drainCollisionEvents(function(handleOne, handleTwo, started) {
-      // Dispatch event to subscribers
-      this.dispatchEvent({
-        type: 'collision',
-        pair: [this.get(handleOne), this.get(handleTwo)],
-        started: started
-      });
+    this.events.drainCollisionEvents(function(h1, h2, started) {
+      // Dispatch event to entities
+      var p1 = this.get(h1);
+      var p2 = this.get(h2);
+      p1.dispatchEvent({ type: 'collision', entity: p2, started: started })
+      p2.dispatchEvent({ type: 'collision', entity: p1, started: started })
     }.bind(this));
   }
 
@@ -60,16 +57,6 @@ class Physics extends EventDispatcher {
     this.entities.forEach(function(child) {
       child.render(delta, alpha);
     });
-  }
-
-  setScene(scene) {
-    // Assign scene for entity 3D objects
-    this.scene = scene;
-
-    // Add debugger to scene
-    if (this.debugger.parent != scene) {
-      this.scene.add(this.debugger);
-    }
   }
 
   setFrequency(frequency = 60) {
@@ -92,14 +79,10 @@ class Physics extends EventDispatcher {
     entity.createBody(this.world);
     entity.createCollider(this.world);
     entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
+    entity.dispatchEvent({ type: 'added' })
 
     // Add entity to entities map using the body handle as the key (ex: "5e-324")
     this.entities.set(entity.body.handle, entity);
-
-    // Add entity 3D object to scene reference
-    if (this.scene) {
-      this.scene.add(entity.object);
-    }
   }
 
   remove(entity) {
@@ -107,6 +90,7 @@ class Physics extends EventDispatcher {
     this.entities.delete(entity.body.handle);
     this.world.removeRigidBody(entity.body);
     entity.object.removeFromParent();
+    entity.dispatchEvent({ type: 'removed' });
   }
 
   get(handle) {

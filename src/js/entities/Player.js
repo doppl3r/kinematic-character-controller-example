@@ -14,11 +14,12 @@ class Player extends Character {
     options = Object.assign({
       activeCollisionTypes: 'KINEMATIC_FIXED',
       activeEvents: 'COLLISION_EVENTS',
-      height: 0.25,
       gravity: 9.81,
-      radius: 0.25,
+      height: 0.25,
+      jumpForce: 5,
       moveForce: 5,
-      jumpForce: 5
+      radius: 0.25,
+      scale: { x: 1, y: 1, z: 1 }
     }, options);
 
     // Create physical shape
