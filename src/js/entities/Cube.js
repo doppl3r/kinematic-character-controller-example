@@ -31,7 +31,11 @@ class Cube extends Entity {
     super(options);
 
     // Update 3D object scale
-    this.object.scale.copy(options.scale)
+    this.object.scale.copy(options.scale);
+
+    // Add optional model to 3D object
+    this.model = options.model;
+    this.object.add(this.model);
   }
 }
 

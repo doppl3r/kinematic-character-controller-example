@@ -42,6 +42,10 @@ class Player extends Character {
     // Set character camera properties
     this.camera = CameraFactory.create('perspective');
     this.cameraOffset = new Vector3(0, 2, 2);
+
+    // Add optional model to 3D object
+    this.model;
+    this.addModel(options.model);
   }
 
   update(delta) {
@@ -65,6 +69,11 @@ class Player extends Character {
     // Update camera position
     this.camera.position.copy(this.object.position).add(this.cameraOffset);
     this.camera.lookAt(this.object.position);
+
+    // Update model (optional)
+    if (this.model && this.model.mixer) {
+      this.model.mixer.update(delta);
+    }
   }
 
   updateVelocityFromInput(delta) {
@@ -116,9 +125,9 @@ class Player extends Character {
   }
 
   addModel(model) {
-    // Invoke Character superclass constructor
-    super.addModel(model);
-      
+    this.model = model;
+    this.object.add(this.model);
+
     // Offset model position from shape dimensions
     var height = this.colliderDesc.shape.halfHeight / this.object.scale.y;
     var radius = this.colliderDesc.shape.radius / this.object.scale.x
