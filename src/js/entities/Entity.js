@@ -3,9 +3,11 @@ import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidB
 
 /*
   An entity is an abstract class that contains a single 3D object and a
-  single rigid body object. An entity assumes that the rigid body is being
-  updated at a lower interval, and leverages the lerp() function to
-  interpolate the 3D object at a higher interval (smoother results)
+  single rigid body object. The rigid body can have multiple colliders.
+  
+  An entity assumes that the rigid body is being updated at a lower
+  interval, and leverages the lerp() function to interpolate the
+  3D object at a higher interval (smoother results)
 */
 
 class Entity extends EventDispatcher {
@@ -14,8 +16,10 @@ class Entity extends EventDispatcher {
     super();
 
     // These components are created when this entity is added to scene/world
-    this.body;
-    this.collider;
+    this.rigidBody;
+    this.rigidBodyDesc;
+    this.colliders = new Map();
+    this.collidersDesc = [];
     this.object = new Object3D();
     this.snapshot = {
       position_1: new Vector3(0, 0, 0),
@@ -31,11 +35,19 @@ class Entity extends EventDispatcher {
     // Update object properties
     this.takeSnapshot();
     this.lerp(1);
+
+    // Add event listeners
+    this.addEventListener('collision', this.onCollision);
+    this.addEventListener('removed', function(e) {
+      // Remove all event listeners when removed by Physics.js
+      e.target.removeEventListener('collision', e.target.onCollision);
+      e.target.removeEventListener('removed', e.target.onCollision);
+    });
   }
 
   update(delta) {
     // Take a snapshot every time the entity is updated
-    if (this.body) this.takeSnapshot();
+    if (this.rigidBody) this.takeSnapshot();
   }
 
   render(delta, alpha) {
@@ -86,62 +98,76 @@ class Entity extends EventDispatcher {
       mass: 1,
       restitution: 0,
       shape: null,
-      solverGroups: 0xFFFFFFFF
+      solverGroups: 0xFFFFFFFF,
+      translation: { x: 0, y: 0, z: 0 }
     }, options);
 
-    this.colliderDesc = new ColliderDesc(options.shape);
-    this.colliderDesc.setActiveCollisionTypes(ActiveCollisionTypes[options.activeCollisionTypes]);
-    this.colliderDesc.setActiveEvents(ActiveEvents[options.activeEvents]);
-    this.colliderDesc.setCollisionGroups(options.collisionGroups);
-    this.colliderDesc.setContactForceEventThreshold(options.contactForceEventThreshold);
-    this.colliderDesc.setDensity(options.density);
-    this.colliderDesc.setFriction(options.friction);
-    this.colliderDesc.setSensor(options.isSensor);
-    this.colliderDesc.setMass(options.mass);
-    this.colliderDesc.setRestitution(options.restitution);
-    this.colliderDesc.setSolverGroups(options.solverGroups);
+    var colliderDesc = new ColliderDesc(options.shape);
+    colliderDesc.setActiveCollisionTypes(ActiveCollisionTypes[options.activeCollisionTypes]);
+    colliderDesc.setActiveEvents(ActiveEvents[options.activeEvents]);
+    colliderDesc.setCollisionGroups(options.collisionGroups);
+    colliderDesc.setContactForceEventThreshold(options.contactForceEventThreshold);
+    colliderDesc.setDensity(options.density);
+    colliderDesc.setFriction(options.friction);
+    colliderDesc.setSensor(options.isSensor);
+    colliderDesc.setMass(options.mass);
+    colliderDesc.setRestitution(options.restitution);
+    colliderDesc.setSolverGroups(options.solverGroups);
+    colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
 
-    // Set collision events
-    this.addEventListener('collision', function(e) {
-      if (e.started == true) options.collisionEventStart(e);
-      else options.collisionEventEnd(e);
-    })
+    // Store callback events to colliderDesc
+    colliderDesc.collisionEventStart = options.collisionEventStart;
+    colliderDesc.collisionEventEnd = options.collisionEventEnd;
+
+    // Add colliderDesc to array
+    this.collidersDesc.push(colliderDesc);
   }
 
   createBody(world) {
-    this.body = world.createRigidBody(this.rigidBodyDesc);
+    this.rigidBody = world.createRigidBody(this.rigidBodyDesc);
   }
 
-  createCollider(world) {
-    if (this.body) {
-      this.collider = world.createCollider(this.colliderDesc, this.body); // Parent collision to rigid body
+  createColliders(world) {
+    if (this.rigidBody) {
+      // Loop through all collider descriptions
+      this.collidersDesc.forEach(function(colliderDesc) {
+        // Parent the collider to the rigid body
+        var collider = world.createCollider(colliderDesc, this.rigidBody);
+
+        // Add collider to colliders map using the collider handle as the key (ex: "5e-324")
+        this.colliders.set(collider.handle, collider);
+
+        // Assign optional callback events to collider
+        collider.collisionEventStart = colliderDesc.collisionEventStart;
+        collider.collisionEventEnd = colliderDesc.collisionEventEnd;
+      }.bind(this));
     }
   }
 
   setPosition(position) {
-    if (this.body) this.body.setTranslation(position);
+    if (this.rigidBody) this.rigidBody.setTranslation(position);
   }
 
   setRotation(quaternion) {
-    if (this.body) this.body.setRotation(quaternion);
+    if (this.rigidBody) this.rigidBody.setRotation(quaternion);
   }
 
   takeSnapshot() {
     // A snapshot requires a physical rigid body
-    if (this.body) {
+    if (this.rigidBody) {
       // Store previous snapshot position for lerp
       this.snapshot.position_1.copy(this.snapshot.position_2);
       this.snapshot.quaternion_1.copy(this.snapshot.quaternion_2);
 
       // Store next position for lerp if the rigid body is a kinematic type
-      if (this.body.isKinematic()) {
-        this.snapshot.position_2.copy(this.body.nextTranslation());
-        this.snapshot.quaternion_2.copy(this.body.nextRotation());
+      if (this.rigidBody.isKinematic()) {
+        this.snapshot.position_2.copy(this.rigidBody.nextTranslation());
+        this.snapshot.quaternion_2.copy(this.rigidBody.nextRotation());
       }
       else {
         // Store next position for lerp for all other rigid body types
-        this.snapshot.position_2.copy(this.body.translation());
-        this.snapshot.quaternion_2.copy(this.body.rotation());
+        this.snapshot.position_2.copy(this.rigidBody.translation());
+        this.snapshot.quaternion_2.copy(this.rigidBody.rotation());
       }
     }
     else {
@@ -154,11 +180,20 @@ class Entity extends EventDispatcher {
 
   lerp(alpha = 0) {
     // Skip (s)lerp if body type is null or "Fixed"
-    if (this.body && this.body.isFixed()) return false;
+    if (this.rigidBody && this.rigidBody.isFixed()) return false;
 
     // Linear interpolation using alpha value
     this.object.position.lerpVectors(this.snapshot.position_1, this.snapshot.position_2, alpha);
     this.object.quaternion.slerpQuaternions(this.snapshot.quaternion_1, this.snapshot.quaternion_2, alpha);
+  }
+
+  onCollision(e) {
+    // Get the collider from the event handle
+    var collider = e.target.colliders.get(e.handle);
+
+    // Determine which event to call by the "started" boolean
+    if (e.started == true) collider.collisionEventStart(e);
+    else collider.collisionEventEnd(e);
   }
 
   toJSON() {
@@ -178,9 +213,9 @@ class Entity extends EventDispatcher {
     };
 
     // Add body info
-    if (this.body) {
-      json.body = {
-        type: this.body.bodyType()
+    if (this.rigidBody) {
+      json.rigidBody = {
+        type: this.rigidBody.bodyType()
       }
     }
 
@@ -190,13 +225,13 @@ class Entity extends EventDispatcher {
   updateFromJSON(json) {
     // Set position
     if (json.position) {
-      if (this.body) this.setPosition(json.position);
+      if (this.rigidBody) this.setPosition(json.position);
       this.snapshot.position_2.copy(json.position);
     }
 
     // Set rotation
     if (json.quaternion) {
-      if (this.body) this.setRotation(json.quaternion);
+      if (this.rigidBody) this.setRotation(json.quaternion);
       this.snapshot.quaternion_2.copy(json.quaternion);
     }
   }

@@ -118,9 +118,9 @@ class Player extends Character {
 
   updateObjectRotation() {
     // Calculate 3D object rotation from character translation
-    if (this.nextTranslation.distanceTo(this.body.translation()) > 0.01) {
+    if (this.nextTranslation.distanceTo(this.rigidBody.translation()) > 0.01) {
       this.object.lookAt(this.nextTranslation.x, this.object.position.y, this.nextTranslation.z);
-      this.body.setNextKinematicRotation(this.object.quaternion);
+      this.rigidBody.setNextKinematicRotation(this.object.quaternion);
     }
   }
 
@@ -129,8 +129,8 @@ class Player extends Character {
     this.object.add(this.model);
 
     // Offset model position from shape dimensions
-    var height = this.colliderDesc.shape.halfHeight / this.object.scale.y;
-    var radius = this.colliderDesc.shape.radius / this.object.scale.x
+    var height = this.collidersDesc[0].shape.halfHeight / this.object.scale.y;
+    var radius = this.collidersDesc[0].shape.radius / this.object.scale.x
     this.model.position.y = -(height + radius);
   }
 

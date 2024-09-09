@@ -26,14 +26,18 @@ class Character extends Entity {
 
   move(desiredTranslation) {
     this.controller.computeColliderMovement(this.collider, desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
-    this.nextTranslation.copy(this.body.translation());
+    this.nextTranslation.copy(this.rigidBody.translation());
     this.nextTranslation.add(this.controller.computedMovement());
-    this.body.setNextKinematicTranslation(this.nextTranslation);
+    this.rigidBody.setNextKinematicTranslation(this.nextTranslation);
   }
 
-  createCollider(world) {
+  createColliders(world) {
     // Invoke Entity superclass constructor
-    super.createCollider(world);
+    super.createColliders(world);
+
+    // Assign single collider for controller
+    var handle = this.colliders.entries().next().value[0];
+    this.collider = this.colliders.get(handle);
 
     // Pass world through controller initialization
     this.createController(world);
