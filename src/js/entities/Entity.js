@@ -22,10 +22,10 @@ class Entity extends EventDispatcher {
     this.collidersDesc = [];
     this.object = new Object3D();
     this.snapshot = {
-      position_1: new Vector3(0, 0, 0),
-      position_2: new Vector3(0, 0, 0),
-      quaternion_1: new Quaternion(0, 0, 0, 1),
-      quaternion_2: new Quaternion(0, 0, 0, 1)
+      position_1: new Vector3(),
+      position_2: new Vector3(),
+      quaternion_1: new Quaternion(),
+      quaternion_2: new Quaternion()
     };
 
     // Define initial rigidBodyDesc and colliderDesc
@@ -38,11 +38,7 @@ class Entity extends EventDispatcher {
 
     // Add event listeners
     this.addEventListener('collision', this.onCollision);
-    this.addEventListener('removed', function(e) {
-      // Remove all event listeners when removed by Physics.js
-      e.target.removeEventListener('collision', e.target.onCollision);
-      e.target.removeEventListener('removed', e.target.onCollision);
-    });
+    this.addEventListener('removed', this.onRemoved);
   }
 
   update(delta) {
@@ -51,6 +47,9 @@ class Entity extends EventDispatcher {
   }
 
   render(delta, alpha) {
+    // Skip (s)lerp if body type is null or "Fixed"
+    if (this.rigidBody && this.rigidBody.isFixed()) return false;
+
     // Interpolate 3D object position
     this.lerp(alpha);
   }
@@ -171,6 +170,7 @@ class Entity extends EventDispatcher {
       }
     }
     else {
+      // Set position/rotation from rigidBodyDesc
       this.snapshot.position_1.copy(this.rigidBodyDesc.translation);
       this.snapshot.position_2.copy(this.rigidBodyDesc.translation);
       this.snapshot.quaternion_1.copy(this.rigidBodyDesc.rotation);
@@ -179,9 +179,6 @@ class Entity extends EventDispatcher {
   }
 
   lerp(alpha = 0) {
-    // Skip (s)lerp if body type is null or "Fixed"
-    if (this.rigidBody && this.rigidBody.isFixed()) return false;
-
     // Linear interpolation using alpha value
     this.object.position.lerpVectors(this.snapshot.position_1, this.snapshot.position_2, alpha);
     this.object.quaternion.slerpQuaternions(this.snapshot.quaternion_1, this.snapshot.quaternion_2, alpha);
@@ -194,6 +191,12 @@ class Entity extends EventDispatcher {
     // Determine which event to call by the "started" boolean
     if (e.started == true) collider.collisionEventStart(e);
     else collider.collisionEventEnd(e);
+  }
+
+  onRemoved(e) {
+    // Remove all event listeners when removed by Physics.js
+    e.target.removeEventListener('collision', e.target.onCollision);
+    e.target.removeEventListener('removed', e.target.onRemoved);
   }
 
   toJSON() {
