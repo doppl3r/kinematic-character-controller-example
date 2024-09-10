@@ -24,23 +24,23 @@ class Physics {
   }
 
   update(delta) {
-    // 1: Update all children
-    this.entities.forEach(function(child) {
-      if (child.rigidBody) child.update(delta);
+    // 1: Update all entities
+    this.entities.forEach(function(entity) {
+      entity.update(delta);
     });
 
-    // 2: Check collision events before next simulation
+    // 2: Dispatch collision events from previous world step to each entity pair
     this.events.drainCollisionEvents(function(handle1, handle2, started) {
       // Dispatch an event for each pair
-      var entity1 = this.getEntityFromColliderHandle(handle1);
-      var entity2 = this.getEntityFromColliderHandle(handle2);
+      var entity1 = this.getColliderEntity(handle1);
+      var entity2 = this.getColliderEntity(handle2);
       var event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
       var event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
       entity2.dispatchEvent(event2);
     }.bind(this));
 
-    // 3: Update debugger buffer before next simulation
+    // 3: Update debugger from previous simulation
     this.debugger.update();
 
     // 4: Advance the simulation by one time step
@@ -93,7 +93,7 @@ class Physics {
     return this.entities.get(handle);
   }
 
-  getEntityFromColliderHandle(handle) {
+  getColliderEntity(handle) {
     var collider = this.world.getCollider(handle);
     var rigidBody = collider._parent;
     return this.get(rigidBody.handle);

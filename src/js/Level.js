@@ -71,7 +71,6 @@ class Level extends Group {
       scale: { x: 1, y: 1, z: 1 }
     });
     this.player.model.play('Idle', 0); // Start idle animation
-    this.player.addEventListeners();
     
     // Add entities to scene
     entities.push(mapEntity, cubeEntity, sphereEntity, this.player);

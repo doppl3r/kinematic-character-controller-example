@@ -46,6 +46,14 @@ class Player extends Character {
     // Add optional model to 3D object
     this.model;
     this.addModel(options.model);
+
+    // Bind "this" context to class function (required for event removal)
+    this.onPlayerAdded = this.onPlayerAdded.bind(this);
+    this.onPlayerRemoved = this.onPlayerRemoved.bind(this);
+    
+    // Add event listeners
+    this.addEventListener('added', this.onPlayerAdded);
+    this.addEventListener('removed', this.onPlayerRemoved);
   }
 
   update(delta) {
@@ -146,16 +154,24 @@ class Player extends Character {
     return this.jumping;
   }
 
-  addEventListeners(domElement = window.document) {
+  onPlayerAdded(e) {
+    // Bind target "this" context to class function (required for event removal)
+    e.target.keyDown = e.target.keyDown.bind(e.target);
+    e.target.keyUp = e.target.keyUp.bind(e.target);
+
     // Add event listeners
-    domElement.addEventListener('keydown', function(e) { this.keyDown(e); }.bind(this), false);
-    domElement.addEventListener('keyup', function(e) { this.keyUp(e); }.bind(this), false);
+    document.addEventListener('keydown', e.target.keyDown);
+    document.addEventListener('keyup', e.target.keyUp);
   }
 
-  removeEventListeners(domElement = window.document) {
+  onPlayerRemoved(e) {
+    // Remove entity event listeners
+    e.target.removeEventListener('added', e.target.onPlayerAdded);
+    e.target.removeEventListener('removed', e.target.onPlayerRemoved);
+
     // Add event listeners
-    domElement.removeEventListener('keydown', function(e) { this.keyDown(e); }.bind(this), false);
-    domElement.removeEventListener('keyup', function(e) { this.keyUp(e); }.bind(this), false);
+    document.removeEventListener('keydown', e.target.keyDown);
+    document.removeEventListener('keyup', e.target.keyUp);
   }
 
   keyDown(e) {

@@ -36,7 +36,11 @@ class Entity extends EventDispatcher {
     this.takeSnapshot();
     this.lerp(1);
 
-    // Add event listeners
+    // Bind "this" context to class function (required for event removal)
+    this.onCollision = this.onCollision.bind(this);
+    this.onRemoved = this.onRemoved.bind(this);
+
+    // Add entity event listeners
     this.addEventListener('collision', this.onCollision);
     this.addEventListener('removed', this.onRemoved);
   }
