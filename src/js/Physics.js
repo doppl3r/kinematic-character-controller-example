@@ -23,38 +23,32 @@ class Physics {
     this.debugger = new Debugger(this.world);
   }
 
-  update(delta, alpha) {
-    // Safely drain all entities before next engine step
-    if (this.isDraining == true) {
-      this.isDraining = false;
-      this.clear();
-    }
-
-    // Loop through all entities
+  update(delta) {
+    // 1: Update all children
     this.entities.forEach(function(child) {
       if (child.rigidBody) child.update(delta);
     });
 
-    // Update debugger buffer
-    this.debugger.update();
-
-    // Simulate world
-    this.world.step(this.events);
-
-    // Check collision events
+    // 2: Check collision events before next simulation
     this.events.drainCollisionEvents(function(handle1, handle2, started) {
-      // Dispatch event to entities
+      // Dispatch an event for each pair
       var entity1 = this.getEntityFromColliderHandle(handle1);
       var entity2 = this.getEntityFromColliderHandle(handle2);
-      var event1 = { type: 'collision', pair: entity2, handle: handle1, started: started };
-      var event2 = { type: 'collision', pair: entity1, handle: handle2, started: started };
+      var event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
+      var event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
       entity2.dispatchEvent(event2);
     }.bind(this));
+
+    // 3: Update debugger buffer before next simulation
+    this.debugger.update();
+
+    // 4: Advance the simulation by one time step
+    this.world.step(this.events);
   }
 
   render(delta, alpha) {
-    // Update each 3D object
+    // Update all 3D object rendering properties
     this.entities.forEach(function(child) {
       child.render(delta, alpha);
     });
@@ -103,10 +97,6 @@ class Physics {
     var collider = this.world.getCollider(handle);
     var rigidBody = collider._parent;
     return this.get(rigidBody.handle);
-  }
-
-  drain() {
-    this.isDraining = true;
   }
 
   clear() {

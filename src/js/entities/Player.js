@@ -49,6 +49,9 @@ class Player extends Character {
   }
 
   update(delta) {
+    // Call Entity update function
+    super.update(delta);
+
     // Update the player velocity from input keys
     this.updateVelocityFromInput(delta);
 
@@ -57,9 +60,6 @@ class Player extends Character {
 
     // Update 3D object rotation using next direction
     this.updateObjectRotation();
-
-    // Call Entity update function
-    super.update(delta);
   }
 
   render(delta, alpha) {

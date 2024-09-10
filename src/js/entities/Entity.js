@@ -32,7 +32,7 @@ class Entity extends EventDispatcher {
     this.setRigidBodyDesc(options);
     this.addColliderDesc(options);
 
-    // Update object properties
+    // Update 3D object position/rotation
     this.takeSnapshot();
     this.lerp(1);
 
