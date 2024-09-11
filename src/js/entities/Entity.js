@@ -98,7 +98,7 @@ class Entity extends EventDispatcher {
       density: 1,
       friction: 0.5,
       isSensor: false,
-      mass: 1,
+      mass: null,
       restitution: 0,
       shape: null,
       solverGroups: 0xFFFFFFFF,
@@ -113,10 +113,12 @@ class Entity extends EventDispatcher {
     colliderDesc.setDensity(options.density);
     colliderDesc.setFriction(options.friction);
     colliderDesc.setSensor(options.isSensor);
-    colliderDesc.setMass(options.mass);
     colliderDesc.setRestitution(options.restitution);
     colliderDesc.setSolverGroups(options.solverGroups);
     colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
+    
+    // Conditionally set values to allow default effects
+    if (options.mass) colliderDesc.setMass(options.mass);
 
     // Store callback events to colliderDesc
     colliderDesc.collisionEventStart = options.collisionEventStart;

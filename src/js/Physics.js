@@ -49,8 +49,8 @@ class Physics {
 
   render(delta, alpha) {
     // Update all 3D object rendering properties
-    this.entities.forEach(function(child) {
-      child.render(delta, alpha);
+    this.entities.forEach(function(entity) {
+      entity.render(delta, alpha);
     });
   }
 
