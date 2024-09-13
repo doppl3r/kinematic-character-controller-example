@@ -2,6 +2,7 @@ import { Vector3 } from 'three';
 import { CameraFactory } from '../factories/CameraFactory.js';
 import { Capsule } from '@dimforge/rapier3d';
 import { Character } from './Character.js';
+import { Cuboid } from '@dimforge/rapier3d';
 
 /*
   A Player is a subclass that extends the Character class which includes
@@ -54,6 +55,17 @@ class Player extends Character {
     // Add event listeners
     this.addEventListener('added', this.onPlayerAdded);
     this.addEventListener('removed', this.onPlayerRemoved);
+
+    // Add a sensor collider to the same rigidBody
+    this.addColliderDesc({
+      activeCollisionTypes: 'ALL',
+      activeEvents: 'COLLISION_EVENTS',
+      collisionEventStart: function(e) { console.log(e); },
+      isSensor: true,
+      mass: 0,
+      shape: new Cuboid(options.scale.x * 0.125, options.scale.y * 0.125, options.scale.z * 0.125),
+      translation: { x: 0, y: 0, z: 0.25 * options.scale.y }
+    });
   }
 
   update(delta) {
