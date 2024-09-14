@@ -205,6 +205,23 @@ class Entity extends EventDispatcher {
     e.target.removeEventListener('removed', e.target.onRemoved);
   }
 
+  applyImpulseFromNormal(_force, _normal) {
+    const force = new Vector3().copy(_force);
+    const normal = new Vector3().copy(_normal).normalize();
+    const velocity = new Vector3().copy(this.rigidBody.linvel());
+    const angle = Math.atan2(normal.y, normal.x) + (Math.PI / 2);
+
+    // Set velocity y-value to zero
+    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);
+    velocity.y = 0;
+    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, -angle);
+    this.rigidBody.setLinvel(velocity);
+    
+    // Rotate force by normal angle
+    force.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);
+    this.rigidBody.applyImpulse(force, true);
+  }
+
   toJSON() {
     var json = {
       class: this.constructor.name,

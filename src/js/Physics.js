@@ -37,7 +37,6 @@ class Physics {
 
     // 4: Dispatch collision events to each entity pair
     this.events.drainCollisionEvents(function(handle1, handle2, started) {
-      // Dispatch an event for each pair
       var entity1 = this.getColliderEntity(handle1);
       var entity2 = this.getColliderEntity(handle2);
       var event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
