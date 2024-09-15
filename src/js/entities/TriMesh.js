@@ -24,13 +24,12 @@ class TriMesh extends Entity {
       options.model.traverse(function(child) {
         if (child.isMesh) {
           // Translate geometry from mesh origin
-          var mesh = child.clone();
-          geometry = mesh.geometry.clone();
-          geometry.rotateX(mesh.rotation.x);
-          geometry.rotateY(mesh.rotation.y);
-          geometry.rotateZ(mesh.rotation.z);
-          geometry.scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
-          geometry.translate(mesh.position.x, mesh.position.y, mesh.position.z);
+          geometry = child.geometry;
+          geometry.rotateX(child.rotation.x);
+          geometry.rotateY(child.rotation.y);
+          geometry.rotateZ(child.rotation.z);
+          geometry.scale(child.scale.x, child.scale.y, child.scale.z);
+          geometry.translate(child.position.x, child.position.y, child.position.z);
   
           // Push geometry to array for merge
           geometries.push(geometry);
