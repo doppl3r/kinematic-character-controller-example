@@ -20,7 +20,13 @@ class AssetTextureLoader extends TextureLoader {
         if (value.center) texture.center.copy(value.center);
         if (value.repeat) texture.repeat.copy(value.repeat);
         this.manager.cache[key] = texture;
-      }.bind(this));
+      }.bind(this),
+      function(progress) {
+        
+      },
+      function(err) {
+        console.error('Error: Texture name "' + key + '" not found. Did you add it to the \'public/json/textures.json\' file?');
+      });
     }
   }
 

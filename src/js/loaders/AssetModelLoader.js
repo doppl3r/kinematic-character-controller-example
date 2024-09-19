@@ -22,7 +22,13 @@ class AssetModelLoader extends GLTFLoader {
         model.duplicate = this.duplicate.bind(this, model);
         this.manager.cache[key] = model;
         this.addMixer(model);
-      }.bind(this));
+      }.bind(this),
+      function(xhr) {
+        
+      },
+      function(error) {
+        console.error('Error: Model name "' + key + '" not found. Did you add it to the \'public/json/models.json\' file?');
+      });
     }
   }
 
@@ -86,15 +92,6 @@ class AssetModelLoader extends GLTFLoader {
         }
       }
     }
-  }
-
-  updateShadows(model, castShadow = false, receiveShadow = false) {
-    model.traverse(function (child) {
-      if (child.isMesh) {
-        child.castShadow = castShadow;
-        child.receiveShadow = receiveShadow;
-      }
-    });
   }
 }
 
