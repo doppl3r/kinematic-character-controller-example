@@ -2,6 +2,8 @@
   import '../scss/Stylesheet.scss';
   import { ref, onMounted } from 'vue';
   import { Game } from '../js/Game.js';
+  import Button from './Button.vue';
+  import Loading from './Loading.vue';
 
   // Initialize app and expose to window scope
   var canvas = ref();
@@ -15,4 +17,8 @@
 
 <template>
   <canvas ref="canvas"></canvas>
+  <div class="ui">
+    <Loading />
+    <Button :href="'https://dopplercreative.com'">by doppler</Button>
+  </div>
 </template>
