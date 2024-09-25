@@ -19,6 +19,6 @@
   <canvas ref="canvas"></canvas>
   <div class="ui">
     <Loading />
-    <Button :href="'https://dopplercreative.com'">by doppler</Button>
+    <Button :href="'https://github.com/doppl3r/kinematic-character-controller-example'" class="top-right">by doppl3r</Button>
   </div>
 </template>

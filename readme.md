@@ -16,6 +16,18 @@ This example shows how to create a Kinematic Character Controller (aka "KCC") us
  - Run development libraries `npm run dev`
  - Use the link it provides
 
+## Vite
+
+This example uses [Vite](https://vitejs.dev) for hosting a local environment and includes commands to package/compile for web (similar to Webpack).
+
+## Vue.js
+
+Vue.js is used for the game UI, and leverages the latest "Composition API" introduced in version 3. Vue.js is "An approachable, performant and versatile framework for building web user interfaces".
+
+### Example Component
+
+ - [Button.vue](src/vue/Button.vue) - A simple Vue.js component you can modify.
+
 ## Build for release
 
 - Run build with `npm run build` to create a fresh `/dist` folder
