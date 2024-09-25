@@ -1,5 +1,5 @@
 # Kinematic Character Controller Example
-This example shows how to create a Kinematic Character Controller (aka "KCC") using Rapier.js and Three.js.
+This example shows how to create a **Kinematic Character Controller** (aka "KCC") using Rapier.js and Three.js.
 
 ## Quick links
  - [Player.js](src/js/entities/Player.js) - Extends the `Character.js` class and adds keyboard input.
@@ -18,13 +18,13 @@ This example shows how to create a Kinematic Character Controller (aka "KCC") us
 
 ## Vite
 
-This example uses [Vite](https://vitejs.dev) for hosting a local environment and includes commands to package/compile for web (similar to Webpack).
+This example uses [Vite](https://vitejs.dev) for **hosting** a local environment and includes commands to **package** for web (similar to Webpack).
 
 ## Vue.js
 
-Vue.js is used for the game UI, and leverages the latest "Composition API" introduced in version 3. Vue.js is "An approachable, performant and versatile framework for building web user interfaces".
+[Vue.js](https://vuejs.org/) is used for the game UI, and leverages the latest **Composition API** introduced in version 3. This JavaScript framework is *"An approachable, performant and versatile framework for building web user interfaces"*.
 
-### Example Component
+**Example Component**
 
  - [Button.vue](src/vue/Button.vue) - A simple Vue.js component you can modify.
 
