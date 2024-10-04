@@ -14,7 +14,7 @@ class Character extends Entity {
     options = Object.assign({
       color: '#ffffff',
       shape: new Cuboid(0.5, 0.5, 0.5),
-      type: 'KinematicPositionBased'
+      status: 'KinematicPositionBased'
     }, options);
 
     // Inherit Entity class

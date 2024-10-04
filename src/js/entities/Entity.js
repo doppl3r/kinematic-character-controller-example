@@ -70,11 +70,11 @@ class Entity extends EventDispatcher {
       position: { x: 0, y: 0, z: 0 },
       quaternion: { x: 0, y: 0, z: 0, w: 1 },
       softCcdPrediction: 0,
-      type: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      status: 'Dynamic', // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
     }, options);
 
     // Initialize rigid body description
-    this.rigidBodyDesc = new RigidBodyDesc(RigidBodyType[options.type]);
+    this.rigidBodyDesc = new RigidBodyDesc(RigidBodyType[options.status]);
     this.rigidBodyDesc.enabledRotations(options.enabledRotations.x, options.enabledRotations.y, options.enabledRotations.z);
     this.rigidBodyDesc.enabledTranslations(options.enabledTranslations.x, options.enabledTranslations.y, options.enabledTranslations.z);
     this.rigidBodyDesc.setAngularDamping(options.angularDamping);
@@ -241,7 +241,7 @@ class Entity extends EventDispatcher {
     // Add body info
     if (this.rigidBody) {
       json.rigidBody = {
-        type: this.rigidBody.bodyType()
+        status: this.rigidBody.bodyType()
       }
     }
 

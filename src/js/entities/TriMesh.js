@@ -13,7 +13,7 @@ class TriMesh extends Entity {
     // Set options with default values
     options = Object.assign({
       indices: new Uint16Array(),
-      type: 'Fixed',
+      status: 'Fixed',
       vertices: new Float32Array()
     }, options);
 

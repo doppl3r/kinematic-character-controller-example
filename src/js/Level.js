@@ -45,7 +45,7 @@ class Level extends Group {
       isSensor: true,
       position: { x: -0.5, y: 0, z: -3.5 },
       scale: { x: 1, y: 0.25, z: 1 },
-      type: 'Fixed'
+      status: 'Fixed'
     });
 
     // Create sphere entity
