@@ -21,8 +21,12 @@ class Game {
     this.level = new Level();
 
     // Load public assets with callbacks (onLoad, onProgress, onError)
-    this.assets = new AssetLoader(this.onLoad.bind(this), this.onProgress.bind(this));
-    this.assets.load('./json/');
+    this.assets = new AssetLoader(this.onLoad.bind(this));
+    this.assets.load({
+      models: '../json/models.json',
+      textures: '../json/textures.json',
+      audio: '../json/audio.json',
+    });
   }
 
   update(data) {

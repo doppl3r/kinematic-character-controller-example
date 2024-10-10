@@ -7,7 +7,7 @@ class AssetAudioLoader extends AudioLoader {
   }
 
   async load(directory) {
-    var response = await fetch(directory + 'audio.json');
+    var response = await fetch(directory);
     var json = await response.json();
 
     // Loop through json keys and values

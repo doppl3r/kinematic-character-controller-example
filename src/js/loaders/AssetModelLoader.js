@@ -8,7 +8,7 @@ class AssetModelLoader extends GLTFLoader {
   }
 
   async load(directory) {
-    var response = await fetch(directory + 'models.json');
+    var response = await fetch(directory);
     var json = await response.json();
 
     // Loop through json keys and values

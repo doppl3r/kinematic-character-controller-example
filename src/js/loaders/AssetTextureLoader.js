@@ -6,7 +6,7 @@ class AssetTextureLoader extends TextureLoader {
   }
 
   async load(directory = '') {
-    var response = await fetch(directory + 'textures.json');
+    var response = await fetch(directory);
     var json = await response.json();
 
     // Loop through json keys and values
