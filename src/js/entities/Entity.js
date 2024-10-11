@@ -1,5 +1,5 @@
 import { EventDispatcher, Object3D, Quaternion, Vector3 } from 'three';
-import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
+import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, JointData, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { Easing, Group, Tween } from '@tweenjs/tween.js'
 
 /*
@@ -32,6 +32,7 @@ class Entity extends EventDispatcher {
     this.forceDirection = new Vector3();
     this.forceAcceleration = 1;
     this.forceSpeedMax = Infinity;
+    this.isEntity = true;
     this.parent;
 
     // Define initial rigidBodyDesc and colliderDesc
@@ -131,8 +132,8 @@ class Entity extends EventDispatcher {
     colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
     
     // Conditionally set values to allow default effects
-    if (options.mass) colliderDesc.setMass(options.mass);
-
+    if (options.mass != null) colliderDesc.setMass(options.mass);
+    
     // Store callback events to colliderDesc
     colliderDesc.collisionEventStart = options.collisionEventStart;
     colliderDesc.collisionEventEnd = options.collisionEventEnd;
@@ -159,6 +160,23 @@ class Entity extends EventDispatcher {
         collider.collisionEventStart = colliderDesc.collisionEventStart;
         collider.collisionEventEnd = colliderDesc.collisionEventEnd;
       }.bind(this));
+    }
+  }
+
+  createJointFromParent(world) {
+    if (this.parent) {
+      var anchor1 = new Vector3();
+      var anchor2 = new Vector3().copy(this.parent.rigidBodyDesc.translation).sub(this.rigidBodyDesc.translation);
+      var frame1 = new Quaternion().copy(this.parent.rigidBodyDesc.rotation);
+      var frame2 = new Quaternion().copy(this.rigidBodyDesc.rotation);
+
+      // Rotate position by the frame conjugate
+      anchor1.applyQuaternion(frame1.conjugate());
+      anchor2.applyQuaternion(frame2.conjugate());
+
+      // Create fixed joint from parameters
+      var params = JointData.fixed(anchor1, frame1, anchor2, frame2);
+      this.joint = world.createImpulseJoint(params, this.parent.rigidBody, this.rigidBody, true);
     }
   }
 

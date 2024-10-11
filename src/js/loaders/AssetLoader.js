@@ -1,7 +1,7 @@
 import { LoadingManager } from 'three';
-import { AssetAudioLoader } from './AssetAudioLoader.js';
-import { AssetTextureLoader } from './AssetTextureLoader.js';
 import { AssetModelLoader } from './AssetModelLoader.js';
+import { AssetTextureLoader } from './AssetTextureLoader.js';
+import { AssetAudioLoader } from './AssetAudioLoader.js';
 
 /*
   The AssetLoader is a singleton class that manages loaders
@@ -20,18 +20,11 @@ class AssetLoader extends LoadingManager {
     this.assetAudioLoader = new AssetAudioLoader(this);
   }
 
-  load(paths) {
-    // Initialize default paths
-    paths = Object.assign({
-      models: '../json/models.json',
-      textures: '../json/textures.json',
-      audio: '../json/audio.json',
-    }, paths);
-
+  load(urls = {}) {
     // Load loaders from public directory (ex: /json/)
-    if (paths.models) this.assetModelLoader.load(paths.models);
-    if (paths.textures) this.assetTextureLoader.load(paths.textures);
-    if (paths.audio) this.assetAudioLoader.load(paths.audio);
+    if (urls.models) this.assetModelLoader.load(urls.models);
+    if (urls.textures) this.assetTextureLoader.load(urls.textures);
+    if (urls.audio) this.assetAudioLoader.load(urls.audio);
   }
 
   get(key) {
@@ -47,11 +40,8 @@ class AssetLoader extends LoadingManager {
   }
 }
 
-// Declare default function for super class
+// Set default progress event behavior
 var onLoaderProgress = function(url, itemsLoaded, itemsTotal) {
-  // Execute optional callback assigned from constructor
-  if (typeof this == 'function') this(url, itemsLoaded, itemsTotal);
-
   // Calculate percent
   var percent = Math.ceil((itemsLoaded / itemsTotal) * 100);
 
@@ -66,6 +56,9 @@ var onLoaderProgress = function(url, itemsLoaded, itemsTotal) {
       }
     })
   );
+
+  // Execute optional callback assigned from constructor
+  if (typeof this == 'function') this(url, itemsLoaded, itemsTotal);
 }
 
 export { AssetLoader };

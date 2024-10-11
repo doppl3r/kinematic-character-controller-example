@@ -17,6 +17,7 @@ class Loop {
     this.elapsedTime = 0;
     this.speed = 1;
     this.running = false;
+    this.index = 0;
   }
 
   add(callback = () => {}, frequency = -1) {
@@ -32,7 +33,7 @@ class Loop {
   update(animationFrameCallback) {
     if (this.running == true) {
       // Request visual update function before next repaint
-      requestAnimationFrame(animationFrameCallback);
+      this.index = requestAnimationFrame(animationFrameCallback);
 
       // Check if functions exist
       if (this.actions.length > 0) {
@@ -48,7 +49,8 @@ class Loop {
             this.actions[index].sum %= this.actions[index].rate;
             this.actions[index].callback({
               delta: (this.actions[index].rate == -1) ? delta : this.actions[index].rate,
-              alpha: (index == 0) ? 0 : alpha // Return zero for base action or alpha for sibling actions
+              alpha: (index == 0) ? 0 : alpha, // Return zero for base action or alpha for sibling actions
+              index: this.index
             });
           }
         }

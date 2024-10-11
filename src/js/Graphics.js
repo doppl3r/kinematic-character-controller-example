@@ -16,7 +16,6 @@ class Graphics {
 
     // Add stats
     this.stats = new Stats();
-    document.body.appendChild(this.stats.dom);
 
     // Initialize renderer components
     window.devicePixelRatio = 1; // Force pixelation
@@ -117,6 +116,14 @@ class Graphics {
   setSelectedObjects(objects = []) {
     // Set outline selected objects
     this.outlinePass.selectedObjects = objects;
+  }
+
+  addStats() {
+    document.body.appendChild(this.stats.dom);
+  }
+
+  removeStats() {
+    document.body.removeChild(this.stats.dom);
   }
 }
 
