@@ -36,7 +36,7 @@ class Game {
   }
 
   render(data) {
-    this.physics.render(data.delta, data.alpha);
+    this.physics.animate(data.delta, data.alpha);
 
     // Render graphics
     this.graphics.render();
@@ -44,7 +44,6 @@ class Game {
 
   onLoad() {
     // Initialize entity manager
-    this.physics.init();
     this.physics.setFrequency(30);
     this.graphics.scene.add(this.physics.debugger);
     this.graphics.scene.add(this.level)
@@ -67,12 +66,6 @@ class Game {
     this.loop.add(this.update.bind(this), 30); // Physics
     this.loop.add(this.render.bind(this), -1); // Render
     this.loop.start();
-  }
-
-  onProgress(url, itemsLoaded, itemsTotal) {
-    // Emit loader progress to global window object
-    var percent = Math.ceil((itemsLoaded / itemsTotal) * 100);
-    dispatchEvent(new CustomEvent('updateLoading', { detail: { url: url, itemsLoaded: itemsLoaded, itemsTotal: itemsTotal, percent: percent }}));
   }
 }
 

@@ -38,21 +38,19 @@ class Entity extends EventDispatcher {
     // Define initial rigidBodyDesc and colliderDesc
     this.setRigidBodyDesc(options);
     this.addColliderDesc(options);
-
-    // Update 3D object position/rotation
-    this.takeSnapshot();
-    this.lerp(1);
     
     // Add entity event listeners
     this.onCollision = this.onCollision.bind(this);
+    this.onAdded = this.onAdded.bind(this);
     this.onRemoved = this.onRemoved.bind(this);
     this.addEventListener('collision', this.onCollision);
+    this.addEventListener('added', this.onAdded);
     this.addEventListener('removed', this.onRemoved);
   }
 
   update(delta) {
     // Take a snapshot every time the entity is updated
-    this.takeSnapshot();
+    this.updateSnapshot();
 
     // Check local force
     this.updateForce();
@@ -61,15 +59,15 @@ class Entity extends EventDispatcher {
     this.dispatchEvent({ type: 'updated' });
   }
 
-  render(delta, alpha) {
+  animate(delta, alpha) {
     // Skip (s)lerp if body type is null or "Fixed"
     if (this.rigidBody && this.rigidBody.isFixed()) return false;
 
-    // Interpolate 3D object position
-    this.lerp(alpha);
-
     // Update optional tweens
     this.tweens.update();
+
+    // Interpolate 3D object position
+    this.lerp(alpha);
   }
 
   setRigidBodyDesc(options) {
@@ -220,7 +218,7 @@ class Entity extends EventDispatcher {
     return tween;
   }
 
-  takeSnapshot() {
+  updateSnapshot() {
     // A snapshot requires a physical rigid body
     if (this.rigidBody) {
       // Store previous snapshot position for lerp
@@ -262,9 +260,16 @@ class Entity extends EventDispatcher {
     else collider.collisionEventEnd(e);
   }
 
+  onAdded(e) {
+    // Update 3D object properties
+    e.target.updateSnapshot();
+    e.target.lerp(1);
+  }
+
   onRemoved(e) {
     // Remove all event listeners when removed by Physics.js
     e.target.removeEventListener('collision', e.target.onCollision);
+    e.target.removeEventListener('added', e.target.onAdded);
     e.target.removeEventListener('removed', e.target.onRemoved);
   }
 

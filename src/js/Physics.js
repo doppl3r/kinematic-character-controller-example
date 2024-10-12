@@ -8,19 +8,12 @@ import { EntityFactory } from './factories/EntityFactory.js';
 
 class Physics {
   constructor() {
-    
-  }
-
-  init() {
     // Initialize Rapier world
     this.world = new World({ x: 0.0, y: -9.81 * 8, z: 0.0 });
+    this.world.numSolverIterations = 4; // Default = 4
     this.events = new EventQueue(true);
-
-    // Initialize entity manager
-    this.entities = new Map();
-
-    // Add game debugger
     this.debugger = new Debugger(this.world);
+    this.entities = new Map();
   }
 
   update(delta) {
@@ -46,10 +39,10 @@ class Physics {
     }.bind(this));
   }
 
-  render(delta, alpha) {
+  animate(delta, alpha) {
     // Update all 3D object rendering properties
     this.entities.forEach(function(entity) {
-      entity.render(delta, alpha);
+      entity.animate(delta, alpha);
     });
   }
 
@@ -72,8 +65,8 @@ class Physics {
     // Create body and collider for entity
     entity.createBody(this.world);
     entity.createColliders(this.world);
-    entity.takeSnapshot(); // Take snapshot from rigid body for 3D object
-    entity.dispatchEvent({ type: 'added' })
+    entity.createJointFromParent(this.world);
+    entity.dispatchEvent({ type: 'added' });
 
     // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
     this.entities.set(entity.rigidBody.handle, entity);

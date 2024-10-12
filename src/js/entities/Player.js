@@ -82,9 +82,9 @@ class Player extends Character {
     this.updateObjectRotation();
   }
 
-  render(delta, alpha) {
-    // Call Entity render function
-    super.render(delta, alpha);
+  animate(delta, alpha) {
+    // Call Entity animate function
+    super.animate(delta, alpha);
 
     // Update camera position
     this.camera.position.copy(this.object.position).add(this.cameraOffset);
