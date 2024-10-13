@@ -35,9 +35,8 @@ class Character extends Entity {
     // Invoke Entity superclass constructor
     super.createColliders(world);
 
-    // Assign single collider for controller
-    var handle = this.colliders.entries().next().value[0];
-    this.collider = this.colliders.get(handle);
+    // Assign first collider for controller
+    this.collider = this.rigidBody.collider(0);
 
     // Pass world through controller initialization
     this.createController(world);

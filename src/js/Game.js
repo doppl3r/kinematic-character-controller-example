@@ -42,14 +42,14 @@ class Game {
     this.graphics.render();
   }
 
-  onLoad() {
+  async onLoad() {
     // Initialize entity manager
     this.physics.setFrequency(30);
     this.graphics.scene.add(this.physics.debugger);
     this.graphics.scene.add(this.level)
 
     // Load level and add to physics
-    var entities = this.level.load();
+    var entities = await this.level.load();
     entities.forEach(function(entity) {
       this.physics.add(entity);
 

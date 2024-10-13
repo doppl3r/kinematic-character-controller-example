@@ -30,10 +30,10 @@ class Physics {
 
     // 4: Dispatch collision events to each entity pair
     this.events.drainCollisionEvents(function(handle1, handle2, started) {
-      var entity1 = this.getColliderEntity(handle1);
-      var entity2 = this.getColliderEntity(handle2);
-      var event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
-      var event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
+      const entity1 = this.getEntityFromColliderHandle(handle1);
+      const entity2 = this.getEntityFromColliderHandle(handle2);
+      const event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
+      const event2 = { handle: handle2, pair: entity1, started: started, type: 'collision' };
       entity1.dispatchEvent(event1);
       entity2.dispatchEvent(event2);
     }.bind(this));
@@ -55,21 +55,28 @@ class Physics {
   }
 
   add(entity) {
-    // Recursively add multiple entities if provided
-    if (arguments.length > 1) {
-      for (var i = 0; i < arguments.length; i++) {
-        this.add(arguments[i]);
+    if (entity != null) {
+      // Recursively add multiple entities if provided
+      if (arguments.length > 1) {
+        for (var i = 0; i < arguments.length; i++) {
+          this.add(arguments[i]);
+        }
       }
+  
+      // Create body and collider for entity
+      entity.createRigidBody(this.world);
+      entity.createColliders(this.world);
+      entity.createJointFromParent(this.world);
+      entity.dispatchEvent({ type: 'added' });
+  
+      // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
+      this.entities.set(entity.rigidBody.handle, entity);
     }
+  }
 
-    // Create body and collider for entity
-    entity.createBody(this.world);
-    entity.createColliders(this.world);
-    entity.createJointFromParent(this.world);
-    entity.dispatchEvent({ type: 'added' });
-
-    // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
-    this.entities.set(entity.rigidBody.handle, entity);
+  duplicate(entity) {
+    var options = entity.toJSON();
+    return this.create(options);
   }
 
   remove(entity) {
@@ -85,10 +92,9 @@ class Physics {
     return this.entities.get(handle);
   }
 
-  getColliderEntity(handle) {
-    var collider = this.world.getCollider(handle);
-    var rigidBody = collider._parent;
-    return this.get(rigidBody.handle);
+  getEntityFromColliderHandle(handle) {
+    const collider = this.world.getCollider(handle);
+    return this.get(collider._parent.handle);
   }
 
   clear() {
@@ -98,7 +104,7 @@ class Physics {
   }
 
   toJSON() {
-    var json = [];
+    const json = [];
     this.entities.forEach(function(entity){
       json.push(entity.toJSON());
     });

@@ -8,27 +8,32 @@ class AssetModelLoader extends GLTFLoader {
   }
 
   async load(url) {
-    var response = await fetch(url);
-    var json = await response.json();
+    try {
+      var response = await fetch(url);
+      var json = await response.json();
 
-    // Loop through json keys and values
-    for (const [key, value] of Object.entries(json)) {
-      super.load(value.url, function(gltf) {
-        // Load model from gltf.scene Object3D (includes SkinnedMesh)
-        var model = gltf.scene;
-        model.name = key;
-        model.animations = gltf.animations;
-        model.userData = { ...value.userData };
-        model.duplicate = this.duplicate.bind(this, model);
-        this.manager.cache[key] = model;
-        this.addMixer(model);
-      }.bind(this),
-      function(xhr) {
-        
-      },
-      function(error) {
-        console.error('Error: Model name "' + key + '" not found. Does it exist in \'public/json/models.json\'?');
-      });
+      // Loop through json keys and values
+      for (const [key, value] of Object.entries(json)) {
+        super.load(value.url, function(gltf) {
+          // Load model from gltf.scene Object3D (includes SkinnedMesh)
+          var model = gltf.scene;
+          model.name = key;
+          model.animations = gltf.animations;
+          model.userData = { ...value.userData };
+          model.duplicate = this.duplicate.bind(this, model);
+          this.manager.cache[key] = model;
+          this.addMixer(model);
+        }.bind(this),
+        function(xhr) {
+          
+        },
+        function(error) {
+          console.error(`Error: Model "${ value.url }" not found.`);
+        });
+      }
+    }
+    catch {
+      console.error(`Error: File "${ url }" not found.`);
     }
   }
 
