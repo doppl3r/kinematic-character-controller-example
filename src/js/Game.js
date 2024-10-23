@@ -66,6 +66,7 @@ class Game {
 
       // Use the player camera for rendering graphics
       if (entity.type == 'player') {
+        this.player = entity;
         this.graphics.setCamera(entity.camera);
       }
     }.bind(this));

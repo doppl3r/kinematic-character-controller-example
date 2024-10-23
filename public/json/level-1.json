@@ -6,7 +6,9 @@
       "model": "ramps"
     },
     {
-      "type": "cube",
+      "type": "bounce",
+      "collisionEventStart": "bouncePlayer",
+      "collisionEventEnd": "resetBounce",
       "color": "#0000ff",
       "isSensor": true,
       "position": { "x": -0.5, "y": 0, "z": -3.5 },

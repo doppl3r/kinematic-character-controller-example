@@ -260,10 +260,19 @@ class Entity extends EventDispatcher {
   onCollision(e) {
     // Get the collider from the event handle
     var collider = e.target.getCollider(e.handle);
+    var collisionState = (e.started ? 'Start' : 'End');
+    var collisionEvent = collider['collisionEvent' + collisionState];
+    var collisionName = collisionEvent.name;
 
-    // Determine which event to call by the "started" boolean
-    if (e.started == true) collider.collisionEventStart(e);
-    else collider.collisionEventEnd(e);
+    // Assign callback function by string
+    if (typeof collisionEvent == 'string') {
+      collisionName = collisionEvent;
+      collisionEvent = this[collisionEvent];
+    }
+
+    // Execute collider event
+    try { collisionEvent(e); }
+    catch { console.warn(`Warning: function ${ collisionName } does not exist`); }
   }
 
   onAdded(e) {

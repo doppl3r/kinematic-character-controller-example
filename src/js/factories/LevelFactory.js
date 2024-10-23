@@ -71,7 +71,6 @@ class LevelFactory {
     var options = Object.assign({
       ccd: true,
       friction: json.friction || 0,
-      sleeping: status != 0,
       softCcdPrediction: 0.5
     }, json);
 

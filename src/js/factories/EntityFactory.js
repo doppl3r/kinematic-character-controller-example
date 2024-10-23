@@ -1,3 +1,4 @@
+import { Bounce } from '../entities/Bounce';
 import { Character } from '../entities/Character';
 import { Cube } from '../entities/Cube';
 import { Light } from '../entities/Light';
@@ -29,6 +30,10 @@ class EntityFactory {
     else {
       console.error(`Error: Entity type is undefined.`)
     }
+  }
+
+  static createBounce(options) {
+    return new Bounce(options);
   }
 
   static createCharacter(options) {
