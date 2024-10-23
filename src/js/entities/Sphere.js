@@ -13,7 +13,7 @@ class Sphere extends Entity {
     options = Object.assign({
       color: '#ffffff',
       heightSegments: 32,
-      radius: 1,
+      radius: 0.5,
       widthSegments: 32,
     }, options);
 
@@ -32,9 +32,28 @@ class Sphere extends Entity {
     // Inherit Entity class
     super(options);
 
+    // Set default properties
+    this.isSphere = true;
+    this.type = 'sphere';
+
     // Add optional model to 3D object
     this.model = options.model;
     this.object.add(this.model);
+
+    // Update 3D object scale
+    this.object.scale.set(options.radius * 2, options.radius * 2, options.radius * 2);
+  }
+
+  setRadius(radius) {
+    var collider = this.rigidBody.collider(0); // First collider
+
+    // Update collider and 3D object scale
+    collider.setRadius(radius);
+    this.object.scale.set(radius * 2, radius * 2, radius * 2);
+  }
+
+  setScale(scale) {
+    this.setRadius(scale.x / 2);
   }
 }
 

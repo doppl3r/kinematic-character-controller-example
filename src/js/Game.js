@@ -2,27 +2,22 @@ import { Loop } from './Loop';
 import { Graphics } from './Graphics.js';
 import { AssetLoader } from './loaders/AssetLoader.js';
 import { Physics } from './Physics.js';
-import { Level } from './Level.js';
+import { LevelFactory } from './factories/LevelFactory.js';
 
 class Game {
-  constructor() {
-    
+  constructor(onLoad) {
+    // Initialize core game engine
+    this.loop = new Loop();
+    this.graphics;
+    this.physics = new Physics();
+    this.assets = new AssetLoader(this.onLoad.bind(this, onLoad));
   }
 
   init(canvas) {
-    // Initialize core game engine
-    this.loop = new Loop();
     this.graphics = new Graphics(canvas);
     this.graphics.addStats();
 
-    // Initialize components
-    this.physics = new Physics();
-
-    // Initialize level
-    this.level = new Level();
-
     // Load public assets with callbacks (onLoad, onProgress, onError)
-    this.assets = new AssetLoader(this.onLoad.bind(this));
     this.assets.load({
       models: '../json/models.json',
       textures: '../json/textures.json',
@@ -42,30 +37,38 @@ class Game {
     this.graphics.render();
   }
 
-  async onLoad() {
+  async onLoad(onLoad) {
     // Initialize entity manager
     this.physics.setFrequency(30);
     this.graphics.scene.add(this.physics.debugger);
-    this.graphics.scene.add(this.level)
-
-    // Load level and add to physics
-    var entities = await this.level.load();
-    entities.forEach(function(entity) {
-      this.physics.add(entity);
-
-      // Set camera to player camera
-      if (entity == this.level.player) {
-        this.graphics.setCamera(entity.camera);
-      }
-    }.bind(this));
-
-    // Update camera
-    this.graphics.setCamera(this.level.player.camera);
 
     // Add game loops
     this.loop.add(this.update.bind(this), 30); // Physics
     this.loop.add(this.render.bind(this), -1); // Render
     this.loop.start();
+
+    // Run optional callback
+    if (typeof onLoad == 'function') await onLoad();
+  }
+
+  async loadLevel(path) {
+    this.physics.clear();
+    
+    // Load level from JSON
+    var entities = await LevelFactory.loadFile(path);
+
+    // Loop through entities
+    entities.forEach(function(entity) {
+      this.physics.add(entity);
+      this.graphics.scene.add(entity.object);
+
+      // TODO: Assign custom functions from deprecated Level.js
+
+      // Use the player camera for rendering graphics
+      if (entity.type == 'player') {
+        this.graphics.setCamera(entity.camera);
+      }
+    }.bind(this));
   }
 }
 

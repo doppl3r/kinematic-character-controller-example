@@ -48,6 +48,10 @@ class TriMesh extends Entity {
     // Inherit Entity class
     super(options);
 
+    // Set default properties
+    this.isTriMesh = true;
+    this.type = 'trimesh';
+
     // Add optional model to 3D object
     this.model = options.model;
     this.object.add(this.model);

@@ -1,5 +1,6 @@
 import { Character } from '../entities/Character';
 import { Cube } from '../entities/Cube';
+import { Light } from '../entities/Light';
 import { Player } from '../entities/Player';
 import { Sphere } from '../entities/Sphere';
 import { TriMesh } from '../entities/TriMesh';
@@ -16,9 +17,18 @@ class EntityFactory {
 
   static create(options) {
     // Call function by class name
-    var fn = this['create' + options.class].bind(this);
-    if (fn == null) return;
-    return fn(options);
+    if (options.type != null) {
+      var type = options.type.charAt(0).toUpperCase() + options.type.slice(1);
+      var fn = this['create' + type];
+      if (fn == null) {
+        console.error(`Error: Entity type "${ type }" not found.`);
+        return;
+      }
+      return fn(options);
+    }
+    else {
+      console.error(`Error: Entity type is undefined.`)
+    }
   }
 
   static createCharacter(options) {
@@ -29,6 +39,10 @@ class EntityFactory {
     return new Cube(options);
   }
 
+  static createLight(options) {
+    return new Light(options);
+  }
+
   static createPlayer(options) {
     return new Player(options);
   }
@@ -37,7 +51,7 @@ class EntityFactory {
     return new Sphere(options);
   }
   
-  static createTriMesh(options) {
+  static createTrimesh(options) {
     return new TriMesh(options);
   }
 }

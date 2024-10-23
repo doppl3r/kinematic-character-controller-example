@@ -7,8 +7,14 @@
 
   // Initialize app and expose to window scope
   var canvas = ref();
-  var game = window.game = new Game();
-
+  var gameRef = ref(new Game(onLoad))
+  var game = window.game = gameRef.value;
+  
+  // Load level when game assets are ready
+  function onLoad() {
+    game.loadLevel('../json/level-1.json');
+  }
+  
   // Initialize app after canvas has been mounted
   onMounted(function() {
     game.init(canvas.value);

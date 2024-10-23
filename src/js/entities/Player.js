@@ -20,7 +20,8 @@ class Player extends Character {
       jumpForce: 5,
       moveForce: 5,
       radius: 0.25,
-      scale: { x: 1, y: 1, z: 1 }
+      scale: { x: 1, y: 1, z: 1 },
+      status: 'KinematicPositionBased'
     }, options);
 
     // Create physical shape
@@ -30,6 +31,7 @@ class Player extends Character {
     super(options);
 
     // Set default properties
+    this.type = 'player';
     this.keys = {};
     this.jumping = true;
     this.angle = 0;
