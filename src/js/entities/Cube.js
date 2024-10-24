@@ -11,35 +11,26 @@ class Cube extends Entity {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      color: '#ffffff',
-      scale: { x: 1, y: 1, z: 1 }
+      enabledRotations: { x: false, y: false, z: true },
+      enabledTranslations: { x: true, y: true, z: false },
+      scale: { x: 1, y: 1, z: 1 },
+      model: { name: '' }
     }, options);
 
     // Create physical shape
     options.shape = new Cuboid(options.scale.x / 2, options.scale.y / 2, options.scale.z / 2);
 
-    // Initialize default cube model mesh
-    if (options.model == null) {
-      var geometry = new BoxGeometry(1, 1, 1);
-      var material = new MeshStandardMaterial({ color: options.color });
-      options.model = new Mesh(geometry, material);
-      options.model.receiveShadow = true;
-      options.model.castShadow = true;
-    }
-
     // Inherit Entity class
     super(options);
-
+    
     // Set default properties
     this.isCube = true;
     this.type = 'cube';
-
-    // Add optional model to 3D object
     this.model = options.model;
-    this.object.add(this.model);
-
-    // Update 3D object scale
-    this.object.scale.copy(options.scale)
+    
+    // Update 3D object
+    if (this.model.isObject3D) this.object.add(this.model);
+    this.object.scale.copy(options.scale);
   }
 
   update(delta) {
@@ -53,6 +44,16 @@ class Cube extends Entity {
     if (this.model && this.model.mixer) {
       this.model.mixer.update(delta);
     }
+  }
+
+  createModel(options) {
+    Object.assign({ color: '#ffffff' }, options);
+
+    var geometry = new BoxGeometry(1, 1, 1);
+    var material = new MeshStandardMaterial({ color: options.color });
+    this.model = new Mesh(geometry, material);
+    this.model.receiveShadow = true;
+    this.model.castShadow = true;
   }
   
   setScale(scale) {
@@ -77,6 +78,13 @@ class Cube extends Entity {
 
     // Update 3D object scale
     super.setScale(scaleNew);
+  }
+
+  toJSON() {
+    // Extend entity toJSON with model name
+    const json = super.toJSON();
+    if (this.model.name) json.model = { name: this.model.name };
+    return json;
   }
 }
 
