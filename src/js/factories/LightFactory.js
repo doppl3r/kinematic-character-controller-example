@@ -10,7 +10,7 @@ class LightFactory {
     
   }
 
-  static create(type, options = {}) {
+  static create(type = 'PointLight', options) {
     var light;
     var helper;
     
@@ -19,28 +19,32 @@ class LightFactory {
       color: '#ffffff',
       decay: 2,
       distance: 0,
-      groundColor: '#ffffff',
+      groundColor: '#000000',
       intensity: Math.PI,
+      position: { x: 0, y: 0, z: 0 },
       shadow: false,
       skyColor: '#ffffff'
-    }, options)
+    }, options);
     
     // Conditionally create camera
-    if (type == 'ambient') {
+    if (type == 'AmbientLight') {
       light = new AmbientLight(options.color, options.intensity);
     }
-    else if (type == 'directional') {
+    else if (type == 'DirectionalLight') {
       light = new DirectionalLight(options.color, options.intensity);
       helper = new DirectionalLightHelper(light);
     }
-    else if (type == 'hemisphere') {
+    else if (type == 'HemisphereLight') {
       light = new HemisphereLight(options.skyColor, options.groundColor, options.intensity);
       helper = new HemisphereLightHelper(light);
     }
-    else if (type == 'point') {
+    else if (type == 'PointLight') {
       light = new PointLight(options.color, options.intensity, options.distance, options.decay);
       helper = new PointLightHelper(light);
     }
+
+    // Update position
+    light.position.copy(options.position);
 
     // Add shadow option
     if (options.shadow) {

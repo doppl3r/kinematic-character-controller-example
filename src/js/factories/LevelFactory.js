@@ -1,5 +1,4 @@
 import { Quaternion, Vector3 } from 'three';
-import { LightFactory } from './LightFactory.js';
 import { EntityFactory } from './EntityFactory.js';
 
 class LevelFactory {
@@ -23,14 +22,6 @@ class LevelFactory {
 
     // Loop through children
     entities = this.createEntities(json);
-
-    // Add ambient light
-    var light = EntityFactory.createLight({
-      model: LightFactory.create('ambient'),
-      position: { x: 0, y: 4, z: 0 },
-      sleeping: true
-    });
-    entities.push(light);
 
     // Return array of entities
     return entities;

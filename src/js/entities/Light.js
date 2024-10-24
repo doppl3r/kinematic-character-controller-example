@@ -6,29 +6,25 @@ import { Cube } from './Cube.js';
 */
 
 class Light extends Cube {
-  constructor(options = {}) {
+  constructor(options) {
     // Set options with default values
     options = Object.assign({
       collisionEventStart: function(e) {},
       collisionEventEnd: function(e) {},
-      intensity: Math.PI,
       isSensor: true,
       status: 1
     }, options);
 
-    // Assign new light to 3D model
-    if (options.model == null) {
-      options.model = LightFactory.create('point');
-    }
-
     // Inherit Character class
     super(options);
 
+    // Assign new light to 3D model
+    this.lightType = options.lightType;
+    this.model = LightFactory.create(options.lightType, options);
+    this.object.add(this.model);
+
     // Set default properties
     this.type = 'light';
-
-    // Update light properties
-    this.updateIntensity();
   }
 
   update(delta) {
@@ -41,10 +37,11 @@ class Light extends Cube {
     super.animate(delta, alpha);
   }
 
-  updateIntensity() {
-    // Find the max scale value
-    var max = Math.max(...Object.values(this.object.scale));
-    this.model.intensity = Math.PI * max;
+  toJSON() {
+    // Extend entity toJSON with model name
+    const json = super.toJSON();
+    json.lightType = this.model.type;
+    return json;
   }
 }
 
