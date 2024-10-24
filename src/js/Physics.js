@@ -72,6 +72,7 @@ class Physics {
       // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
       this.entities.set(entity.rigidBody.handle, entity);
     }
+    return entity;
   }
 
   duplicate(entity) {
@@ -85,6 +86,13 @@ class Physics {
     this.world.removeRigidBody(entity.rigidBody);
     entity.object.removeFromParent();
     entity.dispatchEvent({ type: 'removed' });
+    return entity;
+  }
+
+  removeFirst() {
+    var entry = this.entities.entries().next().value;
+    if (entry == null) return;
+    return this.remove(entry[1]);
   }
 
   get(handle) {
