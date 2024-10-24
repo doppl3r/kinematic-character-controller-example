@@ -9,7 +9,7 @@
     },
     {
       "type": "trimesh",
-      "model": "ramps"
+      "model": { "name": "ramps" }
     },
     {
       "type": "bounce",
@@ -24,7 +24,7 @@
     {
       "type": "player",
       "ccd": true,
-      "model": "player",
+      "model": { "name": "player" },
       "position": { "x": 0, "y": 0.5, "z": 0 },
       "radius": 0.25,
       "scale": { "x": 1, "y": 1, "z": 1 }

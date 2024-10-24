@@ -43,7 +43,7 @@ class Player extends Character {
     this.velocity = new Vector3();
 
     // Set character camera properties
-    this.camera = CameraFactory.create('perspective');
+    this.camera = CameraFactory.create('PerspectiveCamera');
     this.cameraOffset = new Vector3(0, 2, 2);
 
     // Add optional model to 3D object

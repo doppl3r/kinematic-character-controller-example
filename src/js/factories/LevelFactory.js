@@ -65,8 +65,13 @@ class LevelFactory {
       softCcdPrediction: 0.5
     }, json);
 
-    // Create model from json model name
-    if (json.model) options.model = game.assets.duplicate(json.model);
+    // Assign optional 3D model using stored model name
+    if (json.model) {
+      // Check if model exists
+      if (game.assets.get(json.model.name)) {
+        options.model = game.assets.duplicate(json.model.name);
+      }
+    }
 
     // Create new entity from options
     var entity = EntityFactory.create(options);
