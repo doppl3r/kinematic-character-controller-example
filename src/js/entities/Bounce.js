@@ -9,7 +9,16 @@ class Bounce extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      
+      events: [
+        {
+          name: "bouncePlayer",
+          data: { x: 0, y: 1, z: 0 }
+        },
+        {
+          name: "resetBounce",
+          started: false
+        }
+      ]
     }, options);
 
     // Inherit Entity class
