@@ -4,6 +4,7 @@ import { Cube } from '../entities/Cube';
 import { Light } from '../entities/Light';
 import { Player } from '../entities/Player';
 import { Sphere } from '../entities/Sphere';
+import { Teleport } from '../entities/Teleport';
 import { TriMesh } from '../entities/TriMesh';
 
 /*
@@ -56,6 +57,10 @@ class EntityFactory {
     return new Sphere(options);
   }
   
+  static createTeleport(options) {
+    return new Teleport(options);
+  }
+
   static createTrimesh(options) {
     return new TriMesh(options);
   }

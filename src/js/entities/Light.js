@@ -9,8 +9,6 @@ class Light extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      collisionEventStart: function(e) {},
-      collisionEventEnd: function(e) {},
       isSensor: true,
       status: 1
     }, options);

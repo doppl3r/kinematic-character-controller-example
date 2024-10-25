@@ -5,7 +5,7 @@ import { Cube } from './Cube.js';
   a 3D rigid body shape (Rapier.js)
 */
 
-class Bounce extends Cube {
+class Teleport extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
@@ -16,9 +16,9 @@ class Bounce extends Cube {
     super(options);
 
     // Set default properties
-    this.createModel({ color: '#0000ff' });
+    this.createModel({ color: '#ff0000' });
     this.object.add(this.model);
-    this.type = 'bounce';
+    this.type = 'teleport';
   }
 
   update(delta) {
@@ -29,18 +29,10 @@ class Bounce extends Cube {
     super.animate(delta, alpha);
   }
 
-  bouncePlayer(e) {
-    // Change cube color to green
-    e.target.model.material.color.set('#00ff00');
-
-    // Bounce player
-    e.pair.move(e.data);
-    e.pair.velocity.y = 0.5;
-  }
-
-  resetBounce(e) {
-    e.target.model.material.color.set('#0000ff');
+  teleport(e) {
+    // Teleport player
+    e.pair.setPosition(e.data);
   }
 }
 
-export { Bounce };
+export { Teleport };

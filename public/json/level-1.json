@@ -12,9 +12,30 @@
       "model": { "name": "ramps" }
     },
     {
+      "type": "teleport",
+      "events": [
+        {
+          "name": "teleport",
+          "data": { "x": 7, "y": 4.5, "z": 1 }
+        }
+      ],
+      "isSensor": true,
+      "position": { "x": 0.5, "y": 0, "z": -4.5 },
+      "scale": { "x": 1, "y": 0.25, "z": 1 },
+      "status": "Fixed"
+    },
+    {
       "type": "bounce",
-      "collisionEventStart": "bouncePlayer",
-      "collisionEventEnd": "resetBounce",
+      "events": [
+        {
+          "name": "bouncePlayer",
+          "data": { "x": 0, "y": 1, "z": 0 }
+        },
+        {
+          "name": "resetBounce",
+          "started": false
+        }
+      ],
       "color": "#0000ff",
       "isSensor": true,
       "position": { "x": -0.5, "y": 0, "z": -3.5 },

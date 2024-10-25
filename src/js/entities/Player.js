@@ -62,7 +62,6 @@ class Player extends Character {
     this.addColliderDesc({
       activeCollisionTypes: 'ALL',
       activeEvents: 'COLLISION_EVENTS',
-      collisionEventStart: function(e) { console.log(e); },
       isSensor: true,
       mass: 0,
       shape: new Cuboid(options.scale.x * 0.125, options.scale.y * 0.125, options.scale.z * 0.125),
