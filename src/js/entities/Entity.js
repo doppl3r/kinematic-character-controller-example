@@ -269,7 +269,7 @@ class Entity extends EventDispatcher {
     // Trigger each event with optional data
     events.forEach(
       function(event) {
-        try { this[event.name](Object.assign(e, { data: event.data })); }
+        try { this[event.name](Object.assign(e, event)); }
         catch { console.warn(`Warning: event ${ event.name } does not exist`); }
       }.bind(this)
     );
