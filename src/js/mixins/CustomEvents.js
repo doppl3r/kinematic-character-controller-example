@@ -16,6 +16,6 @@ export default {
   },
   teleport(e) {
     // Teleport player
-    e.pair.setPosition(e.data);
+    e.pair.setPosition(e.position);
   }
 }
