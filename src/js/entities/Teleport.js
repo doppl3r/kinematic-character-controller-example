@@ -28,11 +28,6 @@ class Teleport extends Cube {
   animate(delta, alpha) {
     super.animate(delta, alpha);
   }
-
-  teleport(e) {
-    // Teleport player
-    e.pair.setPosition(e.data);
-  }
 }
 
 export { Teleport };

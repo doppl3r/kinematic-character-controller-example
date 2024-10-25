@@ -32,6 +32,7 @@ class Entity extends EventDispatcher {
     this.forceAcceleration = 1;
     this.forceSpeedMax = Infinity;
     this.isEntity = true;
+    this.events;
     this.parent;
     this.type;
 
@@ -269,8 +270,8 @@ class Entity extends EventDispatcher {
     // Trigger each event with optional data
     events.forEach(
       function(event) {
-        try { this[event.name](Object.assign(e, { data: event.data })); }
-        catch { console.warn(`Warning: function ${ event.name } does not exist`); }
+        try { this.events[event.name](Object.assign(e, { data: event.data })); }
+        catch { console.warn(`Warning: event ${ event.name } does not exist`); }
       }.bind(this)
     );
   }
@@ -342,6 +343,10 @@ class Entity extends EventDispatcher {
   getSpeed() {
     if (this.rigidBody == null) return 0;
     return _vector.copy(this.rigidBody.linvel()).length();
+  }
+
+  setEvents(events) {
+    this.events = events;
   }
 
   toJSON() {

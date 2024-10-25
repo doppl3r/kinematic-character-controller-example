@@ -1,6 +1,6 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
 import { Debugger } from './Debugger.js';
-import { EntityFactory } from './factories/EntityFactory.js';
+import { Events } from './Events.js';
 
 /*
   Manage physics related components
@@ -11,14 +11,15 @@ class Physics {
     // Initialize Rapier world
     this.world = new World({ x: 0.0, y: -9.81 * 8, z: 0.0 });
     this.world.numSolverIterations = 4; // Default = 4
-    this.events = new EventQueue(true);
+    this.eventQueue = new EventQueue(true);
+    this.events = new Events();
     this.debugger = new Debugger(this.world);
     this.entities = new Map();
   }
 
   update(delta) {
     // 1: Advance the simulation by one time step
-    this.world.step(this.events);
+    this.world.step(this.eventQueue);
 
     // 2: Update debugger from world buffer
     this.debugger.update();
@@ -29,7 +30,7 @@ class Physics {
     });
 
     // 4: Dispatch collision events to each entity pair
-    this.events.drainCollisionEvents(function(handle1, handle2, started) {
+    this.eventQueue.drainCollisionEvents(function(handle1, handle2, started) {
       const entity1 = this.getEntityFromColliderHandle(handle1);
       const entity2 = this.getEntityFromColliderHandle(handle2);
       const event1 = { handle: handle1, pair: entity2, started: started, type: 'collision' };
@@ -50,10 +51,6 @@ class Physics {
     this.world.timestep = 1 / frequency;
   }
 
-  create(options) {
-    return EntityFactory.create(options);
-  }
-
   add(entity) {
     if (entity != null) {
       // Recursively add multiple entities if provided
@@ -67,6 +64,7 @@ class Physics {
       entity.createRigidBody(this.world);
       entity.createColliders(this.world);
       entity.createJointFromParent(this.world);
+      entity.setEvents(this.events);
       entity.dispatchEvent({ type: 'added' });
   
       // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
