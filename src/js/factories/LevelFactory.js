@@ -1,5 +1,6 @@
 import { Quaternion, Vector3 } from 'three';
 import { EntityFactory } from './EntityFactory.js';
+import CustomEvents from '../mixins/CustomEvents.js';
 
 class LevelFactory {
   constructor() {
@@ -75,6 +76,11 @@ class LevelFactory {
 
     // Create new entity from options
     var entity = EntityFactory.create(options);
+
+    // Add custom mixin functions to entity
+    Object.assign(entity, CustomEvents);
+
+    // Return the newly created entity
     return entity;
   }
 }

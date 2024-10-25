@@ -1,6 +1,5 @@
 import { EventQueue, World } from '@dimforge/rapier3d';
 import { Debugger } from './Debugger.js';
-import { Events } from './Events.js';
 
 /*
   Manage physics related components
@@ -12,7 +11,6 @@ class Physics {
     this.world = new World({ x: 0.0, y: -9.81 * 8, z: 0.0 });
     this.world.numSolverIterations = 4; // Default = 4
     this.eventQueue = new EventQueue(true);
-    this.events = new Events();
     this.debugger = new Debugger(this.world);
     this.entities = new Map();
   }
@@ -64,7 +62,6 @@ class Physics {
       entity.createRigidBody(this.world);
       entity.createColliders(this.world);
       entity.createJointFromParent(this.world);
-      entity.setEvents(this.events);
       entity.dispatchEvent({ type: 'added' });
   
       // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
