@@ -60,22 +60,25 @@ class LevelFactory {
     if (json.scale) scale.set(json.scale.x, json.scale.y, json.scale.z);
 
     // Assign defaults from json values
-    var options = Object.assign({
+    json = Object.assign({
       ccd: true,
       friction: json.friction || 0,
       softCcdPrediction: 0.5
     }, json);
 
-    // Assign optional 3D model using stored model name
-    if (json.model) {
-      // Check if model exists
-      if (game.assets.get(json.model.name)) {
-        options.model = game.assets.duplicate(json.model.name);
-      }
+    // Create default model json from entity class static model field
+    if (json.model == undefined) {
+      let modelName = EntityFactory.getProperty(json.type, 'model');
+      if (modelName) json.model = { name: modelName };
     }
 
-    // Create new entity from options
-    var entity = EntityFactory.create(options);
+    // Duplicate 3D model from model json
+    if (json.model && game.assets.get(json.model.name)) {
+      json.model = game.assets.duplicate(json.model.name);
+    }
+
+    // Create new entity from json
+    let entity = EntityFactory.create(json);
 
     // Add custom mixin functions to entity
     Object.assign(entity, CustomEvents);

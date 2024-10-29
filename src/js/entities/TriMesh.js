@@ -52,7 +52,7 @@ class TriMesh extends Entity {
     this.isTriMesh = true;
     this.type = 'trimesh';
 
-    // Add optional model to 3D object
+    // Add model to 3D object
     this.model = options.model;
     this.object.add(this.model);
   }

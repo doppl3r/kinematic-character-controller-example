@@ -9,6 +9,9 @@ import { Entity } from './Entity.js';
 */
 
 class Character extends Entity {
+  // Define static properties
+  static model = '';
+  
   constructor(options = {}) {
     // Set options with default values
     options = Object.assign({

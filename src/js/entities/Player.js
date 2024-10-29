@@ -10,6 +10,9 @@ import { Cuboid } from '@dimforge/rapier3d';
 */
 
 class Player extends Character {
+  // Define static properties
+  static model = 'player';
+
   constructor(options = {}) {
     // Set options with default values
     options = Object.assign({

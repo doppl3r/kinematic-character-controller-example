@@ -8,6 +8,9 @@ import { Entity } from './Entity.js';
 */
 
 class Cube extends Entity {
+  // Define static properties
+  static model = 'cube-cube';
+
   constructor(options) {
     // Set options with default values
     options = Object.assign({

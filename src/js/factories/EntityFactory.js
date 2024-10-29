@@ -12,14 +12,18 @@ import { TriMesh } from '../entities/TriMesh';
 */
 
 class EntityFactory {
-  constructor() {
-    
-  }
+  static Bounce = Bounce;
+  static Character = Character;
+  static Cube = Cube;
+  static Light = Light;
+  static Player = Player;
+  static Sphere = Sphere;
+  static TriMesh = TriMesh;
 
   static create(options) {
     // Call function by class name
     if (options.type != null) {
-      var type = options.type.charAt(0).toUpperCase() + options.type.slice(1);
+      var type = this.getClassName(options.type);
       var fn = this['create' + type];
       if (fn == null) {
         console.error(`Error: Entity type "${ type }" not found.`);
@@ -58,6 +62,22 @@ class EntityFactory {
 
   static createTrimesh(options) {
     return new TriMesh(options);
+  }
+
+  static getClassName(type) {
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  }
+
+  static getProperty(type, property) {
+    const className = this.getClassName(type);
+    if (className) {
+      const staticClass = this[className];
+      if (staticClass) return staticClass[property];
+      else {
+        console.error(`Error: Static class "${ className }" does not exist.`)
+      }
+    }
+    return;
   }
 }
 
