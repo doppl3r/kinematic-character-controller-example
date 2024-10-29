@@ -9,7 +9,9 @@ import { Entity } from './Entity.js';
 
 class Cube extends Entity {
   // Define static properties
-  static model = 'cube-cube';
+  static model = {
+    name: ''
+  };
 
   constructor(options) {
     // Set options with default values

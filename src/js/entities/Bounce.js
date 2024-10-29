@@ -7,7 +7,9 @@ import { Cube } from './Cube.js';
 
 class Bounce extends Cube {
   // Define static properties
-  static model = '';
+  static model = {
+    name: ''
+  };
 
   constructor(options) {
     // Set options with default values

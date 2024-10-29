@@ -68,8 +68,7 @@ class LevelFactory {
 
     // Create default model json from entity class static model field
     if (json.model == undefined) {
-      let modelName = EntityFactory.getProperty(json.type, 'model');
-      if (modelName) json.model = { name: modelName };
+      json.model = EntityFactory.getProperty(json.type, 'model');
     }
 
     // Duplicate 3D model from model json
