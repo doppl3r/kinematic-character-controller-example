@@ -14,7 +14,7 @@ class Debugger extends LineSegments {
   }
 
   update() {
-    if (this.visible == true) {
+    if (this.visible == true && this.parent != null) {
       this.buffers = this.world.debugRender();
       this.geometry.setAttribute('position', new BufferAttribute(this.buffers.vertices, 3));
       this.geometry.setAttribute('color', new BufferAttribute(this.buffers.colors, 4));
