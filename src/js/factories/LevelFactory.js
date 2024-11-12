@@ -35,7 +35,7 @@ class LevelFactory {
       var entity = this.createEntity(child);
       if (entity != null) {
         // Assign parent before adding entity
-        entity.parent = parent;
+        entity.setParent(parent);
         entities.push(entity);
         
         // Recursively load child entities

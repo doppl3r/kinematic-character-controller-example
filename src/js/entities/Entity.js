@@ -16,7 +16,12 @@ class Entity extends EventDispatcher {
     // Inherit Three.js EventDispatcher system
     super();
 
+    // Assign unique id (readonly)
+    Object.defineProperty(this, 'id', { value: _id++ });
+
     // Set base components
+    this.isEntity = true;
+    this.parent;
     this.rigidBody;
     this.rigidBodyDesc;
     this.collidersDesc = [];
@@ -31,9 +36,6 @@ class Entity extends EventDispatcher {
     this.forceDirection = new Vector3();
     this.forceAcceleration = 1;
     this.forceSpeedMax = Infinity;
-    this.isEntity = true;
-    this.parent;
-    this.type;
 
     // Define initial rigidBodyDesc and colliderDesc
     this.setRigidBodyDesc(options);
@@ -172,6 +174,10 @@ class Entity extends EventDispatcher {
       var params = JointData.fixed(anchor1, frame1, anchor2, frame2);
       this.joint = world.createImpulseJoint(params, this.parent.rigidBody, this.rigidBody, true);
     }
+  }
+
+  setParent(parent) {
+    this.parent = parent;
   }
 
   getPosition() {
@@ -347,7 +353,7 @@ class Entity extends EventDispatcher {
   toJSON() {
     // Initialize entity values
     var json = {
-      type: this.type
+      id: this.id
     };
 
     // Include rigidBody properties
@@ -410,5 +416,6 @@ class Entity extends EventDispatcher {
 
 // Assign local helper components
 let _vector = new Vector3();
+let _id = 0;
 
 export { Entity };
