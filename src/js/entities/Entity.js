@@ -175,7 +175,13 @@ class Entity extends EventDispatcher {
   }
 
   setParent(parent) {
-    this.parent = parent;
+    if (parent) {
+      this.parent = parent;
+    }
+  }
+
+  removeParent() {
+    this.parent = null;
   }
 
   getPosition() {
