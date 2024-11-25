@@ -25,38 +25,20 @@ class Character extends Entity {
     // Inherit Entity class
     super(options);
 
+    // Set default properties
+    this.isCharacter = true;
+    this.type = 'character';
+
     // Initialize helpers
     this.nextTranslation = new Vector3();
   }
 
   move(desiredTranslation) {
-    this.controller.computeColliderMovement(this.collider, desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+    // Compute collider movement using first rigid body collider
+    this.controller.computeColliderMovement(this.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
     this.nextTranslation.copy(this.rigidBody.translation());
     this.nextTranslation.add(this.controller.computedMovement());
     this.rigidBody.setNextKinematicTranslation(this.nextTranslation);
-  }
-
-  createColliders(world) {
-    // Invoke Entity superclass constructor
-    super.createColliders(world);
-
-    // Assign first collider for controller
-    this.collider = this.rigidBody.collider(0);
-
-    // Pass world through controller initialization
-    this.createController(world);
-  }
-
-  createController(world) {
-    // Create character controller from world
-    this.controller = world.createCharacterController(0.01); // Spacing
-    this.controller.setSlideEnabled(true); // Allow sliding down hill
-    this.controller.setMaxSlopeClimbAngle(45 * Math.PI / 180); // Don’t allow climbing slopes larger than 45 degrees.
-    this.controller.setMinSlopeSlideAngle(30 * Math.PI / 180); // Automatically slide down on slopes smaller than 30 degrees.
-    this.controller.enableAutostep(0.5, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
-    this.controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
-    this.controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
-    this.controller.setCharacterMass(1); // (mass) Set character mass
   }
 }
 

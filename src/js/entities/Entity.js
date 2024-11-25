@@ -1,5 +1,5 @@
 import { EventDispatcher, MathUtils, Object3D, Quaternion, Vector3 } from 'three';
-import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, JointData, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
+import { ActiveCollisionTypes, ActiveEvents, ColliderDesc, RigidBodyDesc, RigidBodyType } from '@dimforge/rapier3d';
 import { Easing, Group, Tween } from '@tweenjs/tween.js'
 
 /*
@@ -100,6 +100,10 @@ class Entity extends EventDispatcher {
     this.rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
   }
 
+  setRigidBody(rigidBody) {
+    this.rigidBody = rigidBody;
+  }
+
   addColliderDesc(options) {
     // Set options with default values
     options = Object.assign({
@@ -138,40 +142,6 @@ class Entity extends EventDispatcher {
 
     // Add colliderDesc to array
     this.collidersDesc.push(colliderDesc);
-  }
-
-  createRigidBody(world) {
-    this.rigidBody = world.createRigidBody(this.rigidBodyDesc);
-  }
-
-  createColliders(world) {
-    if (this.rigidBody) {
-      // Loop through all collider descriptions
-      this.collidersDesc.forEach(function(colliderDesc) {
-        // Parent the collider to the rigid body
-        const collider = world.createCollider(colliderDesc, this.rigidBody);
-
-        // Assign optional callback events to collider
-        collider.events = colliderDesc.events;
-      }.bind(this));
-    }
-  }
-
-  createJointFromParent(world) {
-    if (this.parent) {
-      const anchor1 = new Vector3();
-      const anchor2 = new Vector3().copy(this.parent.rigidBodyDesc.translation).sub(this.rigidBodyDesc.translation);
-      const frame1 = new Quaternion().copy(this.parent.rigidBodyDesc.rotation);
-      const frame2 = new Quaternion().copy(this.rigidBodyDesc.rotation);
-
-      // Rotate position by the frame conjugate
-      anchor1.applyQuaternion(frame1.conjugate());
-      anchor2.applyQuaternion(frame2.conjugate());
-
-      // Create fixed joint from parameters
-      const params = JointData.fixed(anchor1, frame1, anchor2, frame2);
-      this.joint = world.createImpulseJoint(params, this.parent.rigidBody, this.rigidBody, true);
-    }
   }
 
   setParent(parent) {
@@ -279,8 +249,12 @@ class Entity extends EventDispatcher {
     // Trigger each event with optional data
     events.forEach(
       function(event) {
-        try { this[event.name](Object.assign(e, event)); }
-        catch { console.warn(`Warning: event ${ event.name } does not exist`); }
+        try {
+          let fn = event;
+          if (typeof event == 'object') fn = this[event.name];
+          fn(Object.assign(e, event));
+        }
+        catch { console.warn(`Warning: Function "${ event.name }" does not exist`); }
       }.bind(this)
     );
   }

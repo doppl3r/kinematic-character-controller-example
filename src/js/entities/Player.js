@@ -36,6 +36,7 @@ class Player extends Character {
     super(options);
 
     // Set default properties
+    this.isPlayer = true;
     this.type = 'player';
     this.keys = {};
     this.jumping = true;
@@ -67,6 +68,7 @@ class Player extends Character {
     this.addColliderDesc({
       activeCollisionTypes: 'ALL',
       activeEvents: 'COLLISION_EVENTS',
+      events: [(e) => { console.log(`Interacted with ${e.pair.type}`); }],
       isSensor: true,
       mass: 0,
       shape: new Cuboid(options.scale.x * 0.125, options.scale.y * 0.125, options.scale.z * 0.125),

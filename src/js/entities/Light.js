@@ -27,6 +27,7 @@ class Light extends Cube {
     this.object.add(this.model);
 
     // Set default properties
+    this.isLight = true;
     this.type = 'light';
   }
 
