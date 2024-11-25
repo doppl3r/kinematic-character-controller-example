@@ -145,13 +145,11 @@ class Entity extends EventDispatcher {
   }
 
   setParent(parent) {
-    if (parent) {
-      this.parent = parent;
-    }
+    this.parent = parent;
   }
 
-  removeParent() {
-    this.parent = null;
+  setController(controller) {
+    this.controller = controller;
   }
 
   getPosition() {

@@ -35,10 +35,12 @@ class Character extends Entity {
 
   move(desiredTranslation) {
     // Compute collider movement using first rigid body collider
-    this.controller.computeColliderMovement(this.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
-    this.nextTranslation.copy(this.rigidBody.translation());
-    this.nextTranslation.add(this.controller.computedMovement());
-    this.rigidBody.setNextKinematicTranslation(this.nextTranslation);
+    if (this.rigidBody.collider(0)) {
+      this.controller.computeColliderMovement(this.rigidBody.collider(0), desiredTranslation, QueryFilterFlags['EXCLUDE_SENSORS']);
+      this.nextTranslation.copy(this.rigidBody.translation());
+      this.nextTranslation.add(this.controller.computedMovement());
+      this.rigidBody.setNextKinematicTranslation(this.nextTranslation);
+    }
   }
 }
 

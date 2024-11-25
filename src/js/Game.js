@@ -70,6 +70,7 @@ class Game {
       // Assign rendering camera from player
       if (entity.type == 'player') {
         this.player = entity;
+        this.physics.createController(entity);
         this.graphics.setCamera(entity.camera);
       }
     }.bind(this));

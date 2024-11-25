@@ -62,7 +62,6 @@ class Physics {
       // Create body and collider for entity
       this.createRigidBody(entity);
       this.createColliders(entity);
-      this.createController(entity);
       this.createJointFromParent(entity);
       entity.dispatchEvent({ type: 'added' });
   
@@ -77,6 +76,11 @@ class Physics {
     entity.setRigidBody(rigidBody);
   }
 
+  removeRigidBody(entity) {
+    this.world.removeRigidBody(entity.rigidBody);
+    entity.rigidBody = null;
+  }
+
   createColliders(entity) {
     if (entity.rigidBody) {
       // Loop through all collider descriptions
@@ -88,22 +92,36 @@ class Physics {
     }
   }
 
-  createController(entity) {
-    // Create character controller for KinematicPositionBased rigid body types
-    if (entity.isCharacter) {
-      // Create character controller from world
-      entity.controller = this.world.createCharacterController(0.01); // Spacing
-      entity.controller.setSlideEnabled(true); // Allow sliding down hill
-      entity.controller.setMaxSlopeClimbAngle(45 * Math.PI / 180); // Don’t allow climbing slopes larger than 45 degrees.
-      entity.controller.setMinSlopeSlideAngle(30 * Math.PI / 180); // Automatically slide down on slopes smaller than 30 degrees.
-      entity.controller.enableAutostep(0.5, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
-      entity.controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
-      entity.controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
-      entity.controller.setCharacterMass(1); // (mass) Set character mass
+  removeColliders(entity) {
+    for (let i = entity.rigidBody.numColliders() - 1; i >= 0; i--) {
+      const collider = entity.rigidBody.collider(i);
+      this.world.removeCollider(collider);
     }
   }
 
+  createController(entity) {
+    // Create character controller from world
+    const controller = this.world.createCharacterController(0.01); // Spacing
+    entity.setController(controller);
+
+    // Update controller settings
+    controller.setSlideEnabled(true); // Allow sliding down hill
+    controller.setMaxSlopeClimbAngle(45 * Math.PI / 180); // Don’t allow climbing slopes larger than 45 degrees.
+    controller.setMinSlopeSlideAngle(30 * Math.PI / 180); // Automatically slide down on slopes smaller than 30 degrees.
+    controller.enableAutostep(0.5, 0.2, true); // (maxHeight, minWidth, includeDynamicBodies) Stair behavior
+    controller.enableSnapToGround(0.5); // (distance) Set ground snap behavior
+    controller.setApplyImpulsesToDynamicBodies(true); // Add push behavior
+    controller.setCharacterMass(1); // (mass) Set character mass
+    return controller;
+  }
+
+  removeController(entity) {
+    this.world.removeCharacterController(entity.controller);
+    entity.controller = null;
+  }
+
   createJointFromParent(entity) {
+    let joint;
     if (entity.parent) {
       const anchor1 = new Vector3();
       const anchor2 = new Vector3().copy(entity.parent.rigidBodyDesc.translation).sub(entity.rigidBodyDesc.translation);
@@ -116,8 +134,9 @@ class Physics {
 
       // Create fixed joint from parameters
       const params = JointData.fixed(anchor1, frame1, anchor2, frame2);
-      const joint = this.world.createImpulseJoint(params, entity.parent.rigidBody, entity.rigidBody, true);
+      joint = this.world.createImpulseJoint(params, entity.parent.rigidBody, entity.rigidBody, true);
     }
+    return joint;
   }
 
   duplicate(entity) {
@@ -128,7 +147,7 @@ class Physics {
   remove(entity) {
     // Delete and remove entity reference using the body handle as the key
     this.entities.delete(entity.rigidBody.handle);
-    this.world.removeRigidBody(entity.rigidBody);
+    this.removeRigidBody(entity);
     entity.object.removeFromParent();
     entity.dispatchEvent({ type: 'removed' });
     return entity;
