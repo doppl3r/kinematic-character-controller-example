@@ -28,21 +28,12 @@ class LevelFactory {
     return entities;
   }
 
-  static createEntities(json, entities = [], parent) {
+  static createEntities(json, entities = []) {
     // Loop through children
     json.children.forEach(function(child) {
       // Add entity to array
       var entity = this.createEntity(child);
-      if (entity != null) {
-        // Assign parent before adding entity
-        entity.setParent(parent);
-        entities.push(entity);
-        
-        // Recursively load child entities
-        if (child.children) {
-          this.createEntities(child, entities, entity);
-        }
-      }
+      if (entity != null) entities.push(entity);
     }.bind(this));
 
     // Return array of entities

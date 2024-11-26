@@ -14,6 +14,7 @@ class Physics {
     this.eventQueue = new EventQueue(true);
     this.debugger = new Debugger(this.world);
     this.entities = new Map();
+    this.entityPairs = new Map();
   }
 
   update(delta) {
@@ -62,11 +63,11 @@ class Physics {
       // Create body and collider for entity
       this.createRigidBody(entity);
       this.createColliders(entity);
-      this.createJointFromParent(entity);
+      this.checkJointPairs(entity);
       entity.dispatchEvent({ type: 'added' });
   
-      // Add entity to entities map using the rigidBody handle as the key (ex: "5e-324")
-      this.entities.set(entity.rigidBody.handle, entity);
+      // Add entity to entities map using the entity id
+      this.entities.set(entity.id, entity);
     }
     return entity;
   }
@@ -120,6 +121,20 @@ class Physics {
     entity.controller = null;
   }
 
+  checkJointPairs(entity) {
+    // Get current family by parent ID
+    const family = this.entityPairs.get(entity.parentId);
+
+    if (family) {
+      // TODO: Create joint
+    }
+    else {
+      // TODO: Create new family
+    }
+
+    // TODO: Check all orphans
+  }
+
   createJointFromParent(entity) {
     let joint;
     if (entity.parent) {
@@ -145,8 +160,8 @@ class Physics {
   }
 
   remove(entity) {
-    // Delete and remove entity reference using the body handle as the key
-    this.entities.delete(entity.rigidBody.handle);
+    // Delete and remove entity reference
+    this.entities.delete(entity.id);
     this.removeRigidBody(entity);
     entity.object.removeFromParent();
     entity.dispatchEvent({ type: 'removed' });
@@ -159,14 +174,15 @@ class Physics {
     return this.remove(entry[1]);
   }
 
-  get(handle) {
-    // Get entity from entities map using the body handle as the key
-    return this.entities.get(handle);
+  get(id) {
+    // Get entity from entities map by id
+    return this.entities.get(id);
   }
 
   getEntityFromColliderHandle(handle) {
     const collider = this.world.getCollider(handle);
-    return this.get(collider._parent.handle);
+    const rigidBody = collider._parent;
+    return this.get(rigidBody.userData.id);
   }
 
   clear() {

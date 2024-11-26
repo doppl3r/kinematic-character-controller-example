@@ -16,14 +16,10 @@ class Entity extends EventDispatcher {
     // Inherit Three.js EventDispatcher system
     super();
 
-    // Assign unique id (readonly)
-    Object.defineProperty(this, 'id', { value: _id++ });
-
     // Set base components
     this.name = '';
-    this.uuid = options.uuid || MathUtils.generateUUID();
+    this.id = options.id || MathUtils.generateUUID();
     this.isEntity = true;
-    this.parent;
     this.rigidBody;
     this.rigidBodyDesc;
     this.collidersDesc = [];
@@ -84,6 +80,7 @@ class Entity extends EventDispatcher {
       sleeping: false,
       softCcdPrediction: 0,
       status: 0, // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+      userData: {}
     }, options);
 
     // Initialize rigid body description
@@ -98,6 +95,7 @@ class Entity extends EventDispatcher {
     this.rigidBodyDesc.setSleeping(options.sleeping);
     this.rigidBodyDesc.setSoftCcdPrediction(options.softCcdPrediction);
     this.rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
+    this.rigidBodyDesc.setUserData(Object.assign(options.userData, { id: this.id })); // Store entity ID for Physics.js
   }
 
   setRigidBody(rigidBody) {
@@ -142,10 +140,6 @@ class Entity extends EventDispatcher {
 
     // Add colliderDesc to array
     this.collidersDesc.push(colliderDesc);
-  }
-
-  setParent(parent) {
-    this.parent = parent;
   }
 
   setController(controller) {
@@ -252,7 +246,7 @@ class Entity extends EventDispatcher {
           if (typeof event == 'object') fn = this[event.name];
           fn(Object.assign(e, event));
         }
-        catch { console.warn(`Warning: Function "${ event.name }" does not exist`); }
+        catch (error) { console.error(error); }
       }.bind(this)
     );
   }
@@ -334,17 +328,9 @@ class Entity extends EventDispatcher {
   toJSON() {
     // Initialize entity values
     let json = {
-      name: this.name,
-      parent: {
-        uuid: null
-      },
-      uuid: this.uuid
+      id: this.id,
+      name: this.name
     };
-
-    // Include parent UUID
-    if (this.parent) {
-      json.parent.uuid = this.parent.uuid;
-    }
 
     // Include rigidBody properties
     json = Object.assign({
@@ -380,7 +366,8 @@ class Entity extends EventDispatcher {
       },
       sleeping: this.rigidBodyDesc.sleeping,
       softCcdPrediction: this.rigidBodyDesc.softCcdPrediction,
-      status: this.rigidBodyDesc.status
+      status: this.rigidBodyDesc.status,
+      userData: this.rigidBodyDesc.userData
     }, json);
 
     // Include first collider properties
