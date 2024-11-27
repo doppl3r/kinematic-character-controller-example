@@ -14,7 +14,7 @@ class Physics {
     this.eventQueue = new EventQueue(true);
     this.debugger = new Debugger(this.world);
     this.entities = new Map();
-    this.entityPairs = new Map();
+    this.jointQueue = [];
   }
 
   update(delta) {
@@ -59,17 +59,44 @@ class Physics {
           this.add(arguments[i]);
         }
       }
+
+      // Add entity to entities map using the entity id
+      this.entities.set(entity.id, entity);
   
       // Create body and collider for entity
       this.createRigidBody(entity);
       this.createColliders(entity);
       this.checkJointPairs(entity);
+
+      // Dispatch 'added' event to observers
       entity.dispatchEvent({ type: 'added' });
-  
-      // Add entity to entities map using the entity id
-      this.entities.set(entity.id, entity);
     }
     return entity;
+  }
+
+  remove(entity) {
+    // Delete and remove entity reference
+    this.removeRigidBody(entity);
+    this.entities.delete(entity.id);
+    entity.object.removeFromParent();
+    entity.dispatchEvent({ type: 'removed' });
+    return entity;
+  }
+
+  get(id) {
+    // Get entity from entities map by id
+    return this.entities.get(id);
+  }
+
+  duplicate(entity) {
+    var options = entity.toJSON();
+    return this.create(options);
+  }
+
+  getEntityFromColliderHandle(handle) {
+    const collider = this.world.getCollider(handle);
+    const rigidBody = collider._parent;
+    return this.get(rigidBody.userData.id);
   }
 
   createRigidBody(entity) {
@@ -78,6 +105,19 @@ class Physics {
   }
 
   removeRigidBody(entity) {
+    // Loop through all world joints for matching ID
+    this.world.impulseJoints.forEach(function(joint) {
+      let parent = this.get(joint.body1().userData.id);
+      let child = this.get(joint.body2().userData.id);
+      
+      // Add child joint back to joint queue
+      if (entity.id == parent.id) {
+        this.jointQueue.push(child);
+        this.removeJoint(joint);
+      }
+    }.bind(this));
+
+    // Remove entity
     this.world.removeRigidBody(entity.rigidBody);
     entity.rigidBody = null;
   }
@@ -100,6 +140,53 @@ class Physics {
     }
   }
 
+  checkJointPairs(entity) {
+    // Get entity parent ID
+    let parentId = entity.rigidBodyDesc.userData.parentId;
+    let parent = this.get(parentId);
+    
+    // Check if entity has parent ID
+    if (parentId) {
+      // Add entity to queue if no entity exists yet
+      if (parent) {
+        this.createJoint(parent, entity);
+      }
+      else {
+        this.jointQueue.push(entity);
+      }
+    }
+
+    // Loop through queue
+    for (let i = this.jointQueue.length - 1; i >= 0; i--) {
+      let child = this.jointQueue[i];
+      parent = this.get(child.rigidBodyDesc.userData.parentId);
+      if (parent) {
+        this.createJoint(parent, child);
+        this.jointQueue.splice(i, 1);
+      }
+    }
+  }
+
+  createJoint(parent, child) {
+    const anchor1 = new Vector3();
+    const anchor2 = new Vector3().copy(parent.rigidBodyDesc.translation).sub(child.rigidBodyDesc.translation);
+    const frame1 = new Quaternion().copy(parent.rigidBodyDesc.rotation);
+    const frame2 = new Quaternion().copy(child.rigidBodyDesc.rotation);
+
+    // Rotate position by the frame conjugate
+    anchor1.applyQuaternion(frame1.conjugate());
+    anchor2.applyQuaternion(frame2.conjugate());
+
+    // Create fixed joint from parameters
+    const params = JointData.fixed(anchor1, frame1, anchor2, frame2);
+    const joint = this.world.createImpulseJoint(params, parent.rigidBody, child.rigidBody, true);
+    return joint;
+  }
+
+  removeJoint(joint) {
+    this.world.removeImpulseJoint(joint, true);
+  }
+
   createController(entity) {
     // Create character controller from world
     const controller = this.world.createCharacterController(0.01); // Spacing
@@ -119,70 +206,6 @@ class Physics {
   removeController(entity) {
     this.world.removeCharacterController(entity.controller);
     entity.controller = null;
-  }
-
-  checkJointPairs(entity) {
-    // Get current family by parent ID
-    const family = this.entityPairs.get(entity.parentId);
-
-    if (family) {
-      // TODO: Create joint
-    }
-    else {
-      // TODO: Create new family
-    }
-
-    // TODO: Check all orphans
-  }
-
-  createJointFromParent(entity) {
-    let joint;
-    if (entity.parent) {
-      const anchor1 = new Vector3();
-      const anchor2 = new Vector3().copy(entity.parent.rigidBodyDesc.translation).sub(entity.rigidBodyDesc.translation);
-      const frame1 = new Quaternion().copy(entity.parent.rigidBodyDesc.rotation);
-      const frame2 = new Quaternion().copy(entity.rigidBodyDesc.rotation);
-
-      // Rotate position by the frame conjugate
-      anchor1.applyQuaternion(frame1.conjugate());
-      anchor2.applyQuaternion(frame2.conjugate());
-
-      // Create fixed joint from parameters
-      const params = JointData.fixed(anchor1, frame1, anchor2, frame2);
-      joint = this.world.createImpulseJoint(params, entity.parent.rigidBody, entity.rigidBody, true);
-    }
-    return joint;
-  }
-
-  duplicate(entity) {
-    var options = entity.toJSON();
-    return this.create(options);
-  }
-
-  remove(entity) {
-    // Delete and remove entity reference
-    this.entities.delete(entity.id);
-    this.removeRigidBody(entity);
-    entity.object.removeFromParent();
-    entity.dispatchEvent({ type: 'removed' });
-    return entity;
-  }
-
-  removeFirst() {
-    var entry = this.entities.entries().next().value;
-    if (entry == null) return;
-    return this.remove(entry[1]);
-  }
-
-  get(id) {
-    // Get entity from entities map by id
-    return this.entities.get(id);
-  }
-
-  getEntityFromColliderHandle(handle) {
-    const collider = this.world.getCollider(handle);
-    const rigidBody = collider._parent;
-    return this.get(rigidBody.userData.id);
   }
 
   clear() {
