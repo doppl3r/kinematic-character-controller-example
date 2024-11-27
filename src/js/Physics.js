@@ -60,10 +60,10 @@ class Physics {
         }
       }
 
-      // Add entity to entities map using the entity id
+      // Add entity to entities map before creating components
       this.entities.set(entity.id, entity);
   
-      // Create body and collider for entity
+      // Create entity physics components
       this.createRigidBody(entity);
       this.createColliders(entity);
       this.checkJointPairs(entity);
@@ -75,10 +75,16 @@ class Physics {
   }
 
   remove(entity) {
-    // Delete and remove entity reference
+    // Remove entity physics components before deletion
+    this.removeJoint(entity);
+    this.removeColliders(entity);
     this.removeRigidBody(entity);
-    this.entities.delete(entity.id);
     entity.object.removeFromParent();
+
+    // Delete entity entry
+    this.entities.delete(entity.id);
+
+    // Dispatch 'removed' event to observers
     entity.dispatchEvent({ type: 'removed' });
     return entity;
   }
@@ -105,18 +111,6 @@ class Physics {
   }
 
   removeRigidBody(entity) {
-    // Loop through all world joints for matching ID
-    this.world.impulseJoints.forEach(function(joint) {
-      let parent = this.get(joint.body1().userData.id);
-      let child = this.get(joint.body2().userData.id);
-      
-      // Add child joint back to joint queue
-      if (entity.id == parent.id) {
-        this.jointQueue.push(child);
-        this.removeJoint(joint);
-      }
-    }.bind(this));
-
     // Remove entity
     this.world.removeRigidBody(entity.rigidBody);
     entity.rigidBody = null;
@@ -183,8 +177,18 @@ class Physics {
     return joint;
   }
 
-  removeJoint(joint) {
-    this.world.removeImpulseJoint(joint, true);
+  removeJoint(entity) {
+    // Loop through all world joints for matching ID
+    this.world.impulseJoints.forEach(function(joint) {
+      let parent = this.get(joint.body1().userData.id);
+      let child = this.get(joint.body2().userData.id);
+      
+      // Add child joint back to joint queue
+      if (entity.id == parent.id) {
+        this.jointQueue.push(child);
+        this.world.removeImpulseJoint(joint, true);
+      }
+    }.bind(this));
   }
 
   createController(entity) {

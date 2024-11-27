@@ -19,6 +19,7 @@ class Entity extends EventDispatcher {
     // Set base components
     this.name = '';
     this.id = options.id || MathUtils.generateUUID();
+    this.parentId = options.parentId;
     this.isEntity = true;
     this.rigidBody;
     this.rigidBodyDesc;
@@ -67,8 +68,8 @@ class Entity extends EventDispatcher {
   }
 
   setRigidBodyDesc(options) {
-    // Set options with default values
-    options = Object.assign({
+    // Set default rigid body options
+    this.defaultRigidBodyOptions = {
       angularDamping: 0,
       ccd: false,
       enabledRotations: { x: true, y: true, z: true },
@@ -79,11 +80,13 @@ class Entity extends EventDispatcher {
       rotation: { x: 0, y: 0, z: 0, w: 1 },
       sleeping: false,
       softCcdPrediction: 0,
-      status: 0, // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
-      userData: {}
-    }, options);
+      status: 0 // 0: Dynamic, 1: Fixed, 2: KinematicPositionBased, 3: KinematicVelocityBased
+    };
 
-    // Initialize rigid body description
+    // Set options with default values
+    options = Object.assign({ ...this.defaultRigidBodyOptions }, options);
+
+    // Create rigid body description
     this.rigidBodyDesc = new RigidBodyDesc(isNaN(options.status) ? RigidBodyType[options.status] : options.status);
     this.rigidBodyDesc.enabledRotations(options.enabledRotations.x, options.enabledRotations.y, options.enabledRotations.z);
     this.rigidBodyDesc.enabledTranslations(options.enabledTranslations.x, options.enabledTranslations.y, options.enabledTranslations.z);
@@ -95,7 +98,7 @@ class Entity extends EventDispatcher {
     this.rigidBodyDesc.setSleeping(options.sleeping);
     this.rigidBodyDesc.setSoftCcdPrediction(options.softCcdPrediction);
     this.rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
-    this.rigidBodyDesc.setUserData(Object.assign(options.userData, { id: this.id })); // Store entity ID for Physics.js
+    this.rigidBodyDesc.setUserData({ id: this.id, parentId: options.parentId }); // Store entity ID for Physics.js
   }
 
   setRigidBody(rigidBody) {
@@ -103,8 +106,8 @@ class Entity extends EventDispatcher {
   }
 
   addColliderDesc(options) {
-    // Set options with default values
-    options = Object.assign({
+    // Set default collider options
+    this.defaultColliderOptions = {
       activeCollisionTypes: 'DEFAULT', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
       activeEvents: 'NONE', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
       collisionGroups: 0xFFFFFFFF,
@@ -113,28 +116,30 @@ class Entity extends EventDispatcher {
       events: [],
       friction: 0.5,
       isSensor: false,
-      mass: null,
+      mass: 0,
       restitution: 0,
       shape: null,
       solverGroups: 0xFFFFFFFF,
       translation: { x: 0, y: 0, z: 0 }
-    }, options);
+    };
 
+    // Set options with default values
+    options = Object.assign({ ...this.defaultColliderOptions }, options);
+
+    // Create collider description
     const colliderDesc = new ColliderDesc(options.shape);
-    colliderDesc.setActiveCollisionTypes(ActiveCollisionTypes[options.activeCollisionTypes]);
-    colliderDesc.setActiveEvents(ActiveEvents[options.activeEvents]);
+    colliderDesc.setActiveCollisionTypes(isNaN(options.activeCollisionTypes) ? ActiveCollisionTypes[options.activeCollisionTypes] : options.activeCollisionTypes);
+    colliderDesc.setActiveEvents(isNaN(options.activeEvents) ? ActiveEvents[options.activeEvents] : options.activeEvents);
     colliderDesc.setCollisionGroups(options.collisionGroups);
     colliderDesc.setContactForceEventThreshold(options.contactForceEventThreshold);
+    colliderDesc.setMass(options.mass); // Must set before density
     colliderDesc.setDensity(options.density);
     colliderDesc.setFriction(options.friction);
-    colliderDesc.setSensor(options.isSensor);
     colliderDesc.setRestitution(options.restitution);
+    colliderDesc.setSensor(options.isSensor);
     colliderDesc.setSolverGroups(options.solverGroups);
     colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
-    
-    // Conditionally set values to allow default effects
-    if (options.mass != null) colliderDesc.setMass(options.mass);
-    
+
     // Store callback events to colliderDesc
     colliderDesc.events = options.events;
 
@@ -329,6 +334,7 @@ class Entity extends EventDispatcher {
     // Initialize entity values
     let json = {
       id: this.id,
+      parentId: this.parentId,
       name: this.name
     };
 
@@ -366,8 +372,7 @@ class Entity extends EventDispatcher {
       },
       sleeping: this.rigidBodyDesc.sleeping,
       softCcdPrediction: this.rigidBodyDesc.softCcdPrediction,
-      status: this.rigidBodyDesc.status,
-      userData: this.rigidBodyDesc.userData
+      status: this.rigidBodyDesc.status
     }, json);
 
     // Include first collider properties
