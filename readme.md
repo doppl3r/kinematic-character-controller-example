@@ -3,8 +3,8 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ## Quick links
  - [Player.js](src/js/entities/Player.js) - Extends the `Character.js` class and adds keyboard input.
- - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers that extends [Entity.js](src/js/entities/Entity.js). Can be used for players, conveyors, doors, etc.
- - [Game.js](src/js/Game.js) - Handles all game states, entities, and resources.
+ - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers that extends [Entity.js](src/js/core/Entity.js). Can be used for players, conveyors, doors, etc.
+ - [Game.js](src/js/core/Game.js) - Handles all game states, entities, and resources.
 
 ## Screenshot
 ![Screenshot](public/png/screenshot.png)

@@ -35,7 +35,7 @@ class Bounce extends Cube {
   bouncePlayer(e) {
     // Bounce player
     e.pair.move(e.data);
-    e.pair.velocity.y = 0.25;
+    e.pair.velocity.y = 0.5;
   }
 
   update(delta) {

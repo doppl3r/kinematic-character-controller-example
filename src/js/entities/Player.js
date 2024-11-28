@@ -23,7 +23,7 @@ class Player extends Character {
       ccd: true,
       gravity: 9.81,
       height: 0.25,
-      jumpForce: 10,
+      jumpForce: 5,
       moveForce: 5,
       radius: 0.25,
       scale: { x: 1, y: 1, z: 1 },

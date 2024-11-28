@@ -9,9 +9,9 @@
   Clock credit: mrdoob
 */
 
-class Loop {
+class Ticker {
   constructor() {
-    this.actions = [];
+    this.loops = [];
     this.startTime = 0;
     this.oldTime = 0;
     this.elapsedTime = 0;
@@ -20,14 +20,13 @@ class Loop {
     this.index = 0;
   }
 
-  add(callback = () => {}, frequency = -1) {
+  add(callback, interval = -1) {
     // Add callback function to array of functions
-    this.actions.push({
-      rate: 1 / frequency,
-      sum: 1 / frequency,
-      alpha: 0,
-      callback: callback // Execute function after each interval
-    });
+    this.loops.push(new Loop(callback, interval));
+  }
+
+  get(index) {
+    return this.loops[index];
   }
 
   update(animationFrameCallback) {
@@ -36,20 +35,20 @@ class Loop {
       this.index = requestAnimationFrame(animationFrameCallback);
 
       // Check if functions exist
-      if (this.actions.length > 0) {
+      if (this.loops.length > 0) {
         var delta = this.getDelta();
-        var alpha = this.actions[0].sum / this.actions[0].rate; // Set alpha relative to base interval
+        var alpha = this.loops[0].sum / this.loops[0].rate; // Set alpha relative to base interval
 
         // Loop through array of functions (descending order)
-        for (var index = this.actions.length - 1; index >= 0; index--) {
-          this.actions[index].sum += delta;
+        for (var index = this.loops.length - 1; index >= 0; index--) {
+          this.loops[index].sum += delta;
 
-          // Trigger this.actions[index] callback
-          if (this.actions[index].sum >= this.actions[index].rate || this.actions[index].rate == -1) {
-            this.actions[index].sum %= this.actions[index].rate;
-            this.actions[index].callback({
-              delta: (this.actions[index].rate == -1) ? delta : this.actions[index].rate,
-              alpha: (index == 0) ? 0 : alpha, // Return zero for base action or alpha for sibling actions
+          // Trigger this.loops[index] callback
+          if (this.loops[index].sum >= this.loops[index].rate || this.loops[index].rate == -1) {
+            this.loops[index].sum %= this.loops[index].rate;
+            this.loops[index].callback({
+              delta: (this.loops[index].rate == -1) ? delta : this.loops[index].rate,
+              alpha: (index == 0) ? 0 : alpha, // Return zero for base action or alpha for sibling loops
               index: this.index
             });
           }
@@ -102,4 +101,13 @@ class Loop {
   }
 }
 
-export { Loop };
+class Loop {
+  constructor(callback = () => {}, interval) {
+    this.rate = 1 / interval;
+    this.sum = 1 / interval;
+    this.alpha = 0;
+    this.callback = callback;
+  }
+}
+
+export { Ticker };

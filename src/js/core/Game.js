@@ -1,11 +1,11 @@
-import { Loop } from './Loop';
+import { Ticker } from './Ticker.js';
 import { AssetLoader } from '../loaders/AssetLoader.js';
 import { Graphics } from './Graphics.js';
 import { Physics } from './Physics.js';
 
 class Game {
   constructor(onLoad) {
-    this.loop = new Loop();
+    this.ticker = new Ticker();
     this.physics = new Physics();
     this.graphics;
     this.assets = new AssetLoader(this.onLoad.bind(this, onLoad));
@@ -36,12 +36,17 @@ class Game {
     // Render graphics
     this.graphics.render();
   }
+  
+  setFrequency(frequency = 60) {
+    this.physics.setFrequency(frequency);
+    this.ticker.get(0).rate = 1 / frequency;
+  }
 
   onLoad(onLoad) {
     // Add and start game loops
-    this.loop.add(this.update.bind(this), 60); // Physics
-    this.loop.add(this.render.bind(this), -1); // Render
-    this.loop.start();
+    this.ticker.add(this.update.bind(this), 60); // Physics
+    this.ticker.add(this.render.bind(this), -1); // Render
+    this.ticker.start();
   
     // Run optional callback
     if (typeof onLoad == 'function') onLoad();
