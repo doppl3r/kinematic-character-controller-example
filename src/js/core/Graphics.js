@@ -1,4 +1,4 @@
-import { PCFSoftShadowMap, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { Fog, PCFSoftShadowMap, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPixelatedPass.js';
@@ -8,11 +8,15 @@ import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 import Stats from './Stats.js';
 
 class Graphics {
-  constructor(canvas) {
+  constructor(canvas = document.createElement('canvas')) {
     // Initialize camera and scene
     this.camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
     this.scene = new Scene();
     this.canvas = canvas;
+
+    // Add fog
+    this.fog = new Fog('#ffffff');
+    this.scene.fog = this.fog;
 
     // Add stats
     this.stats = new Stats();
@@ -55,9 +59,10 @@ class Graphics {
     this.composer.addPass(this.smaaPass); // Anti-aliasing
     this.composer.addPass(this.outputPass); // Gamma/sRGB correction
 
-    // Add window resize logic
-    window.addEventListener('resize', function(e) { this.resize(e); }.bind(this));
-    this.resize(); // Run resize immediately
+    // Add event listeners and dispatch resize immediately
+    this.resize = this.resize.bind(this);
+    window.addEventListener('resize', this.resize);
+    window.dispatchEvent(new Event('resize'));
   }
 
   render() {
@@ -67,16 +72,20 @@ class Graphics {
   }
 
   resize(e) {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+    var width = e.target.innerWidth;
+    var height = e.target.innerHeight;
+    this.setSize(width, height)
+  }
+
+  setSize(width, height) {
     var ratio = width / height;
     
     // Update orthographic frustum
     if (this.camera.isOrthographicCamera) {
-      this.camera.left = -ratio;
-      this.camera.right = ratio;
-      this.camera.top = 1;
-      this.camera.bottom = -1;
+      this.camera.left = -ratio * 0.5;
+      this.camera.right = ratio * 0.5;
+      this.camera.top = 0.5;
+      this.camera.bottom = -0.5;
     }
 
     // Update camera ratio

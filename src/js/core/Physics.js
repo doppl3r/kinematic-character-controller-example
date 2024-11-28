@@ -216,6 +216,7 @@ class Physics {
     this.entities.forEach(function(entity){
       this.remove(entity);
     }.bind(this));
+    this.jointQueue = []; // Empty queue
   }
 
   toJSON() {
