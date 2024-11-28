@@ -36,7 +36,7 @@ class Game {
     // Render graphics
     this.graphics.render();
   }
-  
+
   setFrequency(frequency = 60) {
     this.physics.setFrequency(frequency);
     this.ticker.get(0).rate = 1 / frequency;
@@ -44,7 +44,7 @@ class Game {
 
   onLoad(onLoad) {
     // Add and start game loops
-    this.ticker.add(this.update.bind(this), 60); // Physics
+    this.ticker.add(this.update.bind(this), 1000 / 60); // Physics
     this.ticker.add(this.render.bind(this), -1); // Render
     this.ticker.start();
   

@@ -20,16 +20,17 @@ class Ticker {
     this.index = 0;
   }
 
-  add(callback, interval = -1) {
-    // Add callback function to array of functions
-    this.loops.push(new Loop(callback, interval));
+  add(callback, delay = 1000 / 60) {
+    // Create a loop with a callback and delay (milliseconds)
+    const loop = new Loop(callback, delay);
+    this.loops.push(loop);
   }
 
   get(index) {
     return this.loops[index];
   }
 
-  update(animationFrameCallback) {
+  tick(animationFrameCallback) {
     if (this.running == true) {
       // Request visual update function before next repaint
       this.index = requestAnimationFrame(animationFrameCallback);
@@ -48,7 +49,7 @@ class Ticker {
             this.loops[index].sum %= this.loops[index].rate;
             this.loops[index].callback({
               delta: (this.loops[index].rate == -1) ? delta : this.loops[index].rate,
-              alpha: (index == 0) ? 0 : alpha, // Return zero for base action or alpha for sibling loops
+              alpha: (index == 0) ? 0 : alpha, // Return zero for base loop or alpha for sibling loops
               index: this.index
             });
           }
@@ -65,8 +66,8 @@ class Ticker {
 
     // Create recursive callback function
     var animationFrameCallback = function() {
-      // Run update function with callback
-      this.update(animationFrameCallback);
+      // Run tick function with callback
+      this.tick(animationFrameCallback);
     }.bind(this);
 
     // Start recursive callback loop
@@ -101,12 +102,24 @@ class Ticker {
   }
 }
 
+/*
+  A loop triggers a callback after a specific time delay (milliseconds).
+  The rate is measured by delay over 1 second.
+  
+  Ex:
+    delay (60fps): 1000 / 60
+    rate (0.16ms): delay / 1000
+*/
+
 class Loop {
-  constructor(callback = () => {}, interval) {
-    this.rate = 1 / interval;
-    this.sum = 1 / interval;
+  constructor(callback = () => {}, delay) {
+    this.rate = delay / 1000;
+    this.sum = 0;
     this.alpha = 0;
     this.callback = callback;
+
+    // Render immediately if delay is negative
+    if (delay < 0) this.rate = -1;
   }
 }
 

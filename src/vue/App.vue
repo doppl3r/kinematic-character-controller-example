@@ -12,8 +12,9 @@
   
   // Load level when game assets are ready
   function onLoad() {
-    // Change frequency from 60 to 30
-    game.setFrequency(30);
+    // Change engine step rate from 60 to 30
+    game.physics.setFrequency(30);
+    game.ticker.get(0).rate = 1 / 30;
 
     // Load level entities from JSON data
     loadLevel('../json/level-1.json');
