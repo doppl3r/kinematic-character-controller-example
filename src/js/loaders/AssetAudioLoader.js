@@ -37,8 +37,8 @@ class AssetAudioLoader extends AudioLoader {
         });
       }
     }
-    catch {
-      console.error(`Error: File "${ url }" not found.`);
+    catch (error) {
+      console.error(error);
     }
   }
 

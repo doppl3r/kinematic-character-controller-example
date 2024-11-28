@@ -1,4 +1,4 @@
-import { AnimationMixer } from 'three';
+import { AmbientLight, AnimationMixer, OrthographicCamera, Scene, WebGLRenderer } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { clone as cloneWithSkeleton } from 'three/examples/jsm/utils/SkeletonUtils';
 
@@ -23,6 +23,7 @@ class AssetModelLoader extends GLTFLoader {
           model.duplicate = this.duplicate.bind(this, model);
           this.manager.cache[key] = model;
           this.addMixer(model);
+          this.generateThumbnail(model);
         }.bind(this),
         function(xhr) {
           
@@ -32,18 +33,18 @@ class AssetModelLoader extends GLTFLoader {
         });
       }
     }
-    catch {
-      console.error(`Error: File "${ url }" not found.`);
+    catch (error) {
+      console.error(error);
     }
   }
 
   duplicate(model) {
     // Initialize model as null
-    var model = cloneWithSkeleton(model);
-    this.addMixer(model);
+    const clone = cloneWithSkeleton(model);
+    this.addMixer(clone);
 
     // Return new model
-    return model;
+    return clone;
   }
 
   addMixer(model) {
@@ -98,6 +99,25 @@ class AssetModelLoader extends GLTFLoader {
       }
     }
   }
+
+  generateThumbnail(model, width = 64, height = 64) {
+    _scene.add(model);
+    _renderer.setSize(width, height);
+    _renderer.render(_scene, _camera);
+    model.thumbnail = _canvas.toDataURL('image/png');
+    model.removeFromParent();
+  }
 }
+
+// Initialize thumbnail components
+const _light = new AmbientLight('#ffffff', Math.PI);
+const _scene = new Scene();
+const _canvas = document.createElement('canvas');
+const _renderer = new WebGLRenderer({ alpha: true, canvas: _canvas });
+const _camera = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0.01, 100);
+
+// Update local components
+_scene.add(_light);
+_camera.position.z = 10;
 
 export { AssetModelLoader };

@@ -1,6 +1,6 @@
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { TriMesh as TriMeshShape, TriMeshFlags } from '@dimforge/rapier3d';
-import { Entity } from './Entity.js';
+import { Entity } from '../core/Entity.js';
 
 /*
   A TriMesh creates a rigid body from a set of vertices and

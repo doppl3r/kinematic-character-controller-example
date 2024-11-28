@@ -20,9 +20,10 @@ class Player extends Character {
     options = Object.assign({
       activeCollisionTypes: 'KINEMATIC_FIXED',
       activeEvents: 'COLLISION_EVENTS',
+      ccd: true,
       gravity: 9.81,
       height: 0.25,
-      jumpForce: 5,
+      jumpForce: 10,
       moveForce: 5,
       radius: 0.25,
       scale: { x: 1, y: 1, z: 1 },
@@ -160,10 +161,6 @@ class Player extends Character {
     var height = this.collidersDesc[0].shape.halfHeight / this.object.scale.y;
     var radius = this.collidersDesc[0].shape.radius / this.object.scale.x
     this.model.position.y = -(height + radius);
-  }
-
-  isGrounded() {
-    return this.controller.computedGrounded();
   }
 
   isMoving() {

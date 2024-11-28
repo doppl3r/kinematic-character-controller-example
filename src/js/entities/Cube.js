@@ -1,6 +1,6 @@
 import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { Cuboid } from '@dimforge/rapier3d';
-import { Entity } from './Entity.js';
+import { Entity } from '../core/Entity.js';
 
 /*
   A cuboid is a 6-sided shape that provides a 3D object (Three.js) and

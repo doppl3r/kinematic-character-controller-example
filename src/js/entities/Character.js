@@ -1,6 +1,6 @@
 import { Cuboid, QueryFilterFlags } from '@dimforge/rapier3d';
 import { Vector3 } from 'three';
-import { Entity } from './Entity.js';
+import { Entity } from '../core/Entity.js';
 
 /*
   Characters are a subclass that has a single Kinematic Body and
@@ -41,6 +41,10 @@ class Character extends Entity {
       this.nextTranslation.add(this.controller.computedMovement());
       this.rigidBody.setNextKinematicTranslation(this.nextTranslation);
     }
+  }
+
+  isGrounded() {
+    return this.controller.computedGrounded();
   }
 }
 

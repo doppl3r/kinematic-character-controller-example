@@ -41,7 +41,7 @@ class AssetLoader extends LoadingManager {
 }
 
 // Set default progress event behavior
-var onLoaderProgress = function(url, itemsLoaded, itemsTotal) {
+function onLoaderProgress(url, itemsLoaded, itemsTotal) {
   // Calculate percent
   var percent = Math.ceil((itemsLoaded / itemsTotal) * 100);
 

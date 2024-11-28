@@ -1,18 +1,43 @@
 <script setup>
   import '../scss/Stylesheet.scss';
   import { ref, onMounted } from 'vue';
-  import { Game } from '../js/Game.js';
+  import { Game } from '../js/core/Game.js';
+  import { LevelFactory } from '../js/factories/LevelFactory.js';
   import Button from './Button.vue';
   import Loading from './Loading.vue';
 
   // Initialize app and expose to window scope
   var canvas = ref();
-  var gameRef = ref(new Game(onLoad))
-  var game = window.game = gameRef.value;
+  var game = window.game = new Game(onLoad);
   
   // Load level when game assets are ready
   function onLoad() {
-    game.loadLevel('../json/level-1.json');
+    loadLevel('../json/level-1.json');
+  }
+
+  async function loadLevel(path) {
+    game.physics.clear();
+    
+    // Load level from JSON
+    var entities = await LevelFactory.loadFile(path);
+
+    // Loop through entities
+    entities.forEach(function(entity) {
+      // Add 3D object after entity is added
+      entity.addEventListener('added', function(e) {
+        game.graphics.scene.add(entity.object);
+      });
+
+      // Add entity to physics entities map
+      game.physics.add(entity);
+
+      // Assign rendering camera from player
+      if (entity.type == 'player') {
+        game.player = entity;
+        game.physics.createController(entity);
+        game.graphics.setCamera(entity.camera);
+      }
+    });
   }
   
   // Initialize app after canvas has been mounted

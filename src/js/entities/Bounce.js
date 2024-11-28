@@ -18,10 +18,6 @@ class Bounce extends Cube {
         {
           name: "bouncePlayer",
           data: { x: 0, y: 1, z: 0 }
-        },
-        {
-          name: "resetBounce",
-          started: false
         }
       ]
     }, options);
@@ -34,6 +30,12 @@ class Bounce extends Cube {
     this.object.add(this.model);
     this.isBounce = true;
     this.type = 'bounce';
+  }
+
+  bouncePlayer(e) {
+    // Bounce player
+    e.pair.move(e.data);
+    e.pair.velocity.y = 0.25;
   }
 
   update(delta) {

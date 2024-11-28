@@ -1,6 +1,6 @@
 import { SphereGeometry, Mesh, MeshStandardMaterial } from 'three';
 import { Ball } from '@dimforge/rapier3d';
-import { Entity } from './Entity.js';
+import { Entity } from '../core/Entity.js';
 
 /*
   A sphere is a ball shape that provides a 3D object (Three.js) and
