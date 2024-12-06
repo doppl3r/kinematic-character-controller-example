@@ -66,7 +66,7 @@ class Physics {
       // Create entity physics components
       this.createRigidBody(entity);
       this.createColliders(entity);
-      this.checkJointPairs(entity);
+      this.createParentJoint(entity);
 
       // Dispatch 'added' event to observers
       entity.dispatchEvent({ type: 'added' });
@@ -76,7 +76,7 @@ class Physics {
 
   remove(entity) {
     // Remove entity physics components before deletion
-    this.removeJoint(entity);
+    this.removeJoints(entity);
     this.removeColliders(entity);
     this.removeRigidBody(entity);
     entity.object.removeFromParent();
@@ -134,33 +134,6 @@ class Physics {
     }
   }
 
-  checkJointPairs(entity) {
-    // Get entity parent ID
-    let parentId = entity.rigidBodyDesc.userData.parentId;
-    let parent = this.get(parentId);
-    
-    // Check if entity has parent ID
-    if (parentId) {
-      // Add entity to queue if no entity exists yet
-      if (parent) {
-        this.createJoint(parent, entity);
-      }
-      else {
-        this.jointQueue.push(entity);
-      }
-    }
-
-    // Loop through queue
-    for (let i = this.jointQueue.length - 1; i >= 0; i--) {
-      let child = this.jointQueue[i];
-      parent = this.get(child.rigidBodyDesc.userData.parentId);
-      if (parent) {
-        this.createJoint(parent, child);
-        this.jointQueue.splice(i, 1);
-      }
-    }
-  }
-
   createJoint(parent, child) {
     const anchor1 = new Vector3();
     const anchor2 = new Vector3().copy(parent.rigidBodyDesc.translation).sub(child.rigidBodyDesc.translation);
@@ -177,18 +150,95 @@ class Physics {
     return joint;
   }
 
-  removeJoint(entity) {
-    // Loop through all world joints for matching ID
-    this.world.impulseJoints.forEach(function(joint) {
-      let parent = this.get(joint.body1().userData.id);
-      let child = this.get(joint.body2().userData.id);
-      
-      // Add child joint back to joint queue
-      if (entity.id == parent.id) {
-        this.jointQueue.push(child);
-        this.world.removeImpulseJoint(joint, true);
+  removeJoint(joint) {
+    this.world.removeImpulseJoint(joint, true);
+  }
+
+  createParentJoint(entity) {
+    // Get entity parent ID
+    let parentId = entity.getParentId();
+    let parent = this.get(parentId);
+    
+    // Check if entity has parent ID
+    if (parentId) {
+      // Add entity to queue if no entity exists yet
+      if (parent) {
+        this.createJoint(parent, entity);
       }
-    }.bind(this));
+      else {
+        this.jointQueue.push(entity);
+      }
+    }
+
+    // Loop through queue
+    for (let i = this.jointQueue.length - 1; i >= 0; i--) {
+      let child = this.jointQueue[i];
+      
+      // Restore parent ID if previously removed
+      child.restoreParentId();
+
+      // Create joint if parent entity exists in the world
+      parent = this.get(child.getParentId());
+      if (parent) {
+        this.createJoint(parent, child);
+        this.jointQueue.splice(i, 1);
+      }
+      else {
+        // Reset child parent Id to null if parent entity does not exist yet
+        child.setParentId(null);
+      }
+    }
+  }
+
+  removeJoints(entity) {
+    // Populate array of joint handles from entity
+    const jointHandles = [];
+    this.world.impulseJoints.forEachJointHandleAttachedToRigidBody(entity.rigidBody.handle, function(handle) {
+      jointHandles.push(handle);
+    });
+
+    // Reverse-loop through joint handles
+    for (let i = jointHandles.length - 1; i >= 0; i--) {
+      const handle = jointHandles[i];
+      const joint = this.world.impulseJoints.get(handle);
+      const parent = this.get(joint.body1().userData.id);
+      const child = this.get(joint.body2().userData.id);
+      
+      // Enqueue orphan entity before removing joint
+      if (entity.id == parent.id) {
+        if (child.rigidBodyDesc.userData.parentId != null) {
+          this.jointQueue.push(child);
+          child.setParentId(null);
+        }
+      }
+
+      // Remove joints
+      this.removeJoint(joint);
+    };
+  }
+
+  removeParentJoint(entity) {
+    const jointHandles = [];
+    const parent = this.get(entity.getParentId());
+    
+    if (parent) {
+      // Populate array of joint handles from parent entity
+      this.world.impulseJoints.forEachJointHandleAttachedToRigidBody(parent.rigidBody.handle, function(handle) {
+        jointHandles.push(handle);
+      });
+  
+      // Reverse-loop through joint handles
+      for (let i = jointHandles.length - 1; i >= 0; i--) {
+        const handle = jointHandles[i];
+        const joint = this.world.impulseJoints.get(handle); 
+        const child = this.get(joint.body2().userData.id);
+        
+        // Check if entity ID is the same as the child ID
+        if (entity.id == child.id) {
+          this.removeJoint(joint);
+        }
+      }
+    }
   }
 
   createController(entity) {
