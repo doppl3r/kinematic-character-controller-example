@@ -36,7 +36,8 @@ class Cube extends Entity {
 
     // Create model if not defined
     if (this.model.isObject3D == null) {
-      this.createCubeModel(options);
+      const model = this.createModel(options);
+      this.setModel(model);
     }
 
     // Bind "this" context to class function (required for event removal)
@@ -76,16 +77,17 @@ class Cube extends Entity {
     this.removeEventListener('removed', this.onCubeRemoved);
   }
 
-  createCubeModel(options) {
-    Object.assign({
-      color: '#ffffff'
-    }, options);
-
+  createModel(options) {
     var geometry = new BoxGeometry(1, 1, 1);
     var material = new MeshStandardMaterial({ color: options.color });
-    this.model = new Mesh(geometry, material);
-    this.model.receiveShadow = true;
-    this.model.castShadow = true;
+    const model = new Mesh(geometry, material);
+    model.receiveShadow = true;
+    model.castShadow = true;
+    return model;
+  }
+
+  setModel(model) {
+    this.model = model;
   }
   
   setScale(scale) {

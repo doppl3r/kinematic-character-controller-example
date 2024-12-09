@@ -8,6 +8,11 @@ import { Entity } from '../core/Entity.js';
 */
 
 class Sphere extends Entity {
+  // Define static properties
+  static model = {
+    name: ''
+  };
+
   constructor(options = {}) {
     // Set options with default values
     options = Object.assign({
@@ -20,24 +25,19 @@ class Sphere extends Entity {
     // Create physical shape
     options.shape = new Ball(options.radius);
 
-    // Initialize default sphere model mesh
-    if (options.model == null) {
-      var geometry = new SphereGeometry(options.radius, options.widthSegments, options.heightSegments);
-      var material = new MeshStandardMaterial({ color: options.color });
-      options.model = new Mesh(geometry, material);
-      options.model.receiveShadow = true;
-      options.model.castShadow = true;
-    }
-
     // Inherit Entity class
     super(options);
 
     // Set default properties
     this.isSphere = true;
     this.type = 'sphere';
-
-    // Add optional model to 3D object
     this.model = options.model;
+
+    // Initialize default sphere model mesh
+    if (this.model.isObject3D == null) {
+      const model = this.createModel(options);
+      this.setModel(model);
+    }
 
     // Bind "this" context to class function (required for event removal)
     this.onSphereAdded = this.onSphereAdded.bind(this);
@@ -63,13 +63,25 @@ class Sphere extends Entity {
     this.removeEventListener('removed', this.onSphereRemoved);
   }
 
+  createModel(options) {
+    const geometry = new SphereGeometry(options.radius, options.widthSegments, options.heightSegments);
+    const material = new MeshStandardMaterial({ color: options.color });
+    const model = new Mesh(geometry, material);
+    model.receiveShadow = true;
+    model.castShadow = true;
+    return model;
+  }
+
+  setModel(model) {
+    this.model = model;
+  }
+
   setRadius(radius) {
-    var collider = this.rigidBody.collider(0); // First collider
+    const collider = this.rigidBody.collider(0); // First collider
 
     // Update collider and 3D object scale
     collider.setRadius(radius);
     this.object.scale.set(radius * 2, radius * 2, radius * 2);
-
   }
   
   setScale(scale) {
