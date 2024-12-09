@@ -86,7 +86,7 @@ class Entity extends EventDispatcher {
     this.object = object;
   }
 
-  createObject(objectDesc) {
+  createObject3D(objectDesc) {
     const object = new Object3D();
     object.scale.copy(objectDesc.scale);
     return object;
@@ -339,7 +339,6 @@ class Entity extends EventDispatcher {
 
   onAdded(e) {
     // Update 3D object properties
-    this.reset();
     this.updateSnapshot();
     this.lerp(1);
 

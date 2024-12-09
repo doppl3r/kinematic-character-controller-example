@@ -64,7 +64,7 @@ class Physics {
       this.entities.set(entity.id, entity);
   
       // Create entity physics components
-      this.createObject(entity);
+      this.createObject3D(entity);
       this.createRigidBody(entity);
       this.createColliders(entity);
       this.createParentJoint(entity);
@@ -129,8 +129,8 @@ class Physics {
     return this.getEntityById(rigidBody.userData.id);
   }
 
-  createObject(entity) {
-    const object = entity.createObject(entity.objectDesc);
+  createObject3D(entity) {
+    const object = entity.createObject3D(entity.objectDesc);
     entity.setObject(object);
   }
 
