@@ -27,7 +27,6 @@ class Bounce extends Cube {
 
     // Set default properties
     this.createModel({ color: '#0000ff' });
-    this.object.add(this.model);
     this.isBounce = true;
     this.type = 'bounce';
   }

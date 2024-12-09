@@ -14,6 +14,7 @@ class Light extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
+      collisionGroups: 0x00000000,
       isSensor: true,
       status: 1
     }, options);
@@ -24,10 +25,8 @@ class Light extends Cube {
     // Assign new light to 3D model
     this.lightType = options.lightType;
     this.model = LightFactory.create(options.lightType, options);
-    this.object.add(this.model);
 
     // Set default properties
-    this.isLight = true;
     this.type = 'light';
   }
 
@@ -45,6 +44,7 @@ class Light extends Cube {
     // Extend entity toJSON with model name
     const json = super.toJSON();
     json.lightType = this.model.type;
+    json.intensity = this.model.intensity;
     return json;
   }
 }

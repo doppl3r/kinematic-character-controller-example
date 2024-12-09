@@ -10,7 +10,7 @@ import { Entity } from '../core/Entity.js';
 class Cube extends Entity {
   // Define static properties
   static model = {
-    name: ''
+    name: 'cube-cube'
   };
 
   constructor(options) {
@@ -32,10 +32,10 @@ class Cube extends Entity {
     this.isCube = true;
     this.type = 'cube';
     this.model = options.model;
-    
-    // Update 3D object
-    if (this.model.isObject3D) this.object.add(this.model);
-    this.object.scale.copy(options.scale);
+
+    // Bind "this" context to class function (required for event removal)
+    this.onCubeAdded = this.onCubeAdded.bind(this);
+    this.addEventListener('added', this.onCubeAdded);
   }
 
   update(delta) {
@@ -49,6 +49,25 @@ class Cube extends Entity {
     if (this.model && this.model.mixer) {
       this.model.mixer.update(delta);
     }
+  }
+
+  onCubeAdded(e) {
+    // Bind target "this" context to class function (required for event removal)
+    this.onCubeRemoved = this.onCubeRemoved.bind(this);
+
+    // Add optional model to 3D object
+    if (this.model.isObject3D) this.object.add(this.model);
+    
+    // Add Cube event listeners
+    this.addEventListener('removed', this.onCubeRemoved);
+  }
+
+  onCubeRemoved(e) {
+    // Remove model from 3D object
+    if (this.model.isObject3D) this.object.remove(this.model);
+
+    // Remove entity event listeners
+    this.removeEventListener('removed', this.onCubeRemoved);
   }
 
   createModel(options) {
@@ -88,7 +107,16 @@ class Cube extends Entity {
   toJSON() {
     // Extend entity toJSON with model name
     const json = super.toJSON();
+
+    // Assign cube properties to entity JSON
+    Object.assign(json, {
+      type: this.type
+    });
+
+    // Conditionally store model name
     if (this.model.name) json.model = { name: this.model.name };
+
+    // Return json object
     return json;
   }
 }

@@ -20,10 +20,11 @@ class Entity extends EventDispatcher {
     this.name = options.name || '';
     this.id = options.id || MathUtils.generateUUID();
     this.isEntity = true;
+    this.object;
+    this.objectDesc;
     this.rigidBody;
     this.rigidBodyDesc;
     this.collidersDesc = [];
-    this.object = new Object3D();
     this.snapshot = {
       position_1: new Vector3(),
       position_2: new Vector3(),
@@ -36,6 +37,7 @@ class Entity extends EventDispatcher {
     this.forceSpeedMax = Infinity;
 
     // Define initial rigidBodyDesc and colliderDesc
+    this.setObjectDesc(options);
     this.setRigidBodyDesc(options);
     this.addColliderDesc(options);
     
@@ -64,6 +66,30 @@ class Entity extends EventDispatcher {
 
     // Interpolate 3D object position
     this.lerp(alpha);
+  }
+
+  setObjectDesc(options) {
+    // Set default object options
+    const defaultOptions = {
+      scale: { x: 1, y: 1, z: 1 }
+    }
+
+    // Set options with default values
+    options = Object.assign({ ...defaultOptions }, options);
+
+    // Create object description
+    this.objectDesc = new Object3D();
+    this.objectDesc.scale.copy(options.scale);
+  }
+
+  setObject(object) {
+    this.object = object;
+  }
+
+  createObject(objectDesc) {
+    const object = new Object3D();
+    object.scale.copy(objectDesc.scale);
+    return object;
   }
 
   setRigidBodyDesc(options) {
@@ -97,7 +123,7 @@ class Entity extends EventDispatcher {
     this.rigidBodyDesc.setSleeping(options.sleeping);
     this.rigidBodyDesc.setSoftCcdPrediction(options.softCcdPrediction);
     this.rigidBodyDesc.setTranslation(options.position.x, options.position.y, options.position.z);
-    this.rigidBodyDesc.setUserData({ id: this.id, parentId: options.parentId }); // Store entity ID for Physics.js
+    this.rigidBodyDesc.setUserData({ id: this.id, parentId: options.parentId }); // Store entity IDs for Physics.js
   }
 
   setRigidBody(rigidBody) {
@@ -155,16 +181,7 @@ class Entity extends EventDispatcher {
   }
 
   setParentId(parentId) {
-    this.rigidBodyDesc.userData.parentIdPrev = this.rigidBodyDesc.userData.parentId;
     this.rigidBodyDesc.userData.parentId = parentId;
-  }
-
-  restoreParentId() {
-    // Restore parent ID if the previous ID was set
-    if (this.rigidBodyDesc.userData.parentIdPrev) {
-      this.rigidBodyDesc.userData.parentId = this.rigidBodyDesc.userData.parentIdPrev;
-      this.rigidBodyDesc.userData.parentIdPrev = null;
-    }
   }
 
   getPosition() {
@@ -178,7 +195,7 @@ class Entity extends EventDispatcher {
   }
 
   resetPosition() {
-    if (this.rigidBody) this.rigidBody.setTranslation(this.rigidBodyDesc.translation);
+    this.setPosition(this.rigidBodyDesc.translation);
   }
 
   getRotation() {
@@ -192,7 +209,7 @@ class Entity extends EventDispatcher {
   }
 
   resetRotation() {
-    if (this.rigidBody) this.rigidBody.setRotation(this.rigidBodyDesc.rotation);
+    this.setRotation(this.rigidBodyDesc.rotation);
   }
 
   getScale() {
@@ -200,7 +217,45 @@ class Entity extends EventDispatcher {
   }
 
   setScale(scale) {
-    this.object.scale.copy(scale);
+    if (this.object) this.object.scale.copy(scale);
+  }
+
+  resetScale() {
+    this.setScale(this.objectDesc.scale);
+  }
+
+  getLinvel() {
+    if (this.rigidBody == null) return this.rigidBodyDesc.linvel;
+    else return this.rigidBody.linvel();
+  }
+
+  setLinvel(velocity) {
+    if (this.rigidBody) this.rigidBody.setLinvel(velocity);
+  }
+
+  resetLinvel() {
+    if (this.rigidBody) this.setLinvel(this.rigidBodyDesc.linvel);
+  }
+
+  getAngvel() {
+    if (this.rigidBody == null) return this.rigidBodyDesc.angvel;
+    else return this.rigidBody.angvel();
+  }
+
+  setAngvel(velocity) {
+    if (this.rigidBody) this.rigidBody.setAngvel(velocity);
+  }
+
+  resetAngvel() {
+    if (this.rigidBody) this.setAngvel(this.rigidBodyDesc.angvel);
+  }
+
+  reset() {
+    this.resetPosition();
+    this.resetRotation();
+    this.resetScale();
+    this.resetLinvel();
+    this.resetAngvel();
   }
 
   tween(options) {
@@ -243,8 +298,10 @@ class Entity extends EventDispatcher {
 
   lerp(alpha = 0) {
     // Linear interpolation using alpha value
-    this.object.position.lerpVectors(this.snapshot.position_1, this.snapshot.position_2, alpha);
-    this.object.quaternion.slerpQuaternions(this.snapshot.rotation_1, this.snapshot.rotation_2, alpha);
+    if (this.object) {
+      this.object.position.lerpVectors(this.snapshot.position_1, this.snapshot.position_2, alpha);
+      this.object.quaternion.slerpQuaternions(this.snapshot.rotation_1, this.snapshot.rotation_2, alpha);
+    }
   }
 
   getCollider(handle) {
@@ -282,6 +339,7 @@ class Entity extends EventDispatcher {
 
   onAdded(e) {
     // Update 3D object properties
+    this.reset();
     this.updateSnapshot();
     this.lerp(1);
 
@@ -390,9 +448,9 @@ class Entity extends EventDispatcher {
         w: this.rigidBodyDesc.rotation.w
       },
       scale: {
-        x: this.object.scale.x,
-        y: this.object.scale.y,
-        z: this.object.scale.z
+        x: this.objectDesc.scale.x,
+        y: this.objectDesc.scale.y,
+        z: this.objectDesc.scale.z
       },
       sleeping: this.rigidBodyDesc.sleeping,
       softCcdPrediction: this.rigidBodyDesc.softCcdPrediction,

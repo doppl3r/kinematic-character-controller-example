@@ -38,10 +38,29 @@ class Sphere extends Entity {
 
     // Add optional model to 3D object
     this.model = options.model;
-    this.object.add(this.model);
 
-    // Update 3D object scale
-    this.object.scale.set(options.radius * 2, options.radius * 2, options.radius * 2);
+    // Bind "this" context to class function (required for event removal)
+    this.onSphereAdded = this.onSphereAdded.bind(this);
+    this.addEventListener('added', this.onSphereAdded);
+  }
+
+  onSphereAdded(e) {
+    // Bind target "this" context to class function (required for event removal)
+    this.onSphereRemoved = this.onSphereRemoved.bind(this);
+
+    // Add optional model to 3D object
+    if (this.model.isObject3D) this.object.add(this.model);
+    
+    // Add Cube event listeners
+    this.addEventListener('removed', this.onSphereRemoved);
+  }
+
+  onSphereRemoved(e) {
+    // Remove model from 3D object
+    if (this.model.isObject3D) this.object.remove(this.model);
+
+    // Remove entity event listeners
+    this.removeEventListener('removed', this.onSphereRemoved);
   }
 
   setRadius(radius) {

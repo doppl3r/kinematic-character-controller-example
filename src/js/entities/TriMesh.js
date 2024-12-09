@@ -54,7 +54,29 @@ class TriMesh extends Entity {
 
     // Add model to 3D object
     this.model = options.model;
-    this.object.add(this.model);
+
+    // Bind "this" context to class function (required for event removal)
+    this.onTriMeshAdded = this.onTriMeshAdded.bind(this);
+    this.addEventListener('added', this.onTriMeshAdded);
+  }
+
+  onTriMeshAdded(e) {
+    // Bind target "this" context to class function (required for event removal)
+    this.onTriMeshRemoved = this.onTriMeshRemoved.bind(this);
+
+    // Add optional model to 3D object
+    if (this.model.isObject3D) this.object.add(this.model);
+    
+    // Add Cube event listeners
+    this.addEventListener('removed', this.onTriMeshRemoved);
+  }
+
+  onTriMeshRemoved(e) {
+    // Remove model from 3D object
+    if (this.model.isObject3D) this.object.remove(this.model);
+
+    // Remove entity event listeners
+    this.removeEventListener('removed', this.onTriMeshRemoved);
   }
 }
 

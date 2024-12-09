@@ -64,6 +64,7 @@ class Physics {
       this.entities.set(entity.id, entity);
   
       // Create entity physics components
+      this.createObject(entity);
       this.createRigidBody(entity);
       this.createColliders(entity);
       this.createParentJoint(entity);
@@ -89,9 +90,32 @@ class Physics {
     return entity;
   }
 
-  get(id) {
+  getEntityById(id) {
     // Get entity from entities map by id
     return this.entities.get(id);
+  }
+
+  getChildren(entity) {
+    const jointHandles = [];
+    const children = [];
+    
+    // Populate array of joint handles from parent entity
+    this.world.impulseJoints.forEachJointHandleAttachedToRigidBody(entity.rigidBody.handle, function(handle) {
+      jointHandles.push(handle);
+    });
+
+    // Reverse-loop through joint handles
+    for (let i = jointHandles.length - 1; i >= 0; i--) {
+      const handle = jointHandles[i];
+      const joint = this.world.impulseJoints.get(handle); 
+      const child = this.getEntityById(joint.body2().userData.id);
+      
+      // Check if entity ID is the same as the child ID
+      if (entity.id != child.id) {
+        children.push(child);
+      }
+    }
+    return children;
   }
 
   duplicate(entity) {
@@ -102,7 +126,12 @@ class Physics {
   getEntityFromColliderHandle(handle) {
     const collider = this.world.getCollider(handle);
     const rigidBody = collider._parent;
-    return this.get(rigidBody.userData.id);
+    return this.getEntityById(rigidBody.userData.id);
+  }
+
+  createObject(entity) {
+    const object = entity.createObject(entity.objectDesc);
+    entity.setObject(object);
   }
 
   createRigidBody(entity) {
@@ -157,7 +186,7 @@ class Physics {
   createParentJoint(entity) {
     // Get entity parent ID
     let parentId = entity.getParentId();
-    let parent = this.get(parentId);
+    let parent = this.getEntityById(parentId);
     
     // Check if entity has parent ID
     if (parentId) {
@@ -166,26 +195,22 @@ class Physics {
         this.createJoint(parent, entity);
       }
       else {
-        this.jointQueue.push(entity);
+        // Enqueue orphan ID if parent does not exist in the world
+        this.jointQueue.push(entity.id);
       }
     }
 
     // Loop through queue
     for (let i = this.jointQueue.length - 1; i >= 0; i--) {
-      let child = this.jointQueue[i];
-      
-      // Restore parent ID if previously removed
-      child.restoreParentId();
-
-      // Create joint if parent entity exists in the world
-      parent = this.get(child.getParentId());
-      if (parent) {
-        this.createJoint(parent, child);
-        this.jointQueue.splice(i, 1);
-      }
-      else {
-        // Reset child parent Id to null if parent entity does not exist yet
-        child.setParentId(null);
+      // Check if child exists in the world
+      let child = this.getEntityById(this.jointQueue[i]);
+      if (child) {
+        // Create joint if parent entity exists in the world
+        parent = this.getEntityById(child.getParentId());
+        if (parent) {
+          this.createJoint(parent, child);
+          this.jointQueue.splice(i, 1);
+        }
       }
     }
   }
@@ -201,13 +226,13 @@ class Physics {
     for (let i = jointHandles.length - 1; i >= 0; i--) {
       const handle = jointHandles[i];
       const joint = this.world.impulseJoints.get(handle);
-      const parent = this.get(joint.body1().userData.id);
-      const child = this.get(joint.body2().userData.id);
+      const parent = this.getEntityById(joint.body1().userData.id);
+      const child = this.getEntityById(joint.body2().userData.id);
       
-      // Enqueue orphan entity before removing joint
+      // Enqueue orphan ID before removing joint
       if (entity.id == parent.id) {
         if (child.rigidBodyDesc.userData.parentId != null) {
-          this.jointQueue.push(child);
+          this.jointQueue.push(child.id);
           child.setParentId(null);
         }
       }
@@ -219,7 +244,7 @@ class Physics {
 
   removeParentJoint(entity) {
     const jointHandles = [];
-    const parent = this.get(entity.getParentId());
+    const parent = this.getEntityById(entity.getParentId());
     
     if (parent) {
       // Populate array of joint handles from parent entity
@@ -231,11 +256,12 @@ class Physics {
       for (let i = jointHandles.length - 1; i >= 0; i--) {
         const handle = jointHandles[i];
         const joint = this.world.impulseJoints.get(handle); 
-        const child = this.get(joint.body2().userData.id);
+        const child = this.getEntityById(joint.body2().userData.id);
         
         // Check if entity ID is the same as the child ID
         if (entity.id == child.id) {
           this.removeJoint(joint);
+          this.jointQueue.push(child.id);
         }
       }
     }

@@ -54,8 +54,7 @@ class Player extends Character {
     this.cameraOffset = new Vector3(0, 2, 2);
 
     // Add optional model to 3D object
-    this.model;
-    this.addModel(options.model);
+    this.model = options.model;
 
     // Bind "this" context to class function (required for event removal)
     this.onPlayerAdded = this.onPlayerAdded.bind(this);
@@ -153,8 +152,7 @@ class Player extends Character {
     }
   }
 
-  addModel(model) {
-    this.model = model;
+  addModel() {
     this.object.add(this.model);
 
     // Offset model position from shape dimensions
@@ -175,6 +173,9 @@ class Player extends Character {
     // Bind target "this" context to class function (required for event removal)
     e.target.keyDown = e.target.keyDown.bind(e.target);
     e.target.keyUp = e.target.keyUp.bind(e.target);
+
+    // Add player model
+    this.addModel(this.model);
 
     // Add event listeners
     document.addEventListener('keydown', e.target.keyDown);
