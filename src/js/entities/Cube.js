@@ -10,12 +10,13 @@ import { Entity } from '../core/Entity.js';
 class Cube extends Entity {
   // Define static properties
   static model = {
-    name: 'cube-cube'
+    name: ''
   };
 
   constructor(options) {
     // Set options with default values
     options = Object.assign({
+      color: '#620460',
       enabledRotations: { x: false, y: false, z: true },
       enabledTranslations: { x: true, y: true, z: false },
       scale: { x: 1, y: 1, z: 1 },
@@ -32,6 +33,11 @@ class Cube extends Entity {
     this.isCube = true;
     this.type = 'cube';
     this.model = options.model;
+
+    // Create model if not defined
+    if (this.model.isObject3D == null) {
+      this.createCubeModel(options);
+    }
 
     // Bind "this" context to class function (required for event removal)
     this.onCubeAdded = this.onCubeAdded.bind(this);
@@ -70,8 +76,10 @@ class Cube extends Entity {
     this.removeEventListener('removed', this.onCubeRemoved);
   }
 
-  createModel(options) {
-    Object.assign({ color: '#ffffff' }, options);
+  createCubeModel(options) {
+    Object.assign({
+      color: '#ffffff'
+    }, options);
 
     var geometry = new BoxGeometry(1, 1, 1);
     var material = new MeshStandardMaterial({ color: options.color });

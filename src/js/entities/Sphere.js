@@ -69,8 +69,9 @@ class Sphere extends Entity {
     // Update collider and 3D object scale
     collider.setRadius(radius);
     this.object.scale.set(radius * 2, radius * 2, radius * 2);
-  }
 
+  }
+  
   setScale(scale) {
     this.setRadius(scale.x / 2);
   }

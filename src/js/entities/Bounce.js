@@ -14,6 +14,7 @@ class Bounce extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
+      color: '#0000ff',
       events: [
         {
           name: "bouncePlayer",
@@ -26,7 +27,7 @@ class Bounce extends Cube {
     super(options);
 
     // Set default properties
-    this.createModel({ color: '#0000ff' });
+    this.createModel({ color: options.color });
     this.isBounce = true;
     this.type = 'bounce';
   }
