@@ -234,7 +234,7 @@ class Entity extends EventDispatcher {
   }
 
   resetLinvel() {
-    if (this.rigidBody) this.setLinvel(this.rigidBodyDesc.linvel);
+    this.setLinvel(this.rigidBodyDesc.linvel);
   }
 
   getAngvel() {
@@ -247,7 +247,20 @@ class Entity extends EventDispatcher {
   }
 
   resetAngvel() {
-    if (this.rigidBody) this.setAngvel(this.rigidBodyDesc.angvel);
+    this.setAngvel(this.rigidBodyDesc.angvel);
+  }
+
+  getStatus() {
+    if (this.rigidBody) return this.rigidBody.bodyType;
+    else return this.rigidBodyDesc.status;
+  }
+
+  setStatus(status) {
+    if (this.rigidBody) this.rigidBody.setBodyType(status);
+  }
+
+  resetStatus() {
+    this.setStatus(this.rigidBodyDesc.status);
   }
 
   reset() {
@@ -256,6 +269,7 @@ class Entity extends EventDispatcher {
     this.resetScale();
     this.resetLinvel();
     this.resetAngvel();
+    this.resetStatus();
   }
 
   tween(options) {
@@ -269,9 +283,15 @@ class Entity extends EventDispatcher {
     return tween;
   }
 
-  updateSnapshot() {
-    // A snapshot requires a physical rigid body
-    if (this.rigidBody) {
+  updateSnapshot(refresh = false) {
+    if (refresh == true) {
+      // Set position/rotation from rigidBodyDesc
+      this.snapshot.position_1.copy(this.rigidBodyDesc.translation);
+      this.snapshot.position_2.copy(this.rigidBodyDesc.translation);
+      this.snapshot.rotation_1.copy(this.rigidBodyDesc.rotation);
+      this.snapshot.rotation_2.copy(this.rigidBodyDesc.rotation);
+    }
+    else {
       // Store previous snapshot position for lerp
       this.snapshot.position_1.copy(this.snapshot.position_2);
       this.snapshot.rotation_1.copy(this.snapshot.rotation_2);
@@ -286,13 +306,6 @@ class Entity extends EventDispatcher {
         this.snapshot.position_2.copy(this.rigidBody.translation());
         this.snapshot.rotation_2.copy(this.rigidBody.rotation());
       }
-    }
-    else {
-      // Set position/rotation from rigidBodyDesc
-      this.snapshot.position_1.copy(this.rigidBodyDesc.translation);
-      this.snapshot.position_2.copy(this.rigidBodyDesc.translation);
-      this.snapshot.rotation_1.copy(this.rigidBodyDesc.rotation);
-      this.snapshot.rotation_2.copy(this.rigidBodyDesc.rotation);
     }
   }
 
@@ -339,7 +352,7 @@ class Entity extends EventDispatcher {
 
   onAdded(e) {
     // Update 3D object properties
-    this.updateSnapshot();
+    this.updateSnapshot(true);
     this.lerp(1);
 
     // Add entity event listeners with "this" context
@@ -355,7 +368,7 @@ class Entity extends EventDispatcher {
     this.removeEventListener('removed', this.onRemoved);
   }
 
-  applyVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle) {
+  applyVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle = 0) {
     // Rotate and apply velocity at an angle
     const velocity = new Vector3().copy(this.rigidBody.linvel());
     velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, -angle);
@@ -364,7 +377,7 @@ class Entity extends EventDispatcher {
     this.rigidBody.setLinvel(velocity, true);
   }
 
-  setAngularVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle) {
+  setAngularVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle = 0) {
     const velocity = new Vector3().copy(this.rigidBody.linvel());
     let direction = 1;
 
@@ -376,7 +389,7 @@ class Entity extends EventDispatcher {
     this.rigidBody.setAngvel(force, true);
   }
 
-  applyImpulseAtAngle(force = { x: 0, y: 0, z: 0 }, angle) {
+  applyImpulseAtAngle(force = { x: 0, y: 0, z: 0 }, angle = 0) {
     // Rotate and apply force at an angle
     force = new Vector3().copy(force);
     force.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);

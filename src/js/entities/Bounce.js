@@ -14,6 +14,8 @@ class Bounce extends Cube {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
+      activeCollisionTypes: 'ALL',
+      activeEvents: 'COLLISION_EVENTS',
       color: '#0000ff',
       events: [
         {
@@ -34,8 +36,13 @@ class Bounce extends Cube {
 
   bouncePlayer(e) {
     // Bounce player
-    e.pair.move(e.data);
-    e.pair.velocity.y = 0.5;
+    if (e.pair.move) {
+      e.pair.move(e.data);
+      e.pair.velocity.y = 0.5;
+    }
+    else {
+      e.pair.applyImpulseAtAngle({ x: 0, y: 2, z: 0 }, 0);
+    }
   }
 
   update(delta) {

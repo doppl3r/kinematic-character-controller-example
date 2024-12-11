@@ -41,7 +41,8 @@
     {
       "type": "sphere",
       "color": "#ff00ff",
-      "position": { "x": 0.5, "y": 0.5, "z": -1.5 },
+      "friction": 0.1,
+      "position": { "x": 0, "y": 1.5, "z": -1.5 },
       "radius": 0.25
     }
   ]

@@ -17,8 +17,6 @@ class Cube extends Entity {
     // Set options with default values
     options = Object.assign({
       color: '#620460',
-      enabledRotations: { x: false, y: false, z: true },
-      enabledTranslations: { x: true, y: true, z: false },
       scale: { x: 1, y: 1, z: 1 },
       model: { name: '' }
     }, options);
