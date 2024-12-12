@@ -13,7 +13,7 @@ class LevelFactory {
       if (response.ok) { return response.json(); }
       throw new Error('Something went wrong');
     })
-    .then(function(json) { return this.loadFromJSON(json); }.bind(this))
+    .then(function(json) { return json; })
     .catch(function(error) { console.error(error); });
   }
 
@@ -57,9 +57,14 @@ class LevelFactory {
       softCcdPrediction: 0.5
     }, json);
 
+    // Ensure className is defined
+    if (json.className == undefined) {
+      json.className = EntityFactory.getClassNameByType(json.type);
+    }
+
     // Create default model json from entity class static model field
     if (json.model == undefined) {
-      json.model = EntityFactory.getProperty(json.type, 'model');
+      json.model = EntityFactory.getPropertyByClassName('model', json.className);
     }
 
     // Duplicate 3D model from model json

@@ -21,62 +21,30 @@ class EntityFactory {
   static TriMesh = TriMesh;
 
   static create(options) {
-    // Call function by class name
-    if (options.type != null) {
-      var type = this.getClassName(options.type);
-      var fn = this['create' + type];
-      if (fn == null) {
-        console.error(`Error: Entity type "${ type }" not found.`);
-        return;
-      }
-      return fn(options);
+    // Call function by className value
+    if (options.className != null) {
+      return new EntityFactory[options.className](options);
     }
     else {
-      console.error(`Error: Entity type is undefined.`)
+      console.error(`Error: Entity property "className" is undefined.`);
     }
   }
 
-  static createBounce(options) {
-    return new Bounce(options);
+  static getClassNameByType(type) {
+    // Get className from matching (lowercase) type value
+    const properties = Object.keys(EntityFactory);
+    const className = properties.find(className => className.toLowerCase() == type);
+    return className;
   }
 
-  static createCharacter(options) {
-    return new Character(options);
-  }
-  
-  static createCube(options) {
-    return new Cube(options);
+  static getPropertyByType(name, type) {
+    const className = EntityFactory.getClassNameByType(type);
+    return EntityFactory.getPropertyByClassName(name, className);
   }
 
-  static createLight(options) {
-    return new Light(options);
-  }
-
-  static createPlayer(options) {
-    return new Player(options);
-  }
-
-  static createSphere(options) {
-    return new Sphere(options);
-  }
-
-  static createTrimesh(options) {
-    return new TriMesh(options);
-  }
-
-  static getClassName(type) {
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  }
-
-  static getProperty(type, property) {
-    const className = this.getClassName(type);
-    if (className) {
-      const staticClass = this[className];
-      if (staticClass) return staticClass[property];
-      else {
-        console.error(`Error: Static class "${ className }" does not exist.`)
-      }
-    }
+  static getPropertyByClassName(name, className) {
+    const property = EntityFactory[className];
+    if (property) return property[name];
     return;
   }
 }

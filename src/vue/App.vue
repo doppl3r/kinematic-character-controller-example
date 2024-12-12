@@ -11,20 +11,21 @@
   var game = window.game = new Game(onLoad);
   
   // Load level when game assets are ready
-  function onLoad() {
+  async function onLoad() {
     // Change engine step rate from 60 to 30
     game.physics.setFrequency(30);
     game.ticker.get(0).rate = 1 / 30;
 
     // Load level entities from JSON data
-    loadLevel('../json/level-1.json');
+    const json = await LevelFactory.loadFile('../json/level-1.json');
+    loadLevel(json);
   }
 
-  async function loadLevel(path) {
+  async function loadLevel(json) {
     game.physics.clear();
     
     // Load level from JSON
-    var entities = await LevelFactory.loadFile(path);
+    var entities = await LevelFactory.loadFromJSON(json);
 
     // Loop through entities
     entities.forEach(function(entity) {

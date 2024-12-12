@@ -131,45 +131,47 @@ class Entity extends EventDispatcher {
   }
 
   addColliderDesc(options) {
-    // Set default collider options
-    const defaultOptions = {
-      activeCollisionTypes: 'DEFAULT', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
-      activeEvents: 'NONE', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
-      collisionGroups: 0xFFFFFFFF,
-      contactForceEventThreshold: 0,
-      density: 1,
-      events: [],
-      friction: 0.5,
-      isSensor: false,
-      mass: 0,
-      restitution: 0,
-      shape: null,
-      solverGroups: 0xFFFFFFFF,
-      translation: { x: 0, y: 0, z: 0 }
-    };
+    if (options.shape) {
+      // Set default collider options
+      const defaultOptions = {
+        activeCollisionTypes: 'DEFAULT', // 1: DYNAMIC_DYNAMIC, 2: DYNAMIC_FIXED, 12: DYNAMIC_KINEMATIC, 15: DEFAULT, 32: FIXED_FIXED, 8704: KINEMATIC_FIXED, 52224: KINEMATIC_KINEMATIC, 60943: ALL
+        activeEvents: 'NONE', // 0: NONE, 1: COLLISION_EVENTS, 2: CONTACT_FORCE_EVENTS
+        collisionGroups: 0xFFFFFFFF,
+        contactForceEventThreshold: 0,
+        density: 1,
+        events: [],
+        friction: 0.5,
+        isSensor: false,
+        mass: 0,
+        restitution: 0,
+        shape: null,
+        solverGroups: 0xFFFFFFFF,
+        translation: { x: 0, y: 0, z: 0 }
+      };
 
-    // Set options with default values
-    options = Object.assign({ ...defaultOptions }, options);
+      // Set options with default values
+      options = Object.assign({ ...defaultOptions }, options);
 
-    // Create collider description
-    const colliderDesc = new ColliderDesc(options.shape);
-    colliderDesc.setActiveCollisionTypes(isNaN(options.activeCollisionTypes) ? ActiveCollisionTypes[options.activeCollisionTypes] : options.activeCollisionTypes);
-    colliderDesc.setActiveEvents(isNaN(options.activeEvents) ? ActiveEvents[options.activeEvents] : options.activeEvents);
-    colliderDesc.setCollisionGroups(options.collisionGroups);
-    colliderDesc.setContactForceEventThreshold(options.contactForceEventThreshold);
-    colliderDesc.setMass(options.mass); // Must set before density
-    colliderDesc.setDensity(options.density);
-    colliderDesc.setFriction(options.friction);
-    colliderDesc.setRestitution(options.restitution);
-    colliderDesc.setSensor(options.isSensor);
-    colliderDesc.setSolverGroups(options.solverGroups);
-    colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
+      // Create collider description
+      const colliderDesc = new ColliderDesc(options.shape);
+      colliderDesc.setActiveCollisionTypes(isNaN(options.activeCollisionTypes) ? ActiveCollisionTypes[options.activeCollisionTypes] : options.activeCollisionTypes);
+      colliderDesc.setActiveEvents(isNaN(options.activeEvents) ? ActiveEvents[options.activeEvents] : options.activeEvents);
+      colliderDesc.setCollisionGroups(options.collisionGroups);
+      colliderDesc.setContactForceEventThreshold(options.contactForceEventThreshold);
+      colliderDesc.setMass(options.mass); // Must set before density
+      colliderDesc.setDensity(options.density);
+      colliderDesc.setFriction(options.friction);
+      colliderDesc.setRestitution(options.restitution);
+      colliderDesc.setSensor(options.isSensor);
+      colliderDesc.setSolverGroups(options.solverGroups);
+      colliderDesc.setTranslation(options.translation.x, options.translation.y, options.translation.z);
 
-    // Store callback events to colliderDesc
-    colliderDesc.events = options.events;
+      // Store callback events to colliderDesc
+      colliderDesc.events = options.events;
 
-    // Add colliderDesc to array
-    this.collidersDesc.push(colliderDesc);
+      // Add colliderDesc to array
+      this.collidersDesc.push(colliderDesc);
+    }
   }
 
   setController(controller) {
