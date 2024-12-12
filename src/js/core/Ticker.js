@@ -59,12 +59,10 @@ class Ticker {
   }
 
   start() {
-    this.startTime = this.now();
-    this.oldTime = this.startTime;
-    this.elapsedTime = 0;
-    this.running = true;
+    // Reset loops before starting
+    this.reset();
 
-    // Create recursive callback function
+    // Create new recursive callback function
     var animationFrameCallback = function() {
       // Run tick function with callback
       this.tick(animationFrameCallback);
@@ -77,6 +75,22 @@ class Ticker {
   stop() {
     this.getElapsedTime();
     this.running = false;
+  }
+
+  reset() {
+    this.startTime = this.now();
+    this.oldTime = this.startTime;
+    this.elapsedTime = 0;
+    this.running = true;
+
+    // Reset each loop object
+    for (var index = this.loops.length - 1; index >= 0; index--) {
+      this.loops[index].reset();
+    }
+  }
+
+  isRunning() {
+    return this.running;
   }
 
   getElapsedTime() {
@@ -108,7 +122,7 @@ class Ticker {
   
   Ex:
     delay (60fps): 1000 / 60
-    rate (0.16ms): delay / 1000
+    rate (16ms): delay / 1000
 */
 
 class Loop {
@@ -120,6 +134,11 @@ class Loop {
 
     // Render immediately if delay is negative
     if (delay < 0) this.rate = -1;
+  }
+
+  reset() {
+    this.sum = 0;
+    this.alpha = 0;
   }
 }
 
