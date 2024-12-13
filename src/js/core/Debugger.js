@@ -25,6 +25,10 @@ class Debugger extends LineSegments {
     this.visible = true;
   }
 
+  isEnabled() {
+    return this.visible == true;
+  }
+
   disable() {
     this.visible = false;
   }

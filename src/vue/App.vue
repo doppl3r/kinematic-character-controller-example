@@ -2,7 +2,7 @@
   import '../scss/Stylesheet.scss';
   import { ref, onMounted } from 'vue';
   import { Game } from '../js/core/Game.js';
-  import { LevelFactory } from '../js/factories/LevelFactory.js';
+  import { LevelFactory } from '../js/core/factories/LevelFactory.js';
   import Button from './Button.vue';
   import Loading from './Loading.vue';
 

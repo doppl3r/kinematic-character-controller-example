@@ -23,7 +23,6 @@ class AssetModelLoader extends GLTFLoader {
           model.duplicate = this.duplicate.bind(this, model);
           this.manager.cache[key] = model;
           this.addMixer(model);
-          this.generateThumbnail(model);
         }.bind(this),
         function(xhr) {
           
@@ -100,12 +99,12 @@ class AssetModelLoader extends GLTFLoader {
     }
   }
 
-  generateThumbnail(model, width = 64, height = 64) {
+  renderThumbnail(model, width = 64, height = 64) {
     _scene.add(model);
     _renderer.setSize(width, height);
     _renderer.render(_scene, _camera);
-    model.thumbnail = _canvas.toDataURL('image/png');
     model.removeFromParent();
+    return _canvas.toDataURL('image/png');
   }
 }
 

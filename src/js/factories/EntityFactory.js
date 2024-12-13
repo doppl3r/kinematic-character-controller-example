@@ -1,10 +1,9 @@
 import { Bounce } from '../entities/Bounce';
-import { Character } from '../entities/Character';
-import { Cube } from '../entities/Cube';
-import { Light } from '../entities/Light';
+import { Cube } from '../core/entities/Cube';
+import { Light } from '../core/entities/Light';
 import { Player } from '../entities/Player';
-import { Sphere } from '../entities/Sphere';
-import { TriMesh } from '../entities/TriMesh';
+import { Sphere } from '../core/entities/Sphere';
+import { TriMesh } from '../core/entities/TriMesh';
 
 /*
   This class creates new entity instances that are compatible
@@ -13,7 +12,6 @@ import { TriMesh } from '../entities/TriMesh';
 
 class EntityFactory {
   static Bounce = Bounce;
-  static Character = Character;
   static Cube = Cube;
   static Light = Light;
   static Player = Player;

@@ -22,7 +22,7 @@ class LightFactory {
       groundColor: '#000000',
       intensity: Math.PI,
       position: { x: 0, y: 0, z: 0 },
-      shadow: false,
+      castShadow: false,
       skyColor: '#ffffff'
     }, options);
     
@@ -43,11 +43,14 @@ class LightFactory {
       helper = new PointLightHelper(light);
     }
 
-    // Update position
-    light.position.copy(options.position);
+    // Return error message
+    if (light == null) {
+      console.error(`Error: Light type "${ type }" does not exists.`);
+      return;
+    }
 
     // Add shadow option
-    if (options.shadow) {
+    if (options.castShadow) {
       light.castShadow = true;
     }
 

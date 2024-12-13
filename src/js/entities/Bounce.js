@@ -1,4 +1,4 @@
-import { Cube } from './Cube.js';
+import { Cube } from '../core/entities/Cube.js';
 
 /*
   A cuboid is a 6-sided shape that provides a 3D object (Three.js) and
@@ -22,7 +22,8 @@ class Bounce extends Cube {
           name: "bouncePlayer",
           data: { x: 0, y: 1, z: 0 }
         }
-      ]
+      ],
+      status: 1
     }, options);
 
     // Inherit Entity class

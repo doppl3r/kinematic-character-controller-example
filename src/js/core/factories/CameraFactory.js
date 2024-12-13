@@ -19,16 +19,18 @@ class CameraFactory {
 
     // Set options with default values
     options = Object.assign({
+      far: 100,
       fov: 45,
+      near: 0.05,
       zoom: 1
     }, options);
 
     // Conditionally create camera
     if (type == 'PerspectiveCamera') {
-      camera = new PerspectiveCamera(options.fov, ratio, 0.05, 100);
+      camera = new PerspectiveCamera(options.fov, ratio, options.near, options.far);
     }
     else if (type == 'OrthographicCamera') {
-      camera = new OrthographicCamera(-ratio, ratio, 1, -1, 0.05, 100);
+      camera = new OrthographicCamera(-ratio, ratio, 1, -1, options.near, options.far);
     }
 
     // Set camera options

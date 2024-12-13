@@ -1,5 +1,5 @@
 import { Ticker } from './Ticker.js';
-import { AssetLoader } from '../loaders/AssetLoader.js';
+import { AssetLoader } from './loaders/AssetLoader.js';
 import { Graphics } from './Graphics.js';
 import { Physics } from './Physics.js';
 
@@ -15,6 +15,7 @@ class Game {
     // Initialize components
     this.graphics = new Graphics(canvas);
     this.graphics.scene.add(this.physics.debugger);
+    this.physics.debugger.disable();
 
     // Load public assets with callbacks (onLoad, onProgress, onError)
     this.assets.load({

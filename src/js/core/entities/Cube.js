@@ -1,6 +1,6 @@
 import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { Cuboid } from '@dimforge/rapier3d';
-import { Entity } from '../core/Entity.js';
+import { Entity } from './Entity.js';
 
 /*
   A cuboid is a 6-sided shape that provides a 3D object (Three.js) and
@@ -16,9 +16,8 @@ class Cube extends Entity {
   constructor(options) {
     // Set options with default values
     options = Object.assign({
-      color: '#620460',
-      scale: { x: 1, y: 1, z: 1 },
-      model: { name: '' }
+      color: '#ffffff',
+      scale: { x: 1, y: 1, z: 1 }
     }, options);
 
     // Create physical shape

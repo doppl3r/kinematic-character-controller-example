@@ -106,6 +106,7 @@ class Graphics {
 
   setScene(scene) {
     this.scene = scene;
+    this.scene.fog = this.fog;
     this.renderPass.scene = scene;
     this.pixelatedPass.scene = scene;
     this.outlinePass.renderScene = scene;
