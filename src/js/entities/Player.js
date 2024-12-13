@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
-import { CameraFactory } from '../factories/CameraFactory.js';
+import { CameraFactory } from '../core/factories/CameraFactory.js';
 import { Capsule } from '@dimforge/rapier3d';
-import { Character } from './Character.js';
+import { Character } from '../core/entities/Character.js';
 import { Cuboid } from '@dimforge/rapier3d';
 
 /*

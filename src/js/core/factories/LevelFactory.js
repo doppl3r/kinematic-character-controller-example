@@ -1,6 +1,6 @@
 import { Quaternion, Vector3 } from 'three';
-import { EntityFactory } from './EntityFactory.js';
-import CustomEvents from '../mixins/CustomEvents.js';
+import { EntityFactory } from '../../factories/EntityFactory.js';
+import CustomEvents from '../../mixins/CustomEvents.js';
 
 class LevelFactory {
   constructor() {

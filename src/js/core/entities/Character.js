@@ -1,6 +1,6 @@
 import { Cuboid, QueryFilterFlags } from '@dimforge/rapier3d';
 import { Vector3 } from 'three';
-import { Entity } from '../core/Entity.js';
+import { Entity } from './Entity.js';
 
 /*
   Characters are a subclass that has a single Kinematic Body and
