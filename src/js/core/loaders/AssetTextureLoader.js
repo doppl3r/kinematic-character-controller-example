@@ -23,7 +23,7 @@ class AssetTextureLoader extends TextureLoader {
           this.manager.cache[key] = texture;
         }.bind(this),
         undefined,
-        function(err) {
+        function(error) {
           console.error(`Error: Texture "${ value.url }" not found.`);
         });
       }

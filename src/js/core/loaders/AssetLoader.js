@@ -2,6 +2,7 @@ import { LoadingManager } from 'three';
 import { AssetModelLoader } from './AssetModelLoader.js';
 import { AssetTextureLoader } from './AssetTextureLoader.js';
 import { AssetAudioLoader } from './AssetAudioLoader.js';
+import { AssetJSONLoader } from './AssetJSONLoader.js';
 
 /*
   The AssetLoader is a singleton class that manages loaders
@@ -18,6 +19,7 @@ class AssetLoader extends LoadingManager {
     this.assetModelLoader = new AssetModelLoader(this);
     this.assetTextureLoader = new AssetTextureLoader(this);
     this.assetAudioLoader = new AssetAudioLoader(this);
+    this.assetJSONLoader = new AssetJSONLoader(this);
   }
 
   load(urls = {}) {
@@ -25,6 +27,7 @@ class AssetLoader extends LoadingManager {
     if (urls.models) this.assetModelLoader.load(urls.models);
     if (urls.textures) this.assetTextureLoader.load(urls.textures);
     if (urls.audio) this.assetAudioLoader.load(urls.audio);
+    if (urls.json) this.assetJSONLoader.load(urls.json);
   }
 
   get(key) {

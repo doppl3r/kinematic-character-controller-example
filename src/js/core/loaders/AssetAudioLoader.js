@@ -32,7 +32,7 @@ class AssetAudioLoader extends AudioLoader {
         function(xhr) {
           
         },
-        function(err) {
+        function(error) {
           console.error(`Error: Audio "${ value.url }" not found.`);
         });
       }

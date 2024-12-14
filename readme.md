@@ -19,7 +19,7 @@ The `alpha` value (between 0.0 and 1.0) is calculated by adding the sum of time 
 
 Here is a `slow motion` example that demonstrates the interpolation between the physics engine and the graphical rendering. Without interpolation, the game would appear as choppy as the wireframes.
 
-![Screenshot](public/gif/interpolation.gif)
+![Interpolation](public/gif/interpolation.gif)
 
 ### Custom Events
 

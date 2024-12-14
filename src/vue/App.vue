@@ -2,9 +2,10 @@
   import '../scss/Stylesheet.scss';
   import { ref, onMounted } from 'vue';
   import { Game } from '../js/core/Game.js';
-  import { LevelFactory } from '../js/core/factories/LevelFactory.js';
+  import { EntityFactory } from '../js/factories/EntityFactory.js';
   import Button from './Button.vue';
   import Loading from './Loading.vue';
+  import CustomEvents from '../js/mixins/CustomEvents.js';
 
   // Initialize app and expose to window scope
   var canvas = ref();
@@ -18,33 +19,49 @@
     game.ticker.get(0).rate = 1 / 30;
 
     // Load level entities from JSON data
-    const json = await LevelFactory.loadFile('../json/level-1.json');
-    loadLevel(json);
+    loadLevel('level-1');
   }
 
-  async function loadLevel(json) {
+  async function loadLevel(name) {
     game.physics.clear();
-    
+
     // Load level from JSON
-    var entities = await LevelFactory.loadFromJSON(json);
-
-    // Loop through entities
-    entities.forEach(function(entity) {
-      // Add 3D object after entity is added
-      entity.addEventListener('added', function(e) {
-        game.graphics.scene.add(entity.object);
+    const json = game.assets.get(name);
+    const entities = [];
+    
+    // Loop through level children
+    if (json) {
+      json.children.forEach(function(child) {
+        const entity = EntityFactory.create({
+          ccd: true,
+          friction: json.friction || 0,
+          softCcdPrediction: 0.5,
+          ...child,
+        });
+  
+        // Add 3D object after entity is added
+        entity.addEventListener('added', function(e) {
+          game.graphics.scene.add(entity.object);
+        });
+  
+        // Add custom mixin functions to entity
+        Object.assign(entity, CustomEvents);
+  
+        // Assign rendering camera from player
+        if (entity.type == 'player') {
+          game.player = entity;
+          game.physics.createController(entity);
+          game.graphics.setCamera(entity.camera);
+        }
+  
+        // Add entity to physics entity map
+        game.physics.add(entity);
+        entities.push(entity);
       });
+    }
 
-      // Add entity to physics entities map
-      game.physics.add(entity);
-
-      // Assign rendering camera from player
-      if (entity.type == 'player') {
-        game.player = entity;
-        game.physics.createController(entity);
-        game.graphics.setCamera(entity.camera);
-      }
-    });
+    // Return final entity list
+    return entities;
   }
   
   // Initialize app after canvas has been mounted

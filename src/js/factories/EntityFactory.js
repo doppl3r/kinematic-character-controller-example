@@ -1,3 +1,4 @@
+import { EntityFactory as EntityFactoryCore } from '../core/factories/EntityFactory.js';
 import { Bounce } from '../entities/Bounce';
 import { Cube } from '../core/entities/Cube';
 import { Light } from '../core/entities/Light';
@@ -10,7 +11,7 @@ import { TriMesh } from '../core/entities/TriMesh';
   with Three.js and Rapier.js
 */
 
-class EntityFactory {
+class EntityFactory extends EntityFactoryCore {
   static Bounce = Bounce;
   static Cube = Cube;
   static Light = Light;
@@ -19,31 +20,23 @@ class EntityFactory {
   static TriMesh = TriMesh;
 
   static create(options) {
+    // Ensure className is defined
+    if (options.className == undefined) {
+      options.className = EntityFactory.getClassNameByType(options.type);
+    }
+    
+    // Create default model json from entity class static model field
+    if (options.model == undefined) {
+      options.model = EntityFactory.getPropertyByClassName('model', options.className);
+    }
+
+    // Duplicate 3D model from model json
+    if (options.model && game.assets.get(options.model.name)) {
+      options.model = game.assets.duplicate(options.model.name);
+    }
+
     // Call function by className value
-    if (options.className != null) {
-      return new EntityFactory[options.className](options);
-    }
-    else {
-      console.error(`Error: Entity property "className" is undefined.`);
-    }
-  }
-
-  static getClassNameByType(type) {
-    // Get className from matching (lowercase) type value
-    const properties = Object.keys(EntityFactory);
-    const className = properties.find(className => className.toLowerCase() == type);
-    return className;
-  }
-
-  static getPropertyByType(name, type) {
-    const className = EntityFactory.getClassNameByType(type);
-    return EntityFactory.getPropertyByClassName(name, className);
-  }
-
-  static getPropertyByClassName(name, className) {
-    const property = EntityFactory[className];
-    if (property) return property[name];
-    return;
+    return super.create(options);
   }
 }
 

@@ -21,7 +21,8 @@ class Game {
     this.assets.load({
       models: '../json/assets-models.json',
       textures: '../json/assets-textures.json',
-      audio: '../json/assets-audio.json'
+      audio: '../json/assets-audio.json',
+      json: '../json/assets-json.json'
     });
   }
 
