@@ -3,11 +3,23 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ## Quick links
  - [Player.js](src/js/entities/Player.js) - Extends the `Character.js` class and adds keyboard input.
- - [Character.js](src/js/entities/Character.js) - An abstract class for Kinematic Character Controllers that extends [Entity.js](src/js/core/Entity.js). Can be used for players, conveyors, doors, etc.
+ - [Character.js](src/js/core/entities/Character.js) - An abstract class for Kinematic Character Controllers that extends [Entity.js](src/js/core/entities/Entity.js). Can be used for players, conveyors, doors, etc.
  - [Game.js](src/js/core/Game.js) - Handles all game states, entities, and resources.
 
 ## Screenshot
 ![Screenshot](public/png/screenshot.png)
+
+## Other Features
+
+### Interpolation
+
+To improve visual performance, this game example separates the physics engine and the rendering engine into 2 separate "loops". The physics engine loop runs at 30hz, while the rendering loop runs at the refresh rate of your monitor (ex: 240hz).
+
+The alpha value is calculated by adding the sum of time that has changed between these two loops (value will always be between 0.0 and 1.0). The alpha value is then applied to the 3D objects position/rotation each time the rendering loop is called.
+
+Here is a slow motion example that demonstrates the interpolation between the physics engine and the graphical rendering. Without interpolation, the game would appear as choppy as the wireframes.
+
+![Screenshot](public/gif/interpolation.gif)
 
 ## Local Development
 

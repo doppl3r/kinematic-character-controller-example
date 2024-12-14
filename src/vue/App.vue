@@ -14,6 +14,7 @@
   async function onLoad() {
     // Change engine step rate from 60 to 30
     game.physics.setFrequency(30);
+    game.physics.debugger.enable();
     game.ticker.get(0).rate = 1 / 30;
 
     // Load level entities from JSON data
