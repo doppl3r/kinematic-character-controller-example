@@ -13,13 +13,38 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ### Interpolation
 
-To improve visual performance, this game example separates the physics engine and the rendering engine into 2 separate "loops". The physics engine loop runs at 30hz, while the rendering loop runs at the refresh rate of your monitor (ex: 240hz).
+To improve visual performance, this example separates the physics engine and the rendering engine into 2 separate "loops". The physics engine loop runs at 30hz, while the rendering loop runs at the refresh rate of your monitor (ex: 240hz).
 
 The alpha value is calculated by adding the sum of time that has changed between these two loops (value will always be between 0.0 and 1.0). The alpha value is then applied to the 3D objects position/rotation each time the rendering loop is called.
 
-Here is a slow motion example that demonstrates the interpolation between the physics engine and the graphical rendering. Without interpolation, the game would appear as choppy as the wireframes.
+Here is a **slow motion** example that demonstrates the interpolation between the physics engine and the graphical rendering. Without interpolation, the game would appear as choppy as the wireframes.
 
 ![Screenshot](public/gif/interpolation.gif)
+
+### Custom Events
+
+The physics entity system is designed to dispatch events to observers by event type (ex: `collision`, `added`, `removed` etc). The following example shows how you can prescribe a `collider` event to a specific entity using JSON data:
+```
+const entity = EntityFactory.create({
+  "type": "cube",
+  "events": [
+    {
+      "name": "bounce",
+      "velocity": { "x": 8, "y": 0, "z": 0 }
+    }
+  ]
+});
+```
+
+**Note**: *All events are only applied to the first collider assigned to the entity.*
+
+Whenever this entity collides with another entity (or its pair), it will attempt to perform the `bounce` function assigned to this entity. If this function does not exist, you can assign the function to the entity after it is created:
+```
+entity.bounce = function(e) {
+  // Apply velocity to the entity pair
+  e.pair.setLinvel(e.velocity);
+}
+```
 
 ## Local Development
 
