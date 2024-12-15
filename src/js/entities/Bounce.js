@@ -19,7 +19,7 @@ class Bounce extends Cube {
       color: '#0000ff',
       events: [
         {
-          name: "bouncePlayer",
+          name: "bounce",
           data: { x: 0, y: 1, z: 0 }
         }
       ],
@@ -35,8 +35,8 @@ class Bounce extends Cube {
     this.type = 'bounce';
   }
 
-  bouncePlayer(e) {
-    // Bounce player
+  bounce(e) {
+    // Bounce character type
     if (e.pair.move) {
       e.pair.move(e.data);
       e.pair.velocity.y = 0.5;

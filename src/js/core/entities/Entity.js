@@ -226,30 +226,89 @@ class Entity extends EventDispatcher {
     this.setScale(this.objectDesc.scale);
   }
 
-  getLinvel() {
-    if (this.rigidBody == null) return this.rigidBodyDesc.linvel;
-    else return this.rigidBody.linvel();
+  getLinearVelocity() {
+    if (this.rigidBody) return this.rigidBody.linvel();
+    else return this.rigidBodyDesc.linvel;
   }
 
-  setLinvel(velocity) {
+  setLinearVelocity(velocity) {
     if (this.rigidBody) this.rigidBody.setLinvel(velocity);
   }
 
-  resetLinvel() {
-    this.setLinvel(this.rigidBodyDesc.linvel);
+  applyVelocityAtAxisAngle(velocity = { x: 1, y: 1, z: 1 }, axis = { x: 0, y: 0, z: 0 }, angle = 0) {
+    // Get current linear velocity
+    _vector.copy(this.getLinearVelocity());
+
+    // Rotate velocity along axis, apply scale, then revert rotation
+    _vector.applyAxisAngle(axis, -angle);
+    _vector.multiply(velocity);
+    _vector.applyAxisAngle(axis, angle);
+
+    // Set new linear velocity
+    this.setLinearVelocity(_vector, true);
   }
 
-  getAngvel() {
+  applyImpulse(force = { x: 0, y: 0, z: 0 }) {
+    this.rigidBody.applyImpulse(force, true);
+  }
+
+  applyImpulseAtAngle(force = { x: 0, y: 0, z: 0 }, angle = 0) {
+    // Rotate and apply force at an angle
+    force = _vector.copy(force);
+    force.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);
+    this.applyImpulse(force);
+  }
+
+  setForce(direction = { x: 0, y: 0, z: 0 }, acceleration = 1, max = Infinity) {
+    this.forceDirection.copy(direction).normalize(); // Ex: -1.0 to 1.0
+    this.forceAcceleration = acceleration;
+    this.forceSpeedMax = max;
+  }
+
+  updateForce() {
+    // Check if force exists
+    if (this.forceDirection.length() > 0) {
+      _vector.copy(this.getLinearVelocity());
+      const speed = _vector.dot(this.forceDirection);
+      const speedNext = speed + this.forceAcceleration; // Ex: 0.5 to 4.5
+      const speedClamped = Math.max(speed, Math.min(speedNext, this.forceSpeedMax));
+      const acceleration = speedClamped - speed; // Ex: 0.5 (or 0 at max speed)
+      
+      // Update velocity using new force
+      _vector.x += this.forceDirection.x * acceleration;
+      _vector.y += this.forceDirection.y * acceleration;
+      _vector.z += this.forceDirection.z * acceleration;
+      this.setLinearVelocity(_vector);
+    }
+  }
+
+  resetLinearVelocity() {
+    this.setLinearVelocity(this.rigidBodyDesc.linvel);
+  }
+
+  getAngularVelocity() {
     if (this.rigidBody == null) return this.rigidBodyDesc.angvel;
     else return this.rigidBody.angvel();
   }
 
-  setAngvel(velocity) {
+  setAngularVelocity(velocity) {
     if (this.rigidBody) this.rigidBody.setAngvel(velocity);
   }
 
-  resetAngvel() {
-    this.setAngvel(this.rigidBodyDesc.angvel);
+  setAngularVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle = 0) {
+    const velocity = _vector.copy(this.getLinearVelocity());
+    let direction = 1;
+
+    // Rotate velocity before computing direction
+    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, -angle);
+    direction *= -Math.sign(Math.round(velocity.x)); // -1, 0, or 1
+    force = _vector.copy(force);
+    force.multiplyScalar(direction);
+    this.setAngularVelocity(force);
+  }
+
+  resetAngularVelocity() {
+    this.setAngularVelocity(this.rigidBodyDesc.angvel);
   }
 
   getStatus() {
@@ -265,12 +324,22 @@ class Entity extends EventDispatcher {
     this.setStatus(this.rigidBodyDesc.status);
   }
 
+  resetForces() {
+    if (this.rigidBody) this.rigidBody.resetForces();
+  }
+
+  resetTorques() {
+    if (this.rigidBody) this.rigidBody.resetTorques();
+  }
+
   reset() {
     this.resetPosition();
     this.resetRotation();
     this.resetScale();
-    this.resetLinvel();
-    this.resetAngvel();
+    this.resetLinearVelocity();
+    this.resetAngularVelocity();
+    this.resetForces();
+    this.resetTorques();
     this.resetStatus();
   }
 
@@ -370,60 +439,9 @@ class Entity extends EventDispatcher {
     this.removeEventListener('removed', this.onRemoved);
   }
 
-  applyVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle = 0) {
-    // Rotate and apply velocity at an angle
-    const velocity = new Vector3().copy(this.rigidBody.linvel());
-    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, -angle);
-    velocity.multiply(force);
-    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);
-    this.rigidBody.setLinvel(velocity, true);
-  }
-
-  setAngularVelocityAtAngle(force = { x: 1, y: 1, z: 1 }, angle = 0) {
-    const velocity = new Vector3().copy(this.rigidBody.linvel());
-    let direction = 1;
-
-    // Rotate velocity before computing direction
-    velocity.applyAxisAngle({ x: 0, y: 0, z: 1 }, -angle);
-    direction *= -Math.sign(Math.round(velocity.x)); // -1, 0, or 1
-    force = new Vector3().copy(force);
-    force.multiplyScalar(direction);
-    this.rigidBody.setAngvel(force, true);
-  }
-
-  applyImpulseAtAngle(force = { x: 0, y: 0, z: 0 }, angle = 0) {
-    // Rotate and apply force at an angle
-    force = new Vector3().copy(force);
-    force.applyAxisAngle({ x: 0, y: 0, z: 1 }, angle);
-    this.rigidBody.applyImpulse(force, true);
-  }
-
-  setForce(direction = { x: 0, y: 0, z: 0 }, acceleration = 1, max = Infinity) {
-    this.forceDirection.copy(direction).normalize(); // Ex: -1.0 to 1.0
-    this.forceAcceleration = acceleration;
-    this.forceSpeedMax = max;
-  }
-
-  updateForce() {
-    // Check if force exists
-    if (this.forceDirection.length() > 0) {
-      _vector.copy(this.rigidBody.linvel());
-      const speed = _vector.dot(this.forceDirection);
-      const speedNext = speed + this.forceAcceleration; // Ex: 0.5 to 4.5
-      const speedClamped = Math.max(speed, Math.min(speedNext, this.forceSpeedMax));
-      const acceleration = speedClamped - speed; // Ex: 0.5 (or 0 at max speed)
-      
-      // Update velocity using new force
-      _vector.x += this.forceDirection.x * acceleration;
-      _vector.y += this.forceDirection.y * acceleration;
-      _vector.z += this.forceDirection.z * acceleration;
-      this.rigidBody.setLinvel(_vector);
-    }
-  }
-
   getSpeed() {
     if (this.rigidBody == null) return 0;
-    return _vector.copy(this.rigidBody.linvel()).length();
+    return _vector.copy(this.getLinearVelocity()).length();
   }
 
   toJSON() {
@@ -494,6 +512,5 @@ class Entity extends EventDispatcher {
 
 // Assign local helper components
 let _vector = new Vector3();
-let _id = 0;
 
 export { Entity };

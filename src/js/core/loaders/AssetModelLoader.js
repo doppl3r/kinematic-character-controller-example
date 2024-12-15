@@ -99,11 +99,32 @@ class AssetModelLoader extends GLTFLoader {
     }
   }
 
-  renderThumbnail(model, width = 64, height = 64) {
+  renderThumbnail(model, options) {
+    // Set default options
+    options = Object.assign({
+      height: 64,
+      position: { x: 0, y: 0, z: 0 },
+      scale: { x: 1, y: 1, z: 1 },
+      width: 64
+    }, options);
+
+    // Set model options
+    const positionPrev = model.position.clone();
+    const scalePrev = model.scale.clone();
+    model.position.copy(options.position);
+    model.scale.copy(options.scale);
+
+    // Add model to scene before rendering
     _scene.add(model);
-    _renderer.setSize(width, height);
+    _renderer.setSize(options.width, options.height);
     _renderer.render(_scene, _camera);
     model.removeFromParent();
+
+    // Revert model options
+    model.position.copy(positionPrev);
+    model.scale.copy(scalePrev);
+
+    // Return canvas rendering
     return _canvas.toDataURL('image/png');
   }
 }
