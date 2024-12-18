@@ -18,6 +18,7 @@ class Entity extends EventDispatcher {
 
     // Set base components
     this.name = options.name || '';
+    this.type = options.type || 'entity';
     this.id = options.id || MathUtils.generateUUID();
     this.isEntity = true;
     this.object;
@@ -448,7 +449,8 @@ class Entity extends EventDispatcher {
     // Initialize entity values
     let json = {
       id: this.id,
-      name: this.name
+      name: this.name,
+      type: this.type
     };
 
     // Include rigidBody properties
@@ -490,20 +492,22 @@ class Entity extends EventDispatcher {
     }, json);
 
     // Include first collider properties
-    json = Object.assign({
-      activeCollisionTypes: this.collidersDesc[0].activeCollisionTypes,
-      activeEvents: this.collidersDesc[0].activeEvents,
-      collisionGroups: this.collidersDesc[0].collisionGroups,
-      contactForceEventThreshold: this.collidersDesc[0].contactForceEventThreshold,
-      density: this.collidersDesc[0].density,
-      events: this.collidersDesc[0].events,
-      friction: this.collidersDesc[0].friction,
-      isSensor: this.collidersDesc[0].isSensor,
-      mass: this.collidersDesc[0].mass,
-      restitution: this.collidersDesc[0].restitution,
-      solverGroups: this.collidersDesc[0].solverGroups,
-      translation: this.collidersDesc[0].translation
-    }, json);
+    if (this.collidersDesc.length > 0) {
+      json = Object.assign({
+        activeCollisionTypes: this.collidersDesc[0].activeCollisionTypes,
+        activeEvents: this.collidersDesc[0].activeEvents,
+        collisionGroups: this.collidersDesc[0].collisionGroups,
+        contactForceEventThreshold: this.collidersDesc[0].contactForceEventThreshold,
+        density: this.collidersDesc[0].density,
+        events: this.collidersDesc[0].events,
+        friction: this.collidersDesc[0].friction,
+        isSensor: this.collidersDesc[0].isSensor,
+        mass: this.collidersDesc[0].mass,
+        restitution: this.collidersDesc[0].restitution,
+        solverGroups: this.collidersDesc[0].solverGroups,
+        translation: this.collidersDesc[0].translation
+      }, json);
+    }
 
     // Return final json
     return json;

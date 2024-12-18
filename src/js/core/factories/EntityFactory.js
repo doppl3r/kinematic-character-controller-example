@@ -1,4 +1,5 @@
 import { Cube } from '../entities/Cube';
+import { Empty } from '../entities/Empty';
 import { Light } from '../entities/Light';
 import { Sphere } from '../entities/Sphere';
 import { TriMesh } from '../entities/TriMesh';
@@ -10,6 +11,7 @@ import { TriMesh } from '../entities/TriMesh';
 
 class EntityFactory {
   static Cube = Cube;
+  static Empty = Empty;
   static Light = Light;
   static Sphere = Sphere;
   static TriMesh = TriMesh;
