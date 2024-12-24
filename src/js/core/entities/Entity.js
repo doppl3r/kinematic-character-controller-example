@@ -342,6 +342,8 @@ class Entity extends EventDispatcher {
     this.resetForces();
     this.resetTorques();
     this.resetStatus();
+    this.updateSnapshot();
+    this.lerp(1);
   }
 
   tween(options) {

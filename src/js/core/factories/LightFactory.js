@@ -21,7 +21,6 @@ class LightFactory {
       distance: 0,
       groundColor: '#000000',
       intensity: Math.PI,
-      position: { x: 0, y: 0, z: 0 },
       castShadow: false,
       skyColor: '#ffffff'
     }, options);
