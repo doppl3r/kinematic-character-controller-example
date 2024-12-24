@@ -19,7 +19,7 @@ class Bounce extends Cube {
       color: '#0000ff',
       events: [
         {
-          name: "bounce",
+          name: 'bounce',
           value: 30
         }
       ],
