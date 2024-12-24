@@ -21,6 +21,7 @@ class Player extends Character {
       activeCollisionTypes: 'KINEMATIC_FIXED',
       activeEvents: 'COLLISION_EVENTS',
       ccd: true,
+      events: [{ name: 'checkCollision' }],
       gravity: 9.81,
       height: 0.25,
       jumpForce: 5,
@@ -101,6 +102,13 @@ class Player extends Character {
     // Update model (optional)
     if (this.model && this.model.mixer) {
       this.model.mixer.update(delta);
+    }
+  }
+
+  checkCollision({ pair, target, value }) {
+    if (pair.type == 'bounce') {
+      target.move({ x: 0, y: 1, z: 0 });
+      target.velocity.y = 0.5;
     }
   }
 

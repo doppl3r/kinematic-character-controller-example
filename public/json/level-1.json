@@ -15,7 +15,7 @@
       "events": [
         {
           "name": "teleport",
-          "position": { "x": 7, "y": 4.5, "z": 1 }
+          "value": { "x": 7, "y": 4.5, "z": 1 }
         }
       ],
       "isSensor": true,

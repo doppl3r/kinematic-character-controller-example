@@ -20,7 +20,7 @@ class Bounce extends Cube {
       events: [
         {
           name: "bounce",
-          data: { x: 0, y: 1, z: 0 }
+          value: 30
         }
       ],
       status: 1
@@ -33,17 +33,6 @@ class Bounce extends Cube {
     this.createModel({ color: options.color });
     this.isBounce = true;
     this.type = 'bounce';
-  }
-
-  bounce(e) {
-    // Bounce character type
-    if (e.pair.move) {
-      e.pair.move(e.data);
-      e.pair.velocity.y = 0.5;
-    }
-    else {
-      e.pair.applyImpulseAtAngle({ x: 0, y: 2, z: 0 }, 0);
-    }
   }
 
   update(delta) {

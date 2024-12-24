@@ -416,8 +416,10 @@ class Entity extends EventDispatcher {
       function(event) {
         try {
           let fn = event;
-          if (typeof event == 'object') fn = this[event.name];
-          fn(Object.assign(e, event));
+          if (fn) {
+            if (typeof event == 'object') fn = this[event.name];
+            fn(Object.assign(e, event));
+          }
         }
         catch (error) { console.error(error); }
       }.bind(this)
