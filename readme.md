@@ -78,7 +78,7 @@ This example uses [Vite](https://vitejs.dev) for **hosting** a local environment
 ## Update NPM libraries
 
 - Run `npm outdated`
-- Run `npm i package-name@latest` (replace "package-name" for each package listed)
+- Run `npm i package-name@latest` (for Rapier.js, replace `latest` with `canary`)
 
 ## Assets
 - All 3D models and textures were designed by doppl3r (Jacob DeBenedetto), and can be used on any project with proper credit.
