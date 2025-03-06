@@ -8,9 +8,6 @@ export default defineConfig({
   base: './',
   build: {
     emptyOutDir: true,
-    rollupOptions: {
-      treeshake: true // was false for Rapier.js build
-    },
     target: "ES2022"
   },
   css: {
