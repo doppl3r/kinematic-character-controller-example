@@ -9,13 +9,13 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@dimforge/rapier3d": "^0.15.0",
+    "@dimforge/rapier3d": "^0.15.1",
     "@tweenjs/tween.js": "^25.0.0",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "sass": "^1.85.1",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "sass": "^1.86.3",
     "stats.js": "^0.17.0",
-    "three": "^0.174.0",
-    "vite": "^6.2.0",
+    "three": "^0.175.0",
+    "vite": "^6.2.6",
     "vite-plugin-top-level-await": "^1.5.0",
     "vite-plugin-wasm": "^3.4.1",
     "vue": "^3.5.13"
