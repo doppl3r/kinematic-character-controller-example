@@ -26,14 +26,14 @@ class Game {
     });
   }
 
-  update(data = { delta: 1 / 60 }) {
+  update({ delta }) {
     // Update entity physics
-    this.physics.update(data.delta);
+    this.physics.update(delta);
   }
 
-  render(data = { delta: 1 / 60, alpha: 0 }) {
+  render({ delta, alpha }) {
     // Update all entities animation properties
-    this.physics.animate(data.delta, data.alpha);
+    this.physics.animate(delta, alpha);
 
     // Render graphics
     this.graphics.render();
@@ -41,8 +41,8 @@ class Game {
 
   onLoad(onLoad) {
     // Add and start game loops
-    this.ticker.add(this.update.bind(this), 1000 / 60); // Physics
-    this.ticker.add(this.render.bind(this), -1); // Render
+    this.ticker.add(data => this.update(data), 1000 / 30); // Physics
+    this.ticker.add(data => this.render(data)); // Render
     this.ticker.start();
   
     // Run optional callback

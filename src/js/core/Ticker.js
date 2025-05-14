@@ -17,59 +17,48 @@ class Ticker {
     this.elapsedTime = 0;
     this.speed = 1;
     this.running = false;
-    this.index = 0;
   }
 
-  add(callback, delay = 1000 / 60) {
+  add(callback, delay) {
     // Create a loop with a callback and delay (milliseconds)
     const loop = new Loop(callback, delay);
     this.loops.push(loop);
   }
 
-  get(index) {
-    return this.loops[index];
+  get(i) {
+    return this.loops[i];
   }
 
-  tick(animationFrameCallback) {
+  tick(ticker) {
     if (this.running == true) {
-      // Request visual update function before next repaint
-      this.index = requestAnimationFrame(animationFrameCallback);
+      // Run ticker on next repaint
+      requestAnimationFrame(ticker);
 
       // Check if functions exist
-      if (this.loops.length > 0) {
-        var delta = this.getDelta();
-        var alpha = this.loops[0].sum / this.loops[0].rate; // Set alpha relative to base interval
+      let delta = this.getDelta();
+      let alpha = this.loops[0].sum / this.loops[0].rate; // Set alpha relative to base interval
 
-        // Loop through array of functions (descending order)
-        for (var index = this.loops.length - 1; index >= 0; index--) {
-          this.loops[index].sum += delta;
+      // Loop through array of functions (descending order)
+      for (let i = this.loops.length - 1; i >= 0; i--) {
+        this.loops[i].sum += delta;
 
-          // Trigger this.loops[index] callback
-          if (this.loops[index].sum >= this.loops[index].rate || this.loops[index].rate == -1) {
-            this.loops[index].sum %= this.loops[index].rate;
-            this.loops[index].callback({
-              delta: (this.loops[index].rate == -1) ? delta : this.loops[index].rate,
-              alpha: (index == 0) ? 0 : alpha, // Return zero for base loop or alpha for sibling loops
-              index: this.index
-            });
-          }
+        // Trigger loop callback
+        if (this.loops[i].sum >= this.loops[i].rate) {
+          this.loops[i].sum %= this.loops[i].rate; // Keep remainder
+          this.loops[i].callback({
+            delta: i == 0 ? this.loops[i].rate : delta,
+            alpha: i == 0 ? 0 : alpha,
+            frame: this.loops[i].frame++
+          });
         }
       }
     }
   }
 
   start() {
-    // Reset loops before starting
-    this.reset();
-
-    // Create new recursive callback function
-    var animationFrameCallback = function() {
-      // Run tick function with callback
-      this.tick(animationFrameCallback);
-    }.bind(this);
-
-    // Start recursive callback loop
-    animationFrameCallback();
+    this.reset(); // Reset loops before starting
+    const ticker = () => this.tick(ticker);
+    ticker(); // Start recursive callback loop
   }
 
   stop() {
@@ -84,8 +73,8 @@ class Ticker {
     this.running = true;
 
     // Reset each loop object
-    for (var index = this.loops.length - 1; index >= 0; index--) {
-      this.loops[index].reset();
+    for (let i = this.loops.length - 1; i >= 0; i--) {
+      this.loops[i].reset();
     }
   }
 
@@ -126,14 +115,12 @@ class Ticker {
 */
 
 class Loop {
-  constructor(callback = () => {}, delay) {
+  constructor(callback = () => {}, delay = -1) {
     this.rate = delay / 1000;
     this.sum = 0;
     this.alpha = 0;
+    this.frame = 0;
     this.callback = callback;
-
-    // Render immediately if delay is negative
-    if (delay < 0) this.rate = -1;
   }
 
   reset() {
