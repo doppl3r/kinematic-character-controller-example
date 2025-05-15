@@ -29,22 +29,27 @@ class Ticker {
     return this.loops[i];
   }
 
+  remove(i) {
+    return this.loops.splice(i, 1);
+  }
+
   tick(ticker) {
     if (this.running == true) {
       // Run ticker on next repaint
       requestAnimationFrame(ticker);
 
-      // Check if functions exist
+      // Declare delta/alpha from base loop [0]
       let delta = this.getDelta();
-      let alpha = this.loops[0].sum / this.loops[0].rate; // Set alpha relative to base interval
+      let alpha = this.loops[0].sum / this.loops[0].rate;
 
-      // Loop through array of functions (descending order)
+      // Loop through array of loops (descending order)
       for (let i = this.loops.length - 1; i >= 0; i--) {
+        // Add delta time to sum
         this.loops[i].sum += delta;
 
-        // Trigger loop callback
+        // Trigger loop callback and keep sum remainder
         if (this.loops[i].sum >= this.loops[i].rate) {
-          this.loops[i].sum %= this.loops[i].rate; // Keep remainder
+          this.loops[i].sum %= this.loops[i].rate;
           this.loops[i].callback({
             delta: i == 0 ? this.loops[i].rate : delta,
             alpha: i == 0 ? 0 : alpha,
@@ -126,6 +131,7 @@ class Loop {
   reset() {
     this.sum = 0;
     this.alpha = 0;
+    this.frame = 0;
   }
 }
 
