@@ -11,9 +11,9 @@ class Interval {
   constructor() {
     this.loops = [];
     this.speed = 1;
-    this.thread;
-    this.threadTimestamp;
-    this.threadRunning = false;
+    this.thread; // Function
+    this.threadTimestamp; // Float
+    this.threadRunning; // Boolean
   }
 
   add(callback, delay = -1) {
@@ -51,23 +51,18 @@ class Interval {
       for (let i = this.loops.length - 1; i >= 0; i--) {
         // Resolve initial timestamp for each loop
         this.loops[i].timestamp = (this.loops[i].timestamp || timestamp);
-
-        // Set loop delta/alpha from base loop (0)
-        const loop = this.loops[i];
-        const delta = (timestamp - loop.timestamp) * this.speed;
-        const alpha = this.loops[0].sum / this.loops[0].delay;
         
-        // Add delta time to loop sum
-        loop.sum += threadDelta * this.speed;
+        // Add thread delta to loop sum
+        this.loops[i].sum += threadDelta * this.speed;
 
         // Trigger loop callback
-        if (loop.sum >= loop.delay) {
-          loop.sum %= loop.delay;
-          loop.delta = delta;
-          loop.alpha = alpha;
-          loop.frame++;
-          loop.timestamp = timestamp;
-          loop.callback(loop);
+        if (this.loops[i].sum >= this.loops[i].delay) {
+          this.loops[i].sum %= this.loops[i].delay;
+          this.loops[i].delta = (timestamp - this.loops[i].timestamp) * this.speed;
+          this.loops[i].alpha = this.loops[0].sum / this.loops[0].delay;
+          this.loops[i].frame++;
+          this.loops[i].timestamp = timestamp;
+          this.loops[i].callback(this.loops[i]);
         }
       }
     }
