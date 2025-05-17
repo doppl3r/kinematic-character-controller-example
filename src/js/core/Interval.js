@@ -16,7 +16,7 @@ class Interval {
 
   add(callback, delay = -1) {
     // Create a loop with a callback and delay (milliseconds)
-    return this.loops.push({ callback, delay, sum: 0, alpha: 0 });
+    return this.loops.push({ callback, delay, delta: 0, alpha: 0, sum: 0, timestamp: 0 });
   }
 
   get(i) {
@@ -27,38 +27,41 @@ class Interval {
     return this.loops.splice(i, 1);
   }
 
-  update(thread, timestamp) {
-    if (this.running == true) {
-      // Rerun thread on next repaint
-      requestAnimationFrame(thread);
-
-      // Declare delta/alpha from base loop [0]
-      let delta = (timestamp - this.timestamp) * this.speed;
-      let alpha = this.loops[0].sum / this.loops[0].delay;
-      this.timestamp = timestamp;
-
-      // Loop through array of loops (descending order)
-      for (let i = this.loops.length - 1; i >= 0; i--) {
-        // Add delta time to sum
-        this.loops[i].sum += delta;
-
-        // Trigger loop callback
-        if (this.loops[i].sum >= this.loops[i].delay) {
-          this.loops[i].alpha = alpha;
-          this.loops[i].callback(this.loops[i]);
-          this.loops[i].sum %= this.loops[i].delay;
-        }
-      }
-    }
-  }
-
   start() {
     this.running = true;
     this.loops.forEach(loop => loop.delta = loop.alpha = loop.frame = 0);
     
     // Start thread after the first animation frame
     const thread = timestamp => this.update(thread, timestamp);
-    requestAnimationFrame(timestamp => { this.timestamp = timestamp; thread(timestamp) });
+    requestAnimationFrame(timestamp => thread(timestamp));
+  }
+
+  update(thread, timestamp) {
+    if (this.running == true) {
+      // Rerun thread on next repaint
+      requestAnimationFrame(thread);
+
+      // Declare delta/alpha from base loop [0]
+      const diff = (timestamp - this.timestamp || 0) * this.speed;
+      const alpha = this.loops[0].sum / this.loops[0].delay;
+      this.timestamp = timestamp;
+
+      // Loop through array of loops (descending order)
+      for (let i = this.loops.length - 1; i >= 0; i--) {
+        // Add delta time to sum
+        this.loops[i].timestamp = this.loops[i].timestamp || timestamp;
+        this.loops[i].sum += diff;
+
+        // Trigger loop callback
+        if (this.loops[i].sum >= this.loops[i].delay) {
+          this.loops[i].sum %= this.loops[i].delay;
+          this.loops[i].alpha = alpha;
+          this.loops[i].delta = timestamp - this.loops[i].timestamp;
+          this.loops[i].timestamp = timestamp;
+          this.loops[i].callback(this.loops[i]);
+        }
+      }
+    }
   }
 
   stop() {

@@ -31,9 +31,9 @@ class Game {
     this.physics.update(delay / 1000);
   }
 
-  render({ alpha, sum }) {
+  render({ alpha, delta }) {
     // Update all entities animation properties
-    this.physics.animate(sum / 1000, alpha);
+    this.physics.animate(delta / 1000, alpha);
 
     // Render graphics
     this.graphics.render();
