@@ -11,6 +11,7 @@ class Interval {
   constructor() {
     this.loops = [];
     this.speed = 1;
+    this.timestamp;
     this.running = false;
   }
 
@@ -42,7 +43,7 @@ class Interval {
       requestAnimationFrame(thread);
 
       // Declare delta/alpha from base loop [0]
-      const diff = (timestamp - this.timestamp || 0) * this.speed;
+      const difference = timestamp - this.timestamp || 0;
       const alpha = this.loops[0].sum / this.loops[0].delay;
       this.timestamp = timestamp;
 
@@ -50,13 +51,13 @@ class Interval {
       for (let i = this.loops.length - 1; i >= 0; i--) {
         // Add delta time to sum
         this.loops[i].timestamp = this.loops[i].timestamp || timestamp;
-        this.loops[i].sum += diff;
+        this.loops[i].sum += difference * this.speed;
 
         // Trigger loop callback
         if (this.loops[i].sum >= this.loops[i].delay) {
           this.loops[i].sum %= this.loops[i].delay;
+          this.loops[i].delta = (timestamp - this.loops[i].timestamp) * this.speed;
           this.loops[i].alpha = alpha;
-          this.loops[i].delta = timestamp - this.loops[i].timestamp;
           this.loops[i].timestamp = timestamp;
           this.loops[i].callback(this.loops[i]);
         }

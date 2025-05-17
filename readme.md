@@ -13,7 +13,7 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ### Interpolation
 
-To improve visual performance, this example separates the `physics` engine and the `graphics` engine into 2 separate [Ticker.js](src/js/core/Ticker.js) loops. The `physics` engine loop runs at 30hz, while the `graphics` loop runs at the refresh rate of your monitor (ex: 240hz).
+To improve visual performance, this example separates the `physics` engine and the `graphics` engine into 2 separate [Interval.js](src/js/core/Interval.js) loops. The `physics` engine loop runs at 30hz, while the `graphics` loop runs at the refresh rate of your monitor (ex: 240hz).
 
 The `alpha` value (between 0.0 and 1.0) is calculated by adding the sum of time that has changed between these two loops. The alpha value is then applied to the 3D objects position/rotation each time the graphics loop is called.
 
