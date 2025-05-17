@@ -1,11 +1,11 @@
-import { Ticker } from './Ticker.js';
+import { Interval } from './Interval.js';
 import { AssetLoader } from './loaders/AssetLoader.js';
 import { Graphics } from './Graphics.js';
 import { Physics } from './Physics.js';
 
 class Game {
   constructor(onLoad) {
-    this.ticker = new Ticker();
+    this.interval = new Interval();
     this.physics = new Physics();
     this.graphics;
     this.assets = new AssetLoader(this.onLoad.bind(this, onLoad));
@@ -26,14 +26,14 @@ class Game {
     });
   }
 
-  update({ delta }) {
+  update({ delay }) {
     // Update entity physics
-    this.physics.update(delta);
+    this.physics.update(delay / 1000);
   }
 
-  render({ delta, alpha }) {
+  render({ alpha, sum }) {
     // Update all entities animation properties
-    this.physics.animate(delta, alpha);
+    this.physics.animate(sum / 1000, alpha);
 
     // Render graphics
     this.graphics.render();
@@ -41,9 +41,9 @@ class Game {
 
   onLoad(onLoad) {
     // Add and start game loops
-    this.ticker.add(data => this.update(data), 1000 / 30); // Physics
-    this.ticker.add(data => this.render(data)); // Render
-    this.ticker.start();
+    this.interval.add(loop => this.update(loop), 1000 / 30); // Physics
+    this.interval.add(loop => this.render(loop)); // Render
+    this.interval.start();
   
     // Run optional callback
     if (typeof onLoad == 'function') onLoad();
