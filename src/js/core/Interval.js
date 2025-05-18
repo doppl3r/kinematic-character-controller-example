@@ -11,14 +11,14 @@ class Interval {
   constructor() {
     this.loops = [];
     this.speed = 1;
-    this.thread; // Function
-    this.threadTimestamp; // Float
-    this.threadRunning; // Boolean
+    this.thread = () => {};
+    this.threadTimestamp = 0;
+    this.threadRunning =false;
   }
 
   add(callback, delay = -1) {
     // Create a loop with a callback and delay (milliseconds)
-    return this.loops.push({ callback, delay, delta: 0, alpha: 0, frame: 0, sum: 0, timestamp: 0 }) - 1;
+    return this.loops.push({ callback, delay, delta: 0, alpha: 0, frame: 0, sum: 0, timestamp: 0 });
   }
 
   get(i) {
@@ -31,27 +31,27 @@ class Interval {
 
   start() {
     this.threadRunning = true;
-    this.loops.forEach(loop => loop.delta = loop.alpha = loop.frame = loop.sum = loop.timestamp = 0);
     this.thread = timestamp => this.update(timestamp);
     
-    // Start thread after the first animation frame
-    requestAnimationFrame(timestamp => this.thread(timestamp));
+    // Set initial timestamps before starting thread
+    requestAnimationFrame(timestamp => {
+      this.threadTimestamp = timestamp;
+      this.loops.forEach(loop => loop.timestamp = timestamp);
+      this.thread(timestamp);
+    });
   }
 
   update(timestamp) {
-    if (this.threadRunning == true) {
+    if (this.threadRunning === true) {
       // Rerun thread on next repaint
       requestAnimationFrame(this.thread);
 
       // Set thread delta from thread timestamp
-      const threadDelta = timestamp - this.threadTimestamp || 0;
+      const threadDelta = timestamp - this.threadTimestamp;
       this.threadTimestamp = timestamp;
 
       // Loop through array of loops (descending order)
       for (let i = this.loops.length - 1; i >= 0; i--) {
-        // Resolve initial timestamp for each loop
-        this.loops[i].timestamp = (this.loops[i].timestamp || timestamp);
-        
         // Add thread delta to loop sum
         this.loops[i].sum += threadDelta * this.speed;
 
