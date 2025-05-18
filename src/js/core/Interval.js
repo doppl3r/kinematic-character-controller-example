@@ -13,7 +13,7 @@ class Interval {
     this.speed = 1;
     this.thread = () => {};
     this.threadTimestamp = 0;
-    this.threadRunning =false;
+    this.threadRunning = false;
   }
 
   add(callback, delay = -1) {
