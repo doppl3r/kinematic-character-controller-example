@@ -3,8 +3,7 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ## Key Classes
  - [Entity.js](src/js/Entity.js) - The base class for all entities.
- - [EntityControllerDynamic2D.js](src/js/EntityControllerDynamic2D.js) - A 2D input controller class for Dynamic Rigid Bodies.
- - [EntityControllerKinematic2D.js](src/js/EntityControllerKinematic2D.js) - A 2D input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
+ - [EntityControllerKinematic2D.js](src/js/EntityControllerKinematic.js) - A input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
  - [Game.js](src/js/Game.js) - Handles all game states, entities, and resources.
 
 ## Screenshot
@@ -49,10 +48,7 @@ static teleport = {
         arguments: [0.5, 0.5, 0.5]
       }
     }
-  ],
-  object3D: {
-    children: ['asset:glb/teleport.glb']
-  }
+  ]
 }
 ```
 
@@ -73,7 +69,7 @@ This example uses [Vite](https://vitejs.dev) for **hosting** a local environment
 
 **Example Component**
 
- - [PageHome.vue](src/vue/PageHome.vue) - A simple Vue.js component you can modify.
+ - [PageHome.vue](src/vue/PageKinematic.vue) - A simple Vue.js component you can modify.
 
 ## Local Development
 
