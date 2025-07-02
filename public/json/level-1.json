@@ -2,45 +2,75 @@
   "name": "level-1",
   "children": [
     {
-      "type": "light",
-      "position": { "x": 0, "y": 4, "z": 0 },
-      "lightType": "AmbientLight"
-    },
-    {
-      "type": "trimesh",
-      "model": { "name": "ramps" }
-    },
-    {
-      "type": "bounce",
-      "events": [
-        {
-          "name": "teleport",
-          "value": { "x": 7, "y": 4.5, "z": 1 }
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 4,
+          "z": 1
         }
-      ],
-      "isSensor": true,
-      "position": { "x": 0.5, "y": 0, "z": -4.5 },
-      "scale": { "x": 1, "y": 0.25, "z": 1 }
+      },
+      "template": "player"
     },
     {
-      "type": "bounce",
-      "color": "#0000ff",
-      "isSensor": true,
-      "position": { "x": -0.5, "y": 0, "z": -3.5 },
-      "scale": { "x": 1, "y": 0.25, "z": 1 }
+      "template": "trimesh",
+      "object3D": {
+        "children": ["asset:glb/ramps.glb"]
+      }
     },
     {
-      "type": "player",
-      "position": { "x": 0, "y": 0.5, "z": 0 },
-      "radius": 0.25,
-      "scale": { "x": 1, "y": 1, "z": 1 }
+      "template": "ball",
+      "body": {
+        "position": {
+          "x": -0.5,
+          "y": 4,
+          "z": -3.5
+        }
+      }
     },
     {
-      "type": "sphere",
-      "color": "#ff00ff",
-      "friction": 0.1,
-      "position": { "x": 0, "y": 1.5, "z": -1.5 },
-      "radius": 0.25
+      "template": "teleport",
+      "body": {
+        "position": {
+          "x": 7,
+          "y": 4,
+          "z": 1
+        }
+      },
+      "colliders": [
+        {
+          "events": [
+            {
+              "name": "teleport",
+              "value": { "x": -7, "y": 4, "z": 1 }
+            }
+          ],
+          "isSensor": true,
+          "shapeDesc": {
+            "type": "cuboid",
+            "arguments": [0.5, 0.5, 0.5]
+          }
+        }
+      ]
+    },
+    {
+      "template": "bounce",
+      "body": {
+        "position": {
+          "x": -0.5,
+          "y": 0,
+          "z": -3.5
+        }
+      }
+    },
+    {
+      "body": {
+        "position": {
+          "x": 0,
+          "y": 4,
+          "z": 0
+        }
+      },
+      "template": "light_hemisphere"
     }
   ]
 }

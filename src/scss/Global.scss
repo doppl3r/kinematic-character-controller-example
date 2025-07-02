@@ -1,0 +1,39 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+  font-size: 100%;
+}
+
+html {
+  -ms-touch-action: manipulation;
+  height: 100vh;
+  min-height: 22.5em; // 360px
+  min-width: 11.25em; // 180px
+  overflow: hidden;
+  touch-action: manipulation;
+  width: 100vw;
+
+  body {
+    background-color: #000000;
+    margin: 0;
+    font-family: 'Goblin';
+    font-size: clamp(1em, 4vh, 2em);
+    line-height: 1em;
+    width: inherit;
+    height: inherit;
+    overflow: hidden;
+
+    #app {
+      height: inherit;
+      width: inherit;
+    }
+  }
+}
+
+/* Font Family */
+@font-face {
+  font-family: 'Goblin';
+  src: url('/woff2/goblin.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}

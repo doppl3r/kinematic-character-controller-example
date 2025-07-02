@@ -11,6 +11,7 @@ class Debugger extends LineSegments {
     this.material = new LineBasicMaterial({ color: 0xffffff, vertexColors: true });
     this.geometry =  new BufferGeometry();
     this.frustumCulled = false; // Force offscreen renders
+    this.visible = false;
   }
 
   update() {
