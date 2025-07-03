@@ -3,7 +3,8 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 
 ## Key Classes
  - [Entity.js](src/js/Entity.js) - The base class for all entities.
- - [EntityControllerKinematic2D.js](src/js/EntityControllerKinematic.js) - A input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
+ - [EntityFactory.js](src/js/EntityFactory.js) - Creates entity components. Ex: 3D mesh, colliders, etc.
+ - [EntityControllerKinematic.js](src/js/EntityControllerKinematic.js) - A input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
  - [Game.js](src/js/Game.js) - Handles all game states, entities, and resources.
 
 ## Screenshot
