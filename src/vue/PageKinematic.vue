@@ -38,7 +38,7 @@
     await game.load('json/level-1.json');
     game.debugger.enable();
 
-    // Initialize 2D controller
+    // Assign player entity to controller
     game.entities.forEach(entity => {
       if (entity.name === 'player') {
         entityController.setEntity(entity);

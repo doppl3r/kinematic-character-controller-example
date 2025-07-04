@@ -60,7 +60,7 @@ class EntityControllerKinematic {
     }
 
     // Apply constant gravity force (and horizontal damping)
-    this.entity.velocity.y -= 0.02;
+    this.entity.velocity.y -= 0.005;
 
     // Add movement damping (air resistance)
     this.entity.velocity.x *= 0.75;
@@ -97,7 +97,7 @@ class EntityControllerKinematic {
     
     // Rotate direction vector according to gravity angle
     _v.copy({ x: xDirection, y: 0, z: zDirection });
-    this.setForce(_v, 1 / 32, 0.1);
+    this.setForce(_v, 1 / 32, 0.075);
   }
 
   updateForce() {
@@ -142,7 +142,7 @@ class EntityControllerKinematic {
   jump() {
     if (this.allowJump === true) {
       this.allowJump = false;
-      this.entity.velocity.y = 0.3;
+      this.entity.velocity.y = 0.1;
     }
     else {
       // Add jump buffer (ms)

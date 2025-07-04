@@ -12,12 +12,12 @@ class EntityEvents {
   static bounce = event => {
     if (event.pair.rigidBody?.isKinematic()) {
       _v.copy(event.pair.velocity);
-      _v.y = 0.45;
+      _v.y = 0.15;
       event.pair.velocity.copy(_v);
     }
     else {
       _v.copy(event.pair.rigidBody.linvel());
-      _v.y = 20; // Bounce upwards
+      _v.y = 5; // Bounce upwards
       event.pair.rigidBody.setLinvel(_v, true);
     }
   }
