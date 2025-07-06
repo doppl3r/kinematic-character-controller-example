@@ -68,9 +68,9 @@ This example uses [Vite](https://vitejs.dev) for **hosting** a local environment
 
 [Vue.js](https://vuejs.org/) is used for the game UI, and leverages the latest **Composition API** introduced in version 3. This JavaScript framework is *"An approachable, performant and versatile framework for building web user interfaces"*.
 
-**Example Component**
+**Vue Component**
 
- - [PageHome.vue](src/vue/PageKinematic.vue) - A simple Vue.js component you can modify.
+ - [PageKinematic.vue](src/vue/PageKinematic.vue) - A simple Vue.js component you can modify.
 
 ## Local Development
 

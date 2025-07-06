@@ -69,8 +69,13 @@ class Game {
       children: []
     };
 
-    // Load stage from JSON file
-    json = await (await fetch(url)).json();
+    // Load entity descriptions from JSON file
+    try {
+      json = await (await fetch(url)).json();
+    }
+    catch {
+      console.error(`Error: ${ url } not found.`);
+    }
 
     // Create entities from children
     json.children.forEach(child => {

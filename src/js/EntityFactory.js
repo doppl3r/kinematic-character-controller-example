@@ -211,11 +211,10 @@ class EntityFactory {
       // Check queue before creation
       if (queue.length > 0) {
         for (let i = queue.length - 1; i >= 0; i--) {
-          const item = queue[i];
-          // Load asset
-          game.assets.load(item.url, asset => {
-            item.options[item.key] = asset; // Assign asset from queue
-            queue.splice(queue.indexOf(item), 1); // Remove item from queue
+          // Load queued asset asynchronously
+          game.assets.load(queue[i].url, asset => {
+            queue[i].options[queue[i].key] = asset; // Assign asset from queue
+            queue.splice(queue.indexOf(queue[i]), 1); // Remove queued asset
             buildChildren(options, queue); // Continue recursion
           });
         }
