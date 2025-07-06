@@ -8,6 +8,7 @@ export default defineConfig({
   base: './',
   build: {
     emptyOutDir: true,
+    outDir: './build',
     target: "ES2022"
   },
   css: {
