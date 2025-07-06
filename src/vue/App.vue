@@ -1,18 +1,11 @@
 <script setup>
   import '../scss/Global.scss';
-  import { onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
 
   // Initialize components
   const route = useRoute();
 
-  onMounted(() => {
-    
-  });
-
-  onUnmounted(() => {
-    
-  });
+  // Note: Route "pages" (components) are declared in `/src/js/Routes.js`
 </script>
 
 <template>

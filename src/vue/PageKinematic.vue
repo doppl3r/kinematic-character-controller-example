@@ -1,6 +1,5 @@
 <script setup>
   import { onMounted, onUnmounted, ref } from 'vue';
-  import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { Game } from '../js/Game.js';
   import { EntityFactory } from '../js/EntityFactory.js';
@@ -8,10 +7,11 @@
   import ProgressBar from './ProgressBar.vue';
 
   // Initialize Vue components
-  const route = useRoute();
   const i18n = useI18n();
   const canvas = ref();
   const progress = ref({ url: '', itemsLoaded: 0, itemsTotal: 0 });
+
+  // Declare game components
   let entityController;
   let game;
 
@@ -34,7 +34,7 @@
     entityController = new EntityControllerKinematic(controller);
     entityController.setCamera(game.graphics.camera);
 
-    // Load batch of assets
+    // Load game entities
     await game.load('json/level-1.json');
     game.debugger.enable();
 
@@ -64,8 +64,13 @@
 
 <template>
   <div>
+    <!-- Game canvas -->
     <canvas ref="canvas"></canvas>
+
+    <!-- Page title (see translations: "/src/json/i18n/en.json") -->
     <h1>{{ i18n.t('home.title') }}</h1>
+
+    <!-- Add asset progress bar -->
     <ProgressBar :progress="progress" />
   </div>
 </template>

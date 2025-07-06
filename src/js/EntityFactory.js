@@ -163,7 +163,12 @@ class EntityFactory {
         if (event.started === undefined && e.started === true || event.started === e.started) {
           // Trigger match collider handles
           if (e.handle === collider.handle) {
-            EntityEvents[event.name]({ value: event.value, ...e });
+            try {
+              EntityEvents[event.name]({ value: event.value, ...e });
+            }
+            catch (error) {
+              console.error(error);
+            }
           }
         }
       });

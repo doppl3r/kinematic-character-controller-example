@@ -1,5 +1,11 @@
 import { Euler,  Quaternion, Vector3 } from 'three';
 
+/*
+  Add custom "entity events" to this file. The EntityFactory
+  will execute these functions by "key" when the entity
+  collider event is triggered.
+*/
+
 class EntityEvents {
   constructor() {
 
