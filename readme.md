@@ -2,17 +2,17 @@
 This example shows how to create a **Kinematic Character Controller** (aka "KCC") using Rapier.js and Three.js.
 
 ## Key Classes
- - [Entity.js](src/js/Entity.js) - The base class for all entities.
- - [EntityFactory.js](src/js/EntityFactory.js) - Creates entities with components. Ex: 3D mesh, rigid bodies, colliders, etc.
  - [EntityControllerKinematic.js](src/js/EntityControllerKinematic.js) - An input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
- - [Game.js](src/js/Game.js) - Handles game states, loops, entities, and resources.
+ - [EntityFactory.js](src/js/EntityFactory.js) - A factory class that creates entities with vital components. Ex: 3D mesh, rigid bodies, colliders, etc.
+ - [Entity.js](src/js/Entity.js) - The base class for all entities.
+ - [Game.js](src/js/Game.js) - A singleton class for managing game states, loops, entities, and resources.
 
 ## Screenshot
 ![Screenshot](public/png/screenshot.png)
 
 ## Features
 
-- **Asset loader**: Singleton class that dynamically load and cache 3D models, audio, images etc.
+- **Asset loader**: Dynamically load and cache 3D models, audio, images etc.
 - **Entity factory**: Create entities that include rigid bodies, colliders and 3D models using JSON properties
 - **Entity templates**: Predefined instructions for creating entities
 - **Entity controller**: Provides user input and controls for entities
