@@ -172,8 +172,8 @@ class EntityControllerKinematic {
   }
 
   destroy() {
-    this.entity.addEventListener('updated', this.update);
-    this.entity.addEventListener('rendered', this.render);
+    this.entity.removeEventListener('updated', this.update);
+    this.entity.removeEventListener('rendered', this.render);
     document.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('keyup', this.onKeyUp);
     document.removeEventListener('pointerdown', this.onPointerDown);
