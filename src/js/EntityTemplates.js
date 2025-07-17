@@ -16,7 +16,7 @@ class EntityTemplates {
         friction: 0,
         shapeDesc: {
           type: 'ball',
-          arguments: [0.5]
+          arguments: [0.25]
         }
       }
     ],
@@ -27,7 +27,7 @@ class EntityTemplates {
           type: 'Mesh',
           geometry: {
             type: 'SphereGeometry',
-            arguments: [0.5, 12, 8]
+            arguments: [0.25, 12, 8]
           },
           material: {
             type: 'MeshBasicMaterial',
