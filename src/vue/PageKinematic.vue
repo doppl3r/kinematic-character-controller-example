@@ -37,6 +37,7 @@
     // Load game entities
     await game.load('json/level-1.json');
     game.debugger.enable();
+    game.graphics.addStats();
 
     // Assign player entity to controller
     game.entities.forEach(entity => {

@@ -20,6 +20,7 @@ class Graphics {
 
     // Add stats
     this.stats = new Stats();
+    this.stats.dom.style = 'position: fixed; bottom: 0px; left: 0px; cursor: pointer; opacity: 0.9; z-index: 10000;';
 
     // Initialize renderer components
     window.devicePixelRatio = 1; // Force pixelation
