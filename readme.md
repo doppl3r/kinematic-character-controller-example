@@ -1,6 +1,14 @@
 # Kinematic Character Controller Example
 This example shows how to create a **Kinematic Character Controller** (aka "KCC") using Rapier.js and Three.js.
 
+## Local Development
+
+- Clone repository: `git clone https://github.com/doppl3r/kinematic-character-controller-example`
+- Open project in VS Code and open terminal: `View > Terminal`
+- Install NodeJS package libraries: `npm install`
+- Run development libraries `npm run dev`
+- Use the link it provides. Ex: `http://localhost:5173`
+
 ## Key Classes
  - [EntityControllerKinematic.js](src/js/EntityControllerKinematic.js) - An input controller class for Kinematic Rigid Bodies. Can be used for players, conveyors, doors, etc.
  - [EntityFactory.js](src/js/EntityFactory.js) - A factory class that creates entities with vital components. Ex: 3D mesh, rigid bodies, colliders, etc.
@@ -71,21 +79,6 @@ This example uses [Vite](https://vitejs.dev) for **hosting** a local environment
 **Vue Component**
 
  - [PageKinematic.vue](src/vue/PageKinematic.vue) - A simple Vue.js component you can modify.
-
-## Local Development
-
-- Install NodeJS package libraries: `npm install`
-- Run development libraries `npm run dev`
-- Use the link it provides
-
-## Update NPM libraries
-
-- Run `npm outdated`
-- Run `npm i package-name@latest` (for Rapier.js, replace `latest` with `canary`)
-
-## Build for release
-
-- Run `npm run dist` to create zipped files
 
 ## Assets
 - All 3D models and textures were designed by doppl3r (Jacob DeBenedetto), and can be used on any project with proper credit.
