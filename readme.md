@@ -4,8 +4,8 @@ This example shows how to create a **Kinematic Character Controller** (aka "KCC"
 ## Local Development
 
 - Clone repo: `git clone https://github.com/doppl3r/kinematic-character-controller-example`
-- Open project in VS Code. [Download VS Code](https://code.visualstudio.com/download)
-- Open terminal: `View > Terminal`
+- Open project in VS Code
+- Open Terminal: `View > Terminal`
 - Install NodeJS package libraries: `npm install`
 - Run development libraries `npm run dev`
 - Use the link it provides. Ex: `http://localhost:5173`
