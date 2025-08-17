@@ -4,7 +4,7 @@
 
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {
-  BoxGeometry, CapsuleGeometry, CircleGeometry, ConeGeometry, CylinderGeometry,
+  BoxGeometry, BufferGeometry, CapsuleGeometry, CircleGeometry, ConeGeometry, CylinderGeometry,
   DodecahedronGeometry, EdgesGeometry, ExtrudeGeometry, IcosahedronGeometry, InstancedMesh,
   LatheGeometry, LineBasicMaterial, LineDashedMaterial, Material, Mesh, MeshBasicMaterial,
   MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial,
@@ -62,6 +62,11 @@ class MeshFactory {
         obj.geometry.scale(obj.scale.x, obj.scale.y, obj.scale.z);
         obj.geometry.translate(obj.position.x, obj.position.y, obj.position.z);
 
+        // Reset mesh translated mesh values
+        obj.position.set(0, 0, 0);
+        obj.rotation.set(0, 0, 0);
+        obj.scale.set(1, 1, 1);
+
         // Push geometry to array for merge
         geometries.push(obj.geometry);
 
@@ -78,6 +83,7 @@ class MeshFactory {
 
   // Assign all Three.js Mesh classes as static fields
   static BoxGeometry = BoxGeometry;
+  static BufferGeometry = BufferGeometry;
   static CapsuleGeometry = CapsuleGeometry;
   static CircleGeometry = CircleGeometry;
   static ConeGeometry = ConeGeometry;

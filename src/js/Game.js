@@ -25,6 +25,14 @@ class Game {
     this.interval.start();
   }
 
+  pause() {
+    this.interval.stop();
+  }
+
+  resume() {
+    this.interval.start();
+  }
+
   stop() {
     this.interval.stop();
   }
@@ -98,6 +106,14 @@ class Game {
     // Dispatch 'added' event to observers
     entity.dispatchEvent({ type: 'added' });
     return entity;
+  }
+
+  find(key, value) {
+    const results = [];
+    this.entities.forEach(entity => {
+      if (entity[key] === value) results.push(entity);
+    });
+    return results;
   }
 
   remove(entity) {

@@ -14,6 +14,7 @@ class Interval {
     this.thread = timestamp => this.update(timestamp);
     this.threadTimestamp = 0;
     this.threadFrame = 0;
+    this.paused = true;
   }
 
   add(callback, delay = -1) {
@@ -30,19 +31,27 @@ class Interval {
   }
 
   start() {
-    // Set initial timestamps before starting thread
-    this.threadFrame = requestAnimationFrame(timestamp => {
-      this.threadTimestamp = timestamp;
-      this.loops.forEach(loop => loop.timestamp = timestamp);
-      this.thread(timestamp);
-    });
+    // Only start if thread is paused
+    if (this.paused === true) {
+      this.paused = false;
+
+      // Set initial timestamps before starting thread
+      this.threadFrame = requestAnimationFrame(timestamp => {
+        this.threadTimestamp = timestamp;
+        this.loops.forEach(loop => loop.timestamp = timestamp);
+        this.thread(timestamp);
+      });
+    }
   }
 
   stop() {
-    cancelAnimationFrame(this.threadFrame);
+    this.paused = true;
   }
 
   update(timestamp) {
+    // Cancel the interval thread
+    if (this.paused === true) return;
+
     // Rerun thread on next repaint
     this.threadFrame = requestAnimationFrame(this.thread);
 

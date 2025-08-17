@@ -5,7 +5,7 @@ import { RenderPixelatedPass } from 'three/examples/jsm/postprocessing/RenderPix
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import Stats from './Stats.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 class Graphics {
   constructor(canvas = document.createElement('canvas')) {
@@ -23,7 +23,6 @@ class Graphics {
     this.stats.dom.style = 'position: fixed; bottom: 0px; left: 0px; cursor: pointer; opacity: 0.9; z-index: 10000;';
 
     // Initialize renderer components
-    window.devicePixelRatio = 1; // Force pixelation
     this.renderer = new WebGLRenderer({ alpha: true, canvas: canvas });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = false;
@@ -40,7 +39,7 @@ class Graphics {
     this.outlinePass.edgeThickness = 0.125; // Default 1
     this.outlinePass.visibleEdgeColor.set('#000000');
     this.outlinePass.hiddenEdgeColor.set('#000000');
-    this.outlinePass.enabled = true;
+    this.outlinePass.enabled = false;
 
     // Anti-aliasing
     this.smaaPass = new SMAAPass(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
@@ -135,6 +134,14 @@ class Graphics {
 
   removeStats() {
     document.body.removeChild(this.stats.dom);
+  }
+
+  showStats() {
+    this.stats.dom.style.display = 'block';
+  }
+
+  hideStats() {
+    this.stats.dom.style.display = 'none';
   }
 }
 

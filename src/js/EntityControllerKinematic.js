@@ -26,7 +26,7 @@ class EntityControllerKinematic {
 
     // Set camera properties
     this.camera;
-    this.cameraSpeed = 200; // ms
+    this.cameraSpeed = 100; // ms
     this.cameraOffset = new Vector3(0, 3, 4);
 
     // Add input event listeners
@@ -45,6 +45,10 @@ class EntityControllerKinematic {
     this.entity.velocity = new Vector3();
     this.entity.addEventListener('updated', this.onUpdated);
     this.entity.addEventListener('rendered', this.onRendered);
+
+    // Update camera position/rotation
+    this.camera.position.copy(this.cameraOffset);
+    this.camera.lookAt(this.entity.object3D.position);
   }
 
   onUpdated = ({ loop }) => {
