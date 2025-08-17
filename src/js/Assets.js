@@ -1,6 +1,7 @@
 import { Audio, AudioListener, AudioLoader, EventDispatcher, LoadingManager, TextureLoader } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 
 class Assets extends EventDispatcher {
   constructor() {
@@ -49,6 +50,14 @@ class Assets extends EventDispatcher {
           Object.assign(data, { colorSpace: 'srgb', magFilter: 1003 })
           this.assign(fileName, data)
         }
+      },
+      {
+        fileTypes: ['hdr'],
+        loader: new RGBELoader(this.manager),
+        onLoad: (fileName, data) => {
+          Object.assign(data, { mapping: 303 }); // EquirectangularReflectionMapping
+          this.assign(fileName, data)
+        }
       }
     ];
   }
@@ -63,24 +72,24 @@ class Assets extends EventDispatcher {
     // Add item to the queue
     if (asset === undefined) {
       this.queue.push({ name: fileName, callback });
+
+      // Start loading if asset is not queued
+      if (isQueued === false) {
+        // Get loader option by file type (ex: 'mp3')
+        const loaderOption = this.loaderOptions.find(option => option.fileTypes.includes(fileType));
+
+        // Load asset if loader option exists
+        if (loaderOption !== undefined) {
+          loaderOption.loader.load(url, data => loaderOption.onLoad(fileName, data));
+        }
+        else {
+          console.error(`File type ".${ fileType }" not supported`);
+        }
+      }
     }
     else {
       // Run callback with existing asset
       callback(asset);
-    }
-
-    // Start loading if asset is not queued
-    if (isQueued === false) {
-      // Get loader option by file type (ex: 'mp3')
-      const loaderOption = this.loaderOptions.find(option => option.fileTypes.includes(fileType));
-
-      // Load asset if loader option exists
-      if (loaderOption !== undefined) {
-        loaderOption.loader.load(url, data => loaderOption.onLoad(fileName, data));
-      }
-      else {
-        console.error(`File type ".${ fileType }" not supported`);
-      }
     }
   }
 
