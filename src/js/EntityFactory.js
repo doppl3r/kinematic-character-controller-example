@@ -277,11 +277,11 @@ class EntityFactory {
 
     // Add mixer helper function
     mixer.play = (name, duration = 1) => {
-      var startAction = mixer.actions['active'];
-      var endAction = mixer.actions[name];
+      var startAction = mixer.actions?.['active'];
+      var endAction = mixer.actions?.[name];
       
       // Check if action exists
-      if (endAction && endAction != startAction) {
+      if (startAction && endAction && endAction != startAction) {
         // Fade in from no animation
         if (startAction == null) {
           endAction.setEffectiveWeight(1);

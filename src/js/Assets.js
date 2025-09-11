@@ -1,7 +1,7 @@
 import { Audio, AudioListener, AudioLoader, EventDispatcher, LoadingManager, TextureLoader } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader'
 
 class Assets extends EventDispatcher {
   constructor() {
@@ -53,7 +53,7 @@ class Assets extends EventDispatcher {
       },
       {
         fileTypes: ['hdr'],
-        loader: new RGBELoader(this.manager),
+        loader: new HDRLoader(this.manager),
         onLoad: (fileName, data) => {
           Object.assign(data, { mapping: 303 }); // EquirectangularReflectionMapping
           this.assign(fileName, data)
