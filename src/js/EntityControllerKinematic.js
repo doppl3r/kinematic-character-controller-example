@@ -148,7 +148,7 @@ class EntityControllerKinematic {
 
     // Update mixer animations
     if (this.isMoving() === true) {
-      this.entity.mixer.play('Run', 0.125);
+      this.entity?.mixer.play('Run', 0.125);
     }
   }
 
@@ -158,7 +158,7 @@ class EntityControllerKinematic {
 
     // Update mixer animations
     if (this.isMoving() === false) {
-      this.entity.mixer.play('Idle', 0.125);
+      this.entity?.mixer.play('Idle', 0.125);
     }
   }
 
